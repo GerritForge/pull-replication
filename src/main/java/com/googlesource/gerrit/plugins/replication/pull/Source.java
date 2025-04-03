@@ -677,7 +677,6 @@ public class Source {
                     ? RefUpdate.Result.NOT_ATTEMPTED
                     : RefUpdate.Result.REJECTED_OTHER_REASON;
             postReplicationFailedEvent(fetchOp, trackingRefUpdate);
-            queueMetrics.incrementTaskFailed(this);
 
             if (fetchOp.setToRetry()) {
               postReplicationScheduledEvent(fetchOp);
