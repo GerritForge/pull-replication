@@ -6,7 +6,7 @@ gerrit_plugin(
     srcs = glob(["src/main/java/**/*.java"]),
     manifest_entries = [
         "Implementation-Title: Pull Replication plugin",
-        "Implementation-URL: https://gerrit-review.googlesource.com/#/admin/projects/plugins/pull-replication",
+        "Implementation-URL: https://review.gerrithub.io/admin/projects/GerritForge/pull-replication",
         "Gerrit-PluginName: pull-replication",
         "Gerrit-Module: com.gerritforge.gerrit.plugins.replication.pull.PullReplicationModule",
         "Gerrit-InitStep: com.gerritforge.gerrit.plugins.replication.pull.InitPlugin",
