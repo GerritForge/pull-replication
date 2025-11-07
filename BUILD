@@ -6,7 +6,11 @@ gerrit_plugin(
     srcs = glob(["src/main/java/**/*.java"]),
     manifest_entries = [
         "Implementation-Title: Pull Replication plugin",
+<<<<<<< PATCH SET (69319c2d603cec6fbbf52697a7c78b5d8c22b408 Update build URLs to point to GerritHub)
+        "Implementation-URL: https://review.gerrithub.io/admin/projects/GerritForge/pull-replication",
+=======
         "Implementation-URL: https://github.com/GerritForge/pull-replication",
+>>>>>>> BASE      (004d934e64d73238e812503b2fb80d86941ec19e Update base package to com.gerritforge and add BSL license h)
         "Gerrit-PluginName: pull-replication",
         "Gerrit-Module: com.gerritforge.gerrit.plugins.replication.pull.PullReplicationModule",
         "Gerrit-InitStep: com.gerritforge.gerrit.plugins.replication.pull.InitPlugin",
