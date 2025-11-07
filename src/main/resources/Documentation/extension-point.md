@@ -22,7 +22,7 @@ Example:
 
 ```
 [gerrit]
-  installModule = com.googlesource.gerrit.plugins.replication.pull.ReplicationExtensionPointModule
+  installModule = com.gerritforge.gerrit.plugins.replication.pull.ReplicationExtensionPointModule
 ```
 
 > **NOTE**: Use and configuration of the @PLUGIN@ plugin as library module
@@ -32,7 +32,7 @@ upgrade.
 
 ### Extension points
 
-* `com.googlesource.gerrit.plugins.replication.pull.ReplicationFetchFilter`
+* `com.gerritforge.gerrit.plugins.replication.pull.ReplicationFetchFilter`
 
   Filter out the refs fetched from a remote instance.
   Only one filter at a time is supported. Filter implementation needs to

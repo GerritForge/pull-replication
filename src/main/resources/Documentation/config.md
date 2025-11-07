@@ -227,7 +227,7 @@ replication.consumeStreamEvents
 	catch up with the events after being unreachable.
 
 	When `consumeStreamEvents` is enabled gerrit.instanceId
-	instead of [replication.instanceLabel](https://gerrit.googlesource.com/plugins/pull-replication/+/refs/heads/stable-3.4/src/main/resources/Documentation/config.md#replication.instanceLabel) must be used.
+	instead of [replication.instanceLabel](https://github.com/GerritForge/pull-replication/blob/stable-3.13/src/main/resources/Documentation/config.md) must be used.
 
 	Using pull-replication standalone with a broker is also possible.
 	Check the replication.eventBrokerTopic parameter.
@@ -246,7 +246,7 @@ replication.eventBrokerTopic
 	standalone with a broker.
 
 	When `eventBrokerTopic` is enabled gerrit.instanceId
-	instead of [replication.instanceLabel](https://gerrit.googlesource.com/plugins/pull-replication/+/refs/heads/stable-3.4/src/main/resources/Documentation/config.md#replication.instanceLabel)
+	instead of [replication.instanceLabel](https://github.com/GerritForge/pull-replication/blob/stable-3.13/src/main/resources/Documentation/config.md)
 	must be used.
 
 	Bear in mind that if consumeStreamEvents is set to true this

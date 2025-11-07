@@ -1,0 +1,73 @@
+// Copyright (C) 2025 GerritForge, Inc.
+//
+// Licensed under the BSL 1.1 (the "License");
+// you may not use this file except in compliance with the License.
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package com.gerritforge.gerrit.plugins.replication.pull.filter;
+
+import com.google.common.base.Strings;
+import com.google.gerrit.entities.AccessSection;
+import com.googlesource.gerrit.plugins.replication.api.ReplicationConfig;
+import java.util.List;
+import org.eclipse.jgit.lib.Config;
+
+public abstract class RefsFilter {
+  public enum PatternType {
+    REGEX,
+    WILDCARD,
+    EXACT_MATCH;
+
+    public static PatternType getPatternType(String pattern) {
+      if (pattern.startsWith(AccessSection.REGEX_PREFIX)) {
+        return REGEX;
+      } else if (pattern.endsWith("*")) {
+        return WILDCARD;
+      } else {
+        return EXACT_MATCH;
+      }
+    }
+  }
+
+  private final List<String> refsPatterns;
+
+  public RefsFilter(ReplicationConfig replicationConfig) {
+    refsPatterns = getRefNamePatterns(replicationConfig.getConfig());
+  }
+
+  public boolean match(String refName) {
+    if (refName == null || Strings.isNullOrEmpty(refName)) {
+      throw new IllegalArgumentException(
+          String.format("Ref name cannot be null or empty, but was %s", refName));
+    }
+
+    for (String pattern : refsPatterns) {
+      if (matchesPattern(refName, pattern)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  protected abstract List<String> getRefNamePatterns(Config cfg);
+
+  private boolean matchesPattern(String refName, String pattern) {
+    boolean match = false;
+    switch (PatternType.getPatternType(pattern)) {
+      case REGEX:
+        match = refName.matches(pattern);
+        break;
+      case WILDCARD:
+        match = refName.startsWith(pattern.substring(0, pattern.length() - 1));
+        break;
+      case EXACT_MATCH:
+        match = refName.equals(pattern);
+    }
+    return match;
+  }
+}

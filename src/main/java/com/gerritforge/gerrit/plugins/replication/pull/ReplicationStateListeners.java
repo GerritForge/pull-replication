@@ -1,0 +1,45 @@
+// Copyright (C) 2025 GerritForge, Inc.
+//
+// Licensed under the BSL 1.1 (the "License");
+// you may not use this file except in compliance with the License.
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package com.gerritforge.gerrit.plugins.replication.pull;
+
+import com.google.gerrit.extensions.registration.DynamicSet;
+import com.google.inject.Inject;
+
+public class ReplicationStateListeners implements ReplicationStateListener {
+  private final DynamicSet<ReplicationStateListener> listeners;
+
+  @Inject
+  ReplicationStateListeners(DynamicSet<ReplicationStateListener> stateListeners) {
+    this.listeners = stateListeners;
+  }
+
+  @Override
+  public void warn(String msg, ReplicationState... states) {
+    for (ReplicationStateListener listener : listeners) {
+      listener.warn(msg, states);
+    }
+  }
+
+  @Override
+  public void error(String msg, ReplicationState... states) {
+    for (ReplicationStateListener listener : listeners) {
+      listener.error(msg, states);
+    }
+  }
+
+  @Override
+  public void error(String msg, Throwable t, ReplicationState... states) {
+    for (ReplicationStateListener listener : listeners) {
+      listener.error(msg, t, states);
+    }
+  }
+}

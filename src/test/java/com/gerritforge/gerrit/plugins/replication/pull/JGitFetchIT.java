@@ -1,0 +1,112 @@
+// Copyright (C) 2025 GerritForge, Inc.
+//
+// Licensed under the BSL 1.1 (the "License");
+// you may not use this file except in compliance with the License.
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package com.gerritforge.gerrit.plugins.replication.pull;
+
+import static com.google.common.truth.Truth.assertThat;
+import static com.google.gerrit.acceptance.GitUtil.deleteRef;
+import static com.google.gerrit.acceptance.GitUtil.pushHead;
+import static com.google.gerrit.acceptance.testsuite.project.TestProjectUpdate.allow;
+
+import com.google.common.collect.Lists;
+import com.google.gerrit.acceptance.PushOneCommit;
+import com.google.gerrit.acceptance.SkipProjectClone;
+import com.google.gerrit.acceptance.TestPlugin;
+import com.google.gerrit.acceptance.UseLocalDisk;
+import com.google.gerrit.acceptance.testsuite.project.ProjectOperations;
+import com.google.gerrit.entities.Permission;
+import com.google.inject.Inject;
+import com.gerritforge.gerrit.plugins.replication.pull.fetch.Fetch;
+import com.gerritforge.gerrit.plugins.replication.pull.fetch.JGitFetch;
+import com.gerritforge.gerrit.plugins.replication.pull.fetch.PermanentTransportException;
+import org.eclipse.jgit.lib.Config;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.URIish;
+import org.junit.Before;
+import org.junit.Test;
+
+@SkipProjectClone
+@UseLocalDisk
+@TestPlugin(
+    name = "pull-replication",
+    sysModule = "com.gerritforge.gerrit.plugins.replication.pull.JGitFetchIT$TestModule")
+public class JGitFetchIT extends FetchITBase {
+  private static final String TEST_REPLICATION_SUFFIX = "suffix1";
+  private static final String TEST_TASK_ID = "taskid";
+
+  @Inject private ProjectOperations projectOperations;
+
+  @Before
+  public void allowRefDeletion() {
+    projectOperations
+        .allProjectsForUpdate()
+        .add(allow(Permission.DELETE).ref("refs/*").group(adminGroupUuid()))
+        .update();
+  }
+
+  @Test(expected = PermanentTransportException.class)
+  public void shouldThrowPermanentTransportExceptionWhenRefDoesNotExists() throws Exception {
+
+    testRepo = cloneProject(createTestProject(project + TEST_REPLICATION_SUFFIX));
+    String nonExistingRef = "refs/changes/02/20000/1:refs/changes/02/20000/1";
+    try (Repository repo = repoManager.openRepository(project)) {
+      Fetch objectUnderTest =
+          fetchFactory.create(TEST_TASK_ID, new URIish(testRepoPath.toString()), repo);
+      objectUnderTest.fetch(Lists.newArrayList(FetchRefSpec.fromRef(nonExistingRef)));
+    }
+  }
+
+  @Test
+  public void shouldPruneRefsWhenMirrorIsUnset() throws Exception {
+    testRepo = cloneProject(createTestProject(project + TEST_REPLICATION_SUFFIX));
+    String branchRef = Constants.R_HEADS + "anyBranch";
+    String tagRef = Constants.R_TAGS + "anyTag";
+
+    PushOneCommit.Result branchPush = pushFactory.create(user.newIdent(), testRepo).to(branchRef);
+    branchPush.assertOkStatus();
+
+    PushResult tagPush = pushHead(testRepo, tagRef, false, false);
+    assertOkStatus(tagPush, tagRef);
+
+    try (Repository localRepo = repoManager.openRepository(project)) {
+      fetchAllRefs(TEST_TASK_ID, testRepoPath, localRepo);
+      assertThat(getRef(localRepo, branchRef)).isNotNull();
+      assertThat(getRef(localRepo, tagRef)).isNotNull();
+
+      PushResult deleteBranchResult = deleteRef(testRepo, branchRef);
+      assertOkStatus(deleteBranchResult, branchRef);
+
+      PushResult deleteTagResult = deleteRef(testRepo, tagRef);
+      assertOkStatus(deleteTagResult, tagRef);
+
+      fetchAllRefs(TEST_TASK_ID, testRepoPath, localRepo);
+      assertThat(getRef(localRepo, branchRef)).isNotNull();
+      assertThat(getRef(localRepo, tagRef)).isNotNull();
+    }
+  }
+
+  @SuppressWarnings("unused")
+  private static class TestModule extends FetchModule<JGitFetch> {
+    @Override
+    Class<JGitFetch> clientClass() {
+      return JGitFetch.class;
+    }
+
+    @Override
+    Config cf() {
+      Config cf = new Config();
+      cf.setInt("remote", "test_config", "timeout", 0);
+      return cf;
+    }
+  }
+}
