@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d7bb9a6c_7ecb50eb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:38:13Z",
+      "side": 1,
+      "message": "Good point.",
+      "parentUuid": "fbae8086_5a99ee98",
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ea09771e_d79c32e4",
         "filename": "BUILD",
         "patchSetId": 1
