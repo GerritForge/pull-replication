@@ -36,6 +36,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "52b5e1ce_55369e89",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:43:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d7bb9a6c_7ecb50eb",
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ea09771e_d79c32e4",
@@ -49,6 +67,24 @@
       "writtenOn": "2025-11-08T10:36:30Z",
       "side": 1,
       "message": "This is stale.\n\n\n\n```suggestion\n        \"Implementation-URL: https://github.com/GerritForge/pull-replication\",\n```",
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc9723f8_cb2a0a0b",
+        "filename": "BUILD",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:43:24Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "ea09771e_d79c32e4",
       "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -76,6 +112,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a54bdc4d_eb83d217",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:43:24Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "a0de90e6_c7a2cd2d",
+      "range": {
+        "startLine": 230,
+        "startChar": 40,
+        "endLine": 230,
+        "endChar": 189
+      },
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "766adda2_93c82e40",
@@ -89,6 +149,24 @@
       "writtenOn": "2025-11-08T10:36:30Z",
       "side": 1,
       "message": "This is stale.\n\n\n\n```suggestion\n\tinstead of [replication.instanceLabel](https://github.com/GerritForge/pull-replication/blob/stable-3.13/src/main/resources/Documentation/config.md#replication.instanceLabel)\n```",
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "84deffa8_435675dc",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:43:24Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "766adda2_93c82e40",
       "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -110,6 +188,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1303c901_ec888bfe",
+        "filename": "src/main/resources/Documentation/extension-point.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:43:24Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "5504471d_ccc1c4b2",
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4755435e_02703abf",
@@ -123,6 +219,24 @@
       "writtenOn": "2025-11-08T10:38:56Z",
       "side": 1,
       "message": "```suggestion\n* `com.gerritforge.gerrit.plugins.replication.pull.ReplicationFetchFilter`\n```",
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a986135d_97afe47c",
+        "filename": "src/main/resources/Documentation/extension-point.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:43:24Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "4755435e_02703abf",
       "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
