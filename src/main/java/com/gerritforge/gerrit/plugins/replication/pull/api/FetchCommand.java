@@ -1,0 +1,135 @@
+// Copyright (C) 2025 GerritForge, Inc.
+//
+// Licensed under the BSL 1.1 (the "License");
+// you may not use this file except in compliance with the License.
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package com.gerritforge.gerrit.plugins.replication.pull.api;
+
+import static com.gerritforge.gerrit.plugins.replication.pull.ReplicationType.ASYNC;
+import static com.gerritforge.gerrit.plugins.replication.pull.ReplicationType.SYNC;
+
+import com.google.gerrit.entities.Project;
+import com.google.gerrit.extensions.registration.DynamicItem;
+import com.google.gerrit.server.events.EventDispatcher;
+import com.google.inject.Inject;
+import com.gerritforge.gerrit.plugins.replication.pull.Command;
+import com.gerritforge.gerrit.plugins.replication.pull.FetchOne;
+import com.gerritforge.gerrit.plugins.replication.pull.FetchRefSpec;
+import com.gerritforge.gerrit.plugins.replication.pull.FetchResultProcessing;
+import com.gerritforge.gerrit.plugins.replication.pull.PullReplicationStateLogger;
+import com.gerritforge.gerrit.plugins.replication.pull.ReplicationState;
+import com.gerritforge.gerrit.plugins.replication.pull.ReplicationType;
+import com.gerritforge.gerrit.plugins.replication.pull.Source;
+import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RemoteConfigurationMissingException;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.eclipse.jgit.errors.TransportException;
+
+public class FetchCommand implements Command {
+
+  private ReplicationState.Factory fetchReplicationStateFactory;
+  private PullReplicationStateLogger fetchStateLog;
+  private SourcesCollection sources;
+  private final DynamicItem<EventDispatcher> eventDispatcher;
+
+  @Inject
+  public FetchCommand(
+      ReplicationState.Factory fetchReplicationStateFactory,
+      PullReplicationStateLogger fetchStateLog,
+      SourcesCollection sources,
+      DynamicItem<EventDispatcher> eventDispatcher) {
+    this.fetchReplicationStateFactory = fetchReplicationStateFactory;
+    this.fetchStateLog = fetchStateLog;
+    this.sources = sources;
+    this.eventDispatcher = eventDispatcher;
+  }
+
+  public void fetchAsync(
+      Project.NameKey name,
+      String label,
+      Set<FetchRefSpec> refsSpecs,
+      PullReplicationApiRequestMetrics apiRequestMetrics)
+      throws InterruptedException, RemoteConfigurationMissingException, TransportException {
+    fetch(name, label, refsSpecs, ASYNC, Optional.of(apiRequestMetrics));
+  }
+
+  public void fetchSync(Project.NameKey name, String label, Set<FetchRefSpec> refsSpecs)
+      throws InterruptedException, RemoteConfigurationMissingException, TransportException {
+    fetch(name, label, refsSpecs, SYNC, Optional.empty());
+  }
+
+  private void fetch(
+      Project.NameKey name,
+      String label,
+      Set<FetchRefSpec> refSpecs,
+      ReplicationType fetchType,
+      Optional<PullReplicationApiRequestMetrics> apiRequestMetrics)
+      throws InterruptedException, RemoteConfigurationMissingException, TransportException {
+    ReplicationState state =
+        fetchReplicationStateFactory.create(
+            new FetchResultProcessing.CommandProcessing(this, eventDispatcher.get()));
+    Optional<Source> source = sources.getByRemoteName(label);
+    if (!source.isPresent()) {
+      String msg = String.format("Remote configuration section %s not found", label);
+      fetchStateLog.error(msg, state);
+      throw new RemoteConfigurationMissingException(msg);
+    }
+
+    try {
+      if (fetchType == ReplicationType.ASYNC) {
+        state.markAllFetchTasksScheduled();
+        for (FetchRefSpec refSpec : refSpecs) {
+          source.get().schedule(name, refSpec, state, apiRequestMetrics);
+        }
+      } else {
+        Optional<FetchOne> maybeFetch =
+            source.get().fetchSync(name, refSpecs, source.get().getURI(name), apiRequestMetrics);
+        if (maybeFetch.map(FetchOne::safeGetFetchRefSpecs).filter(List::isEmpty).isPresent()) {
+          fetchStateLog.warn(
+              String.format(
+                  "[%s] Nothing to fetch, ref-specs is empty", maybeFetch.get().getTaskIdHex()));
+        } else if (maybeFetch.map(fetch -> !fetch.hasSucceeded()).orElse(false)) {
+          throw newTransportException(maybeFetch.get());
+        }
+      }
+    } catch (IllegalStateException e) {
+      fetchStateLog.error("Exception during the fetch operation", e, state);
+      throw e;
+    }
+
+    try {
+      if (fetchType == ReplicationType.ASYNC) {
+        state.waitForReplication(source.get().getTimeout());
+      }
+    } catch (InterruptedException e) {
+      writeStdErrSync("We are interrupted while waiting replication to complete");
+      throw e;
+    }
+  }
+
+  private TransportException newTransportException(FetchOne fetchOne) {
+    String combinedErrorMessage =
+        fetchOne.getFetchFailures().stream()
+            .map(TransportException::getMessage)
+            .collect(Collectors.joining("\n"));
+    return new TransportException(
+        String.format(
+            "[%s] %s trying to fetch %s",
+            fetchOne.getTaskIdHex(), combinedErrorMessage, fetchOne.safeGetFetchRefSpecs()));
+  }
+
+  @Override
+  public void writeStdOutSync(String message) {}
+
+  @Override
+  public void writeStdErrSync(String message) {}
+}
