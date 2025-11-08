@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fbae8086_5a99ee98",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019121
+      },
+      "writtenOn": "2025-11-08T08:36:27Z",
+      "side": 1,
+      "message": "@syntonyze@gmail.com how about [extension-point.md](https://github.com/GerritForge/pull-replication/blob/refs/heads/stable-3.13/src/main/resources/Documentation/extension-point.md?plain\u003d1#L25)? also few lines below...",
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
