@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a1e101da_cfeae8f3",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:53:57Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "b015343e_96b4bf52",
+      "range": {
+        "startLine": 230,
+        "startChar": 147,
+        "endLine": 230,
+        "endChar": 173
+      },
+      "revId": "9630c0c6eaf09de1b23d5d32ec6b043fbc991d7e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "10998b74_bac8bcaa",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-11-08T10:48:48Z",
       "side": 1,
       "message": "GitHub doesn\u0027t support anchors.\n\n\n\n```suggestion\n\tinstead of [replication.instanceLabel](https://github.com/GerritForge/pull-replication/blob/stable-3.13/src/main/resources/Documentation/config.md)\n```",
+      "range": {
+        "startLine": 249,
+        "startChar": 147,
+        "endLine": 249,
+        "endChar": 173
+      },
+      "revId": "9630c0c6eaf09de1b23d5d32ec6b043fbc991d7e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "96abe91c_c9b92c29",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:53:57Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "10998b74_bac8bcaa",
       "range": {
         "startLine": 249,
         "startChar": 147,
