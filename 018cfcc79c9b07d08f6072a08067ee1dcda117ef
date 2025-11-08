@@ -16,6 +16,63 @@
       "message": "@syntonyze@gmail.com how about [extension-point.md](https://github.com/GerritForge/pull-replication/blob/refs/heads/stable-3.13/src/main/resources/Documentation/extension-point.md?plain\u003d1#L25)? also few lines below...",
       "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea09771e_d79c32e4",
+        "filename": "BUILD",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:36:30Z",
+      "side": 1,
+      "message": "This is stale.\n\n\n\n```suggestion\n        \"Implementation-URL: https://github.com/GerritForge/pull-replication\",\n```",
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a0de90e6_c7a2cd2d",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:36:30Z",
+      "side": 1,
+      "message": "This is stale.\n\n\n\n```suggestion\n\tinstead of [replication.instanceLabel](https://github.com/GerritForge/pull-replication/blob/stable-3.13/src/main/resources/Documentation/config.md#replication.instanceLabel) must be used.\n```",
+      "range": {
+        "startLine": 230,
+        "startChar": 40,
+        "endLine": 230,
+        "endChar": 189
+      },
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "766adda2_93c82e40",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:36:30Z",
+      "side": 1,
+      "message": "This is stale.\n\n\n\n```suggestion\n\tinstead of [replication.instanceLabel](https://github.com/GerritForge/pull-replication/blob/stable-3.13/src/main/resources/Documentation/config.md#replication.instanceLabel)\n```",
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
