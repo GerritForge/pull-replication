@@ -91,6 +91,40 @@
       "message": "This is stale.\n\n\n\n```suggestion\n\tinstead of [replication.instanceLabel](https://github.com/GerritForge/pull-replication/blob/stable-3.13/src/main/resources/Documentation/config.md#replication.instanceLabel)\n```",
       "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5504471d_ccc1c4b2",
+        "filename": "src/main/resources/Documentation/extension-point.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:38:56Z",
+      "side": 1,
+      "message": "```suggestion\n  installModule \u003d com.gerritforge.gerrit.plugins.replication.pull.ReplicationExtensionPointModule\n```",
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4755435e_02703abf",
+        "filename": "src/main/resources/Documentation/extension-point.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-08T10:38:56Z",
+      "side": 1,
+      "message": "```suggestion\n* `com.gerritforge.gerrit.plugins.replication.pull.ReplicationFetchFilter`\n```",
+      "revId": "018cfcc79c9b07d08f6072a08067ee1dcda117ef",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
