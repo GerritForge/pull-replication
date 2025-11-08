@@ -1,0 +1,104 @@
+// Copyright (C) 2025 GerritForge, Inc.
+//
+// Licensed under the BSL 1.1 (the "License");
+// you may not use this file except in compliance with the License.
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package com.gerritforge.gerrit.plugins.replication.pull.transport;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.eclipse.jgit.transport.HttpConfig.EXTRA_HEADER;
+import static org.eclipse.jgit.transport.HttpConfig.HTTP;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.googlesource.gerrit.plugins.replication.CredentialsFactory;
+import com.gerritforge.gerrit.plugins.replication.pull.BearerTokenProvider;
+import com.gerritforge.gerrit.plugins.replication.pull.SourceConfiguration;
+import java.util.Optional;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.StoredConfig;
+import org.eclipse.jgit.transport.RemoteConfig;
+import org.eclipse.jgit.transport.TransferConfig;
+import org.eclipse.jgit.transport.Transport;
+import org.eclipse.jgit.transport.TransportHttp;
+import org.eclipse.jgit.transport.URIish;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+@RunWith(MockitoJUnitRunner.class)
+public class TransportProviderTest {
+  @Mock private SourceConfiguration sourceConfig;
+  @Mock private CredentialsFactory cpFactory;
+  @Mock private RemoteConfig remoteConfig;
+  @Mock private BearerTokenProvider bearerTokenProvider;
+  @Mock private Repository repository;
+  @Mock private StoredConfig storedConfig;
+  @Mock private org.eclipse.jgit.transport.TransferConfig transferConfig;
+
+  @Before
+  public void setup() {
+    when(sourceConfig.getRemoteConfig()).thenReturn(remoteConfig);
+    when(repository.getConfig()).thenReturn(storedConfig);
+    String[] emptyHeaders = {};
+    when(storedConfig.getStringList(HTTP, null, EXTRA_HEADER)).thenReturn(emptyHeaders);
+    when(storedConfig.get(TransferConfig.KEY)).thenReturn(transferConfig);
+  }
+
+  private void verifyConstructor() {
+    verify(sourceConfig).getRemoteConfig();
+    verify(remoteConfig).getName();
+    verify(bearerTokenProvider).get();
+  }
+
+  @Test
+  public void shouldProvideTransportHttpWithBearerToken() throws Exception {
+    when(bearerTokenProvider.get()).thenReturn(Optional.of("some-bearer-token"));
+
+    TransportProvider transportProvider =
+        new TransportProvider(sourceConfig, cpFactory, bearerTokenProvider);
+    verifyConstructor();
+
+    URIish urIish = new URIish("http://some-host/some-path");
+    Transport transport = transportProvider.open(repository, urIish);
+
+    // TODO(davido): We cannot access headers to check that the bearer token is set.
+    assertThat(transport).isInstanceOf(TransportHttp.class);
+  }
+
+  @Test
+  public void shouldProvideNativeTransportWhenNoBearerTokenProvided() throws Exception {
+
+    when(bearerTokenProvider.get()).thenReturn(Optional.empty());
+
+    TransportProvider transportProvider =
+        new TransportProvider(sourceConfig, cpFactory, bearerTokenProvider);
+    verifyConstructor();
+
+    URIish urIish = new URIish("ssh://some-host/some-path");
+    Transport transport = transportProvider.open(repository, urIish);
+
+    assertThat(transport).isNotInstanceOf(TransportHttp.class);
+  }
+
+  @Test
+  public void shouldProvideNativeTransportWhenNoHttpSchemeProvided() throws Exception {
+    when(bearerTokenProvider.get()).thenReturn(Optional.of("some-bearer-token"));
+
+    TransportProvider transportProvider =
+        new TransportProvider(sourceConfig, cpFactory, bearerTokenProvider);
+    verifyConstructor();
+
+    URIish urIish = new URIish("ssh://some-host/some-path");
+    Transport transport = transportProvider.open(repository, urIish);
+    assertThat(transport).isNotInstanceOf(TransportHttp.class);
+  }
+}
