@@ -74,7 +74,7 @@ public class FetchOneTest {
   private final String TEST_DELETE_REF = ":" + TEST_REF;
   private final FetchRefSpec TEST_REF_SPEC = FetchRefSpec.fromRef(TEST_REF);
   private final String URI_PATTERN = "http://test.com/" + TEST_PROJECT_NAME + ".git";
-  private final TestMetricMaker testMetricMaker = new TestMetricMaker();
+  private final TestMetricMaker testMetricMaker = TestMetricMaker.getInstance();
 
   private final RefSpec ALL_REFS_SPEC = FetchRefSpec.fromRef("refs/*:refs/*");
 
