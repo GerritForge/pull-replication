@@ -2,7 +2,10 @@ FROM gerritcodereview/gerrit:3.6.8-almalinux8
 
 USER root
 
-RUN yum install -y gettext
+RUN rpm --import https://repo.almalinux.org/almalinux/RPM-GPG-KEY-AlmaLinux
+RUN dnf clean all
+RUN dnf update -y almalinux-release
+RUN dnf install -y gettext
 
 RUN git config -f /var/gerrit/etc/secure.config --add auth.bearerToken "theSecretBearerToken"
 
