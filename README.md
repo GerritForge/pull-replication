@@ -25,7 +25,10 @@ with temporary commercial restrictions.
 * If your intended use case falls outside the **Additional Use Grant** and you require a
   commercial license, please contact [GerritForge Sales](https://gerritforge.com/contact).
 
+<<<<<<< PATCH SET (b581a8bba10fe4006989f13b4ca586d78eed7c79 Add BSL 1.1 notice in README.md)
+=======
 
+>>>>>>> BASE      (be9bbc81706acd56fa7e885833d257875fe6788e Add BSL 1.1 notice in README)
 ## Access
 
 
