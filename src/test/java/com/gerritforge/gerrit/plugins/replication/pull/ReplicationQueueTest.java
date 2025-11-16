@@ -583,11 +583,12 @@ public class ReplicationQueueTest {
   }
 
   @Test
-  public void shouldSkipEventWhenStarredChangesRef() {
+  public void shouldReplicateStarredChangesRef() throws IOException {
     Event event = generateBatchRefUpdateEvent("refs/starred-changes/41/2941/1000000");
+    objectUnderTest.start();
     objectUnderTest.onEvent(event);
 
-    verifyNoInteractions(wq, rd, dis, sl, fetchClientFactory, accountAttribute);
+    verify(fetchRestApiClient).callBatchSendObject(any(), any(), anyLong(), any());
   }
 
   @Test

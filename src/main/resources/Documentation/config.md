@@ -314,7 +314,6 @@ replication.excludeRefs
 
     By default, the following refs are excluded from the git fetch calls:
     - refs/cache-automerge/*
-    - refs/starred-changes/*
 
     Note that if you are using @PLUGIN@ together with multi-site, you should
     explicitly exclude `refs/multi-site/version` from being replicated.
