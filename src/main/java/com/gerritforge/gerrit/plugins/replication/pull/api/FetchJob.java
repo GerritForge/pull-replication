@@ -11,12 +11,12 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.api;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.BatchInput;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RemoteConfigurationMissingException;
 import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.entities.Project;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.BatchInput;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RemoteConfigurationMissingException;
 import org.eclipse.jgit.errors.TransportException;
 
 public class FetchJob implements Runnable {

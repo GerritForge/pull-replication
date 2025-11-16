@@ -13,6 +13,10 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.gerritforge.gerrit.plugins.replication.pull.FetchRefSpec;
+import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.Input;
+import com.gerritforge.gerrit.plugins.replication.pull.api.FetchJob.Factory;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RemoteConfigurationMissingException;
 import com.google.auto.value.AutoValue;
 import com.google.common.base.Strings;
 import com.google.gerrit.common.Nullable;
@@ -34,10 +38,6 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.gerritforge.gerrit.plugins.replication.pull.FetchRefSpec;
-import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.Input;
-import com.gerritforge.gerrit.plugins.replication.pull.api.FetchJob.Factory;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RemoteConfigurationMissingException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;

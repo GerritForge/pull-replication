@@ -13,13 +13,13 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.google.gerrit.acceptance.config.GerritConfig;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.entities.Project.NameKey;
 import com.google.gerrit.entities.RefNames;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.extensions.restapi.Url;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import java.util.Optional;
 import org.junit.Ignore;
 import org.junit.Test;

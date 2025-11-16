@@ -19,15 +19,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.gerrit.entities.Project;
-import com.google.gerrit.extensions.registration.DynamicItem;
-import com.google.gerrit.server.events.EventDispatcher;
 import com.gerritforge.gerrit.plugins.replication.pull.FetchRefSpec;
 import com.gerritforge.gerrit.plugins.replication.pull.PullReplicationStateLogger;
 import com.gerritforge.gerrit.plugins.replication.pull.ReplicationState;
 import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RemoteConfigurationMissingException;
+import com.google.gerrit.entities.Project;
+import com.google.gerrit.extensions.registration.DynamicItem;
+import com.google.gerrit.server.events.EventDispatcher;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

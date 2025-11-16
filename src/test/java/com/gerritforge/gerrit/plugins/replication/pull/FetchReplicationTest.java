@@ -11,10 +11,10 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull;
 
-import static com.google.common.truth.Truth.assertThat;
-import static com.google.gerrit.testing.GerritJUnit.assertThrows;
 import static com.gerritforge.gerrit.plugins.replication.pull.Source.encode;
 import static com.gerritforge.gerrit.plugins.replication.pull.Source.needsUrlEncoding;
+import static com.google.common.truth.Truth.assertThat;
+import static com.google.gerrit.testing.GerritJUnit.assertThrows;
 
 import org.eclipse.jgit.lib.Config;
 import org.eclipse.jgit.transport.RemoteConfig;

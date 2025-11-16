@@ -17,6 +17,7 @@ import static com.google.gerrit.acceptance.GitUtil.pushOne;
 import static com.google.gerrit.acceptance.testsuite.project.TestProjectUpdate.allow;
 import static com.google.gerrit.server.group.SystemGroupBackend.REGISTERED_USERS;
 
+import com.gerritforge.gerrit.plugins.replication.pull.client.FetchApiClient;
 import com.google.gerrit.acceptance.PushOneCommit;
 import com.google.gerrit.acceptance.PushOneCommit.Result;
 import com.google.gerrit.acceptance.UseLocalDisk;
@@ -32,7 +33,6 @@ import com.google.gerrit.extensions.events.ProjectDeletedListener;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.server.events.ProjectEvent;
 import com.googlesource.gerrit.plugins.replication.AutoReloadConfigDecorator;
-import com.gerritforge.gerrit.plugins.replication.pull.client.FetchApiClient;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;

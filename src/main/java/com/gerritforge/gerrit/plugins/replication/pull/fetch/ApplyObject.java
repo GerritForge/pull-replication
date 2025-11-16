@@ -11,16 +11,16 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.fetch;
 
-import com.google.gerrit.entities.Project;
-import com.google.gerrit.extensions.restapi.IdString;
-import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
-import com.google.gerrit.server.git.GitRepositoryManager;
-import com.google.inject.Inject;
 import com.gerritforge.gerrit.plugins.replication.pull.LocalGitRepositoryManagerProvider;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
+import com.google.gerrit.entities.Project;
+import com.google.gerrit.extensions.restapi.IdString;
+import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
+import com.google.gerrit.server.git.GitRepositoryManager;
+import com.google.inject.Inject;
 import java.io.IOException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
 import org.eclipse.jgit.lib.ObjectId;

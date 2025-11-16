@@ -11,13 +11,13 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.api;
 
+import com.gerritforge.gerrit.plugins.replication.pull.BearerTokenProvider;
 import com.google.gerrit.extensions.registration.DynamicSet;
 import com.google.gerrit.httpd.AllRequestFilter;
 import com.google.inject.Inject;
 import com.google.inject.Scopes;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
-import com.gerritforge.gerrit.plugins.replication.pull.BearerTokenProvider;
 
 public class HttpModule extends ServletModule {
   private final BearerTokenProvider bearerTokenProvider;

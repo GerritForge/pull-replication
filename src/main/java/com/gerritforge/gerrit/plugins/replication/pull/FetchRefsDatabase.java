@@ -13,9 +13,9 @@ package com.gerritforge.gerrit.plugins.replication.pull;
 
 import static java.util.stream.Collectors.toMap;
 
+import com.gerritforge.gerrit.plugins.replication.pull.transport.TransportProvider;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.gerritforge.gerrit.plugins.replication.pull.transport.TransportProvider;
 import java.io.IOException;
 import java.util.Map;
 import org.eclipse.jgit.lib.Ref;

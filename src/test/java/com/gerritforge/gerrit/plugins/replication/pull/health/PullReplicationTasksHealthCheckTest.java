@@ -11,13 +11,15 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.health;
 
-import static com.google.common.truth.Truth.assertThat;
 import static com.gerritforge.gerrit.plugins.replication.pull.health.PullReplicationTasksHealthCheck.HEALTHCHECK_NAME_SUFFIX;
 import static com.gerritforge.gerrit.plugins.replication.pull.health.PullReplicationTasksHealthCheck.PERIOD_OF_TIME_FIELD;
 import static com.gerritforge.gerrit.plugins.replication.pull.health.PullReplicationTasksHealthCheck.PROJECTS_FILTER_FIELD;
+import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
+import com.gerritforge.gerrit.plugins.replication.pull.Source;
+import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import com.google.common.base.Ticker;
 import com.google.common.testing.FakeTicker;
 import com.google.gerrit.common.Nullable;
@@ -33,8 +35,6 @@ import com.googlesource.gerrit.plugins.healthcheck.HealthCheckExtensionApiModule
 import com.googlesource.gerrit.plugins.healthcheck.check.HealthCheck;
 import com.googlesource.gerrit.plugins.replication.MergedConfigResource;
 import com.googlesource.gerrit.plugins.replication.api.ConfigResource;
-import com.gerritforge.gerrit.plugins.replication.pull.Source;
-import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;

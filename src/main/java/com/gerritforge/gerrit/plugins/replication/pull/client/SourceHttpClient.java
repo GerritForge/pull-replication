@@ -11,9 +11,9 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.client;
 
+import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;

@@ -13,12 +13,12 @@ package com.gerritforge.gerrit.plugins.replication.pull.fetch;
 
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
+import com.gerritforge.gerrit.plugins.replication.pull.FetchRefSpec;
+import com.gerritforge.gerrit.plugins.replication.pull.SourceConfiguration;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.googlesource.gerrit.plugins.replication.CredentialsFactory;
-import com.gerritforge.gerrit.plugins.replication.pull.FetchRefSpec;
-import com.gerritforge.gerrit.plugins.replication.pull.SourceConfiguration;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;

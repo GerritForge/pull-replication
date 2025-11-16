@@ -11,6 +11,8 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.health;
 
+import com.gerritforge.gerrit.plugins.replication.pull.Source;
+import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import com.google.common.base.Ticker;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -24,8 +26,6 @@ import com.googlesource.gerrit.plugins.healthcheck.HealthCheckConfig;
 import com.googlesource.gerrit.plugins.healthcheck.check.AbstractHealthCheck;
 import com.googlesource.gerrit.plugins.healthcheck.check.HealthCheck;
 import com.googlesource.gerrit.plugins.replication.MergedConfigResource;
-import com.gerritforge.gerrit.plugins.replication.pull.Source;
-import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

@@ -16,10 +16,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.google.gerrit.server.events.EventDispatcher;
 import com.gerritforge.gerrit.plugins.replication.pull.FetchResultProcessing.CommandProcessing;
 import com.gerritforge.gerrit.plugins.replication.pull.FetchResultProcessing.GitUpdateProcessing;
 import com.gerritforge.gerrit.plugins.replication.pull.ReplicationState.RefFetchResult;
+import com.google.gerrit.server.events.EventDispatcher;
 import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.transport.URIish;
 import org.junit.Before;

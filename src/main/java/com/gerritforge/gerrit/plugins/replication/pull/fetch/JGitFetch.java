@@ -13,10 +13,10 @@ package com.gerritforge.gerrit.plugins.replication.pull.fetch;
 
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import com.gerritforge.gerrit.plugins.replication.pull.FetchRefSpec;
 import com.gerritforge.gerrit.plugins.replication.pull.transport.TransportProvider;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;

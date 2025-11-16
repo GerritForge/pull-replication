@@ -11,6 +11,7 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.api;
 
+import com.gerritforge.gerrit.plugins.replication.pull.auth.PullReplicationInternalUser;
 import com.google.gerrit.extensions.annotations.PluginName;
 import com.google.gerrit.extensions.registration.DynamicItem;
 import com.google.gerrit.httpd.AllRequestFilter;
@@ -21,7 +22,6 @@ import com.google.gerrit.server.util.ThreadLocalRequestContext;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
-import com.gerritforge.gerrit.plugins.replication.pull.auth.PullReplicationInternalUser;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Matcher;

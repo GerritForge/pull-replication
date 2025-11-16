@@ -13,13 +13,13 @@ package com.gerritforge.gerrit.plugins.replication.pull.client;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-import com.google.gerrit.common.Nullable;
-import com.google.gerrit.entities.Project;
-import com.google.gerrit.entities.Project.NameKey;
 import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.RefInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.BatchApplyObjectData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
+import com.google.gerrit.common.Nullable;
+import com.google.gerrit.entities.Project;
+import com.google.gerrit.entities.Project.NameKey;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;

@@ -15,6 +15,7 @@ import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBroker
 import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule.STREAM_EVENTS_TOPIC_NAME;
 
 import com.gerritforge.gerrit.eventbroker.BrokerApi;
+import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
 import com.google.gerrit.common.Nullable;
 import com.google.gerrit.extensions.events.LifecycleListener;
 import com.google.gerrit.extensions.registration.DynamicItem;
@@ -25,7 +26,6 @@ import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.permissions.PermissionBackendException;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
 import java.io.IOException;
 import java.util.function.Consumer;
 

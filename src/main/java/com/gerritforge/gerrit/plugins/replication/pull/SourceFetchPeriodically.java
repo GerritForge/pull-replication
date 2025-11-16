@@ -11,6 +11,7 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.PullReplicationApiRequestMetrics;
 import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.extensions.registration.DynamicItem;
@@ -19,7 +20,6 @@ import com.google.gerrit.server.project.ProjectCache;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.assistedinject.Assisted;
-import com.gerritforge.gerrit.plugins.replication.pull.api.PullReplicationApiRequestMetrics;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;

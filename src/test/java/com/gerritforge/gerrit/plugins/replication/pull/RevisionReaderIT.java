@@ -13,6 +13,9 @@ package com.gerritforge.gerrit.plugins.replication.pull;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
+import com.gerritforge.gerrit.plugins.replication.pull.fetch.ApplyObject;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.truth.Truth8;
@@ -37,9 +40,6 @@ import com.googlesource.gerrit.plugins.replication.ReplicationConfigImpl;
 import com.googlesource.gerrit.plugins.replication.api.ApiModule;
 import com.googlesource.gerrit.plugins.replication.api.ConfigResource;
 import com.googlesource.gerrit.plugins.replication.api.ReplicationConfig;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
-import com.gerritforge.gerrit.plugins.replication.pull.fetch.ApplyObject;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

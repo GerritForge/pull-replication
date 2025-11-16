@@ -17,14 +17,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import com.google.common.collect.Lists;
 import com.google.gerrit.extensions.restapi.MergeConflictException;
 import com.google.gerrit.extensions.restapi.Response;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.server.project.ProjectResource;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;

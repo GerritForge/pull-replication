@@ -13,14 +13,14 @@ package com.gerritforge.gerrit.plugins.replication.pull;
 
 import static com.gerritforge.gerrit.plugins.replication.pull.ReplicationQueue.repLog;
 
+import com.gerritforge.gerrit.plugins.replication.pull.client.FetchApiClient;
+import com.gerritforge.gerrit.plugins.replication.pull.client.HttpResult;
 import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.server.ioutil.HexFormat;
 import com.google.gerrit.server.util.IdGenerator;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.gerritforge.gerrit.plugins.replication.pull.client.FetchApiClient;
-import com.gerritforge.gerrit.plugins.replication.pull.client.HttpResult;
 import java.io.IOException;
 import org.eclipse.jgit.transport.URIish;
 

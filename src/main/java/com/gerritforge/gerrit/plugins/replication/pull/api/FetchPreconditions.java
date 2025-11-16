@@ -13,6 +13,7 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 
 import static com.gerritforge.gerrit.plugins.replication.pull.api.FetchApiCapability.CALL_FETCH_ACTION;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.UnauthorizedAuthException;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.extensions.annotations.PluginName;
 import com.google.gerrit.extensions.api.access.PluginPermission;
@@ -24,7 +25,6 @@ import com.google.gerrit.server.permissions.RefPermission;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.UnauthorizedAuthException;
 
 @Singleton
 public class FetchPreconditions {

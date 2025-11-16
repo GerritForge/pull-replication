@@ -11,8 +11,8 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.api;
 
-import static com.google.gerrit.httpd.restapi.RestApiServlet.SC_UNPROCESSABLE_ENTITY;
 import static com.gerritforge.gerrit.plugins.replication.pull.api.HttpServletOps.checkAcceptHeader;
+import static com.google.gerrit.httpd.restapi.RestApiServlet.SC_UNPROCESSABLE_ENTITY;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
 import static javax.servlet.http.HttpServletResponse.SC_CREATED;
@@ -21,6 +21,12 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.BatchInput;
+import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.Input;
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionsInput;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.UnauthorizedAuthException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.util.PayloadSerDes;
 import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.extensions.annotations.PluginName;
@@ -48,12 +54,6 @@ import com.google.gson.stream.MalformedJsonException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
-import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.BatchInput;
-import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.Input;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionsInput;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.UnauthorizedAuthException;
-import com.gerritforge.gerrit.plugins.replication.pull.api.util.PayloadSerDes;
 import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.IOException;

@@ -13,13 +13,13 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.google.gerrit.extensions.restapi.Response;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.extensions.restapi.RestModifyView;
 import com.google.gerrit.server.project.ProjectResource;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

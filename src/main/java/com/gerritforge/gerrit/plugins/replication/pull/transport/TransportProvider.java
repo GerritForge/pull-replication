@@ -13,12 +13,12 @@ package com.gerritforge.gerrit.plugins.replication.pull.transport;
 
 import static org.eclipse.jgit.util.HttpSupport.HDR_AUTHORIZATION;
 
+import com.gerritforge.gerrit.plugins.replication.pull.BearerTokenProvider;
+import com.gerritforge.gerrit.plugins.replication.pull.SourceConfiguration;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.googlesource.gerrit.plugins.replication.CredentialsFactory;
-import com.gerritforge.gerrit.plugins.replication.pull.BearerTokenProvider;
-import com.gerritforge.gerrit.plugins.replication.pull.SourceConfiguration;
 import java.util.Optional;
 import org.eclipse.jgit.errors.NotSupportedException;
 import org.eclipse.jgit.errors.TransportException;

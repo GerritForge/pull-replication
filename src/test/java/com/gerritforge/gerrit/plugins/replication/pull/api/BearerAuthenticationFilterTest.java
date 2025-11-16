@@ -16,12 +16,12 @@ import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.gerritforge.gerrit.plugins.replication.pull.auth.PullReplicationInternalUser;
 import com.google.gerrit.extensions.registration.DynamicItem;
 import com.google.gerrit.httpd.WebSession;
 import com.google.gerrit.server.AccessPath;
 import com.google.gerrit.server.util.ThreadLocalRequestContext;
 import com.google.inject.Provider;
-import com.gerritforge.gerrit.plugins.replication.pull.auth.PullReplicationInternalUser;
 import java.util.Optional;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;

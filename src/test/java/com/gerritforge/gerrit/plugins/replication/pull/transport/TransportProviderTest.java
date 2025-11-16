@@ -17,9 +17,9 @@ import static org.eclipse.jgit.transport.HttpConfig.HTTP;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.googlesource.gerrit.plugins.replication.CredentialsFactory;
 import com.gerritforge.gerrit.plugins.replication.pull.BearerTokenProvider;
 import com.gerritforge.gerrit.plugins.replication.pull.SourceConfiguration;
+import com.googlesource.gerrit.plugins.replication.CredentialsFactory;
 import java.util.Optional;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.StoredConfig;

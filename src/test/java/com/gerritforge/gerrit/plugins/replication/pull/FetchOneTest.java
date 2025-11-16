@@ -11,9 +11,9 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull;
 
-import static com.google.common.truth.Truth.assertThat;
 import static com.gerritforge.gerrit.plugins.replication.pull.FetchOne.FILTER_ONLY;
 import static com.gerritforge.gerrit.plugins.replication.pull.FetchOne.refsToDelete;
+import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.argThat;
@@ -23,18 +23,18 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.gerrit.acceptance.TestMetricMaker;
-import com.google.gerrit.entities.Project;
-import com.google.gerrit.extensions.registration.DynamicItem;
-import com.google.gerrit.server.git.GitRepositoryManager;
-import com.google.gerrit.server.git.PerThreadRequestScope;
-import com.google.gerrit.server.util.IdGenerator;
 import com.gerritforge.gerrit.plugins.replication.pull.api.DeleteRefCommand;
 import com.gerritforge.gerrit.plugins.replication.pull.api.PullReplicationApiRequestMetrics;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.Fetch;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.FetchFactory;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.InexistentRefTransportException;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.RefUpdateState;
+import com.google.gerrit.acceptance.TestMetricMaker;
+import com.google.gerrit.entities.Project;
+import com.google.gerrit.extensions.registration.DynamicItem;
+import com.google.gerrit.server.git.GitRepositoryManager;
+import com.google.gerrit.server.git.PerThreadRequestScope;
+import com.google.gerrit.server.util.IdGenerator;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;

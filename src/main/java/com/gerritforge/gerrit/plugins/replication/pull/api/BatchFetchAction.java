@@ -11,13 +11,13 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.api;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.BatchInput;
 import com.google.gerrit.extensions.restapi.Response;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.extensions.restapi.RestModifyView;
 import com.google.gerrit.server.project.ProjectResource;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.BatchInput;
 
 @Singleton
 public class BatchFetchAction implements RestModifyView<ProjectResource, BatchInput> {

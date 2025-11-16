@@ -11,9 +11,9 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.api;
 
+import com.gerritforge.gerrit.plugins.replication.pull.AutoValueTypeAdapterFactory;
 import com.google.gerrit.json.OutputFormat;
 import com.google.gson.Gson;
-import com.gerritforge.gerrit.plugins.replication.pull.AutoValueTypeAdapterFactory;
 
 public class HttpPayloadGsonProvider {
 

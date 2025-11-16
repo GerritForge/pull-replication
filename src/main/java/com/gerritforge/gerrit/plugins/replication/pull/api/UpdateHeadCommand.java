@@ -11,6 +11,10 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.api;
 
+import com.gerritforge.gerrit.plugins.replication.pull.Context;
+import com.gerritforge.gerrit.plugins.replication.pull.FetchRefReplicatedEvent;
+import com.gerritforge.gerrit.plugins.replication.pull.GerritConfigOps;
+import com.gerritforge.gerrit.plugins.replication.pull.ReplicationState;
 import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.entities.RefNames;
@@ -21,10 +25,6 @@ import com.google.gerrit.server.events.EventDispatcher;
 import com.google.gerrit.server.permissions.PermissionBackendException;
 import com.google.inject.Singleton;
 import com.googlesource.gerrit.plugins.replication.LocalFS;
-import com.gerritforge.gerrit.plugins.replication.pull.Context;
-import com.gerritforge.gerrit.plugins.replication.pull.FetchRefReplicatedEvent;
-import com.gerritforge.gerrit.plugins.replication.pull.GerritConfigOps;
-import com.gerritforge.gerrit.plugins.replication.pull.ReplicationState;
 import java.util.Optional;
 import javax.inject.Inject;
 import org.eclipse.jgit.lib.RefUpdate;

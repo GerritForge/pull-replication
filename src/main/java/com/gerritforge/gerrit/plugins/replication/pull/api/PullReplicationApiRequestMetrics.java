@@ -13,9 +13,9 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import com.gerritforge.gerrit.plugins.replication.pull.FetchReplicationMetrics;
 import com.google.gerrit.server.events.Event;
 import com.google.inject.Inject;
-import com.gerritforge.gerrit.plugins.replication.pull.FetchReplicationMetrics;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.servlet.http.HttpServletRequest;

@@ -11,9 +11,21 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull;
 
-import static com.googlesource.gerrit.plugins.replication.StartReplicationCapability.START_REPLICATION;
 import static com.gerritforge.gerrit.plugins.replication.pull.api.FetchApiCapability.CALL_FETCH_ACTION;
+import static com.googlesource.gerrit.plugins.replication.StartReplicationCapability.START_REPLICATION;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.FetchApiCapability;
+import com.gerritforge.gerrit.plugins.replication.pull.api.FetchJob;
+import com.gerritforge.gerrit.plugins.replication.pull.api.ProjectDeletionAction;
+import com.gerritforge.gerrit.plugins.replication.pull.auth.PullReplicationGroupModule;
+import com.gerritforge.gerrit.plugins.replication.pull.client.FetchApiClient;
+import com.gerritforge.gerrit.plugins.replication.pull.client.FetchRestApiClient;
+import com.gerritforge.gerrit.plugins.replication.pull.client.HttpClient;
+import com.gerritforge.gerrit.plugins.replication.pull.client.SourceHttpClient;
+import com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule;
+import com.gerritforge.gerrit.plugins.replication.pull.event.StreamEventModule;
+import com.gerritforge.gerrit.plugins.replication.pull.fetch.ApplyObject;
+import com.gerritforge.gerrit.plugins.replication.pull.health.PullReplicationHealthCheckModule;
 import com.google.common.eventbus.EventBus;
 import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.extensions.annotations.Exports;
@@ -38,18 +50,6 @@ import com.googlesource.gerrit.plugins.replication.CredentialsFactory;
 import com.googlesource.gerrit.plugins.replication.ObservableQueue;
 import com.googlesource.gerrit.plugins.replication.ReplicationConfigModule;
 import com.googlesource.gerrit.plugins.replication.StartReplicationCapability;
-import com.gerritforge.gerrit.plugins.replication.pull.api.FetchApiCapability;
-import com.gerritforge.gerrit.plugins.replication.pull.api.FetchJob;
-import com.gerritforge.gerrit.plugins.replication.pull.api.ProjectDeletionAction;
-import com.gerritforge.gerrit.plugins.replication.pull.auth.PullReplicationGroupModule;
-import com.gerritforge.gerrit.plugins.replication.pull.client.FetchApiClient;
-import com.gerritforge.gerrit.plugins.replication.pull.client.FetchRestApiClient;
-import com.gerritforge.gerrit.plugins.replication.pull.client.HttpClient;
-import com.gerritforge.gerrit.plugins.replication.pull.client.SourceHttpClient;
-import com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule;
-import com.gerritforge.gerrit.plugins.replication.pull.event.StreamEventModule;
-import com.gerritforge.gerrit.plugins.replication.pull.fetch.ApplyObject;
-import com.gerritforge.gerrit.plugins.replication.pull.health.PullReplicationHealthCheckModule;
 import org.eclipse.jgit.lib.Config;
 
 class PullReplicationModule extends AbstractModule {

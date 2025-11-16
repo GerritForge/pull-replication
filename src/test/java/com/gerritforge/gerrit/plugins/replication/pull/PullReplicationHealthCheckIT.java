@@ -11,11 +11,12 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull;
 
-import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth.assertWithMessage;
 import static com.gerritforge.gerrit.plugins.replication.pull.health.PullReplicationTasksHealthCheck.HEALTHCHECK_NAME_SUFFIX;
 import static com.gerritforge.gerrit.plugins.replication.pull.health.PullReplicationTasksHealthCheck.PERIOD_OF_TIME_FIELD;
+import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 
+import com.gerritforge.gerrit.plugins.replication.pull.health.PullReplicationTasksHealthCheck;
 import com.google.common.base.Stopwatch;
 import com.google.gerrit.acceptance.SkipProjectClone;
 import com.google.gerrit.acceptance.TestPlugin;
@@ -34,7 +35,6 @@ import com.googlesource.gerrit.plugins.healthcheck.HealthCheckExtensionApiModule
 import com.googlesource.gerrit.plugins.healthcheck.check.HealthCheck;
 import com.googlesource.gerrit.plugins.replication.ReplicationConfigModule;
 import com.googlesource.gerrit.plugins.replication.api.ApiModule;
-import com.gerritforge.gerrit.plugins.replication.pull.health.PullReplicationTasksHealthCheck;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;

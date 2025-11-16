@@ -13,6 +13,8 @@ package com.gerritforge.gerrit.plugins.replication.pull;
 
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import com.google.common.collect.Lists;
 import com.google.gerrit.common.Nullable;
 import com.google.gerrit.entities.Project;
@@ -20,8 +22,6 @@ import com.google.gerrit.entities.RefNames;
 import com.google.gerrit.server.git.GitRepositoryManager;
 import com.google.inject.Inject;
 import com.googlesource.gerrit.plugins.replication.api.ReplicationConfig;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -11,11 +11,11 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.auth;
 
-import static com.google.common.truth.Truth.assertThat;
 import static com.gerritforge.gerrit.plugins.replication.pull.auth.PullReplicationGroupBackend.INTERNAL_GROUP_DESCRIPTION;
 import static com.gerritforge.gerrit.plugins.replication.pull.auth.PullReplicationGroupBackend.INTERNAL_GROUP_NAME;
 import static com.gerritforge.gerrit.plugins.replication.pull.auth.PullReplicationGroupBackend.INTERNAL_GROUP_UUID;
 import static com.gerritforge.gerrit.plugins.replication.pull.auth.PullReplicationGroupBackend.NAME_PREFIX;
+import static com.google.common.truth.Truth.assertThat;
 
 import com.google.gerrit.acceptance.LightweightPluginDaemonTest;
 import com.google.gerrit.acceptance.SkipProjectClone;

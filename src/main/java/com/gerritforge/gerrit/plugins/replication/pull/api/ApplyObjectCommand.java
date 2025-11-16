@@ -15,17 +15,6 @@ import static com.gerritforge.gerrit.plugins.replication.pull.ApplyObjectCacheMo
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
-import com.google.common.cache.Cache;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.flogger.FluentLogger;
-import com.google.gerrit.entities.Project;
-import com.google.gerrit.extensions.registration.DynamicItem;
-import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
-import com.google.gerrit.metrics.Timer1;
-import com.google.gerrit.server.events.EventDispatcher;
-import com.google.gerrit.server.permissions.PermissionBackendException;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.gerritforge.gerrit.plugins.replication.pull.ApplyObjectMetrics;
 import com.gerritforge.gerrit.plugins.replication.pull.ApplyObjectsCacheKey;
 import com.gerritforge.gerrit.plugins.replication.pull.Context;
@@ -42,6 +31,17 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingPare
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.ApplyObject;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.RefUpdateState;
+import com.google.common.cache.Cache;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.flogger.FluentLogger;
+import com.google.gerrit.entities.Project;
+import com.google.gerrit.extensions.registration.DynamicItem;
+import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
+import com.google.gerrit.metrics.Timer1;
+import com.google.gerrit.server.events.EventDispatcher;
+import com.google.gerrit.server.permissions.PermissionBackendException;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;

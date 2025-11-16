@@ -13,6 +13,10 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionsInput;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
 import com.google.common.base.Strings;
 import com.google.gerrit.extensions.restapi.AuthException;
 import com.google.gerrit.extensions.restapi.BadRequestException;
@@ -24,10 +28,6 @@ import com.google.gerrit.extensions.restapi.RestModifyView;
 import com.google.gerrit.extensions.restapi.UnprocessableEntityException;
 import com.google.gerrit.server.project.ProjectResource;
 import com.google.inject.Inject;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionsInput;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;

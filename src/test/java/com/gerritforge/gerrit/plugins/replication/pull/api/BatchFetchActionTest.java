@@ -17,12 +17,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.RefInput;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gerrit.extensions.restapi.MergeConflictException;
 import com.google.gerrit.extensions.restapi.Response;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.server.project.ProjectResource;
-import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.RefInput;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import org.junit.Before;

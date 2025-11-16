@@ -20,10 +20,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.gerritforge.gerrit.eventbroker.BrokerApi;
+import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
 import com.google.gerrit.extensions.registration.DynamicItem;
 import com.google.gerrit.server.events.RefUpdatedEvent;
 import com.google.gerrit.server.permissions.PermissionBackendException;
-import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

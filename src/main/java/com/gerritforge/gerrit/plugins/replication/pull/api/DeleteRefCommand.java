@@ -13,6 +13,12 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
+import com.gerritforge.gerrit.plugins.replication.pull.LocalGitRepositoryManagerProvider;
+import com.gerritforge.gerrit.plugins.replication.pull.PullReplicationStateLogger;
+import com.gerritforge.gerrit.plugins.replication.pull.ReplicationState;
+import com.gerritforge.gerrit.plugins.replication.pull.Source;
+import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
+import com.gerritforge.gerrit.plugins.replication.pull.fetch.RefUpdateState;
 import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
@@ -21,12 +27,6 @@ import com.google.gerrit.server.git.GitRepositoryManager;
 import com.google.gerrit.server.project.ProjectCache;
 import com.google.gerrit.server.project.ProjectState;
 import com.google.inject.Inject;
-import com.gerritforge.gerrit.plugins.replication.pull.LocalGitRepositoryManagerProvider;
-import com.gerritforge.gerrit.plugins.replication.pull.PullReplicationStateLogger;
-import com.gerritforge.gerrit.plugins.replication.pull.ReplicationState;
-import com.gerritforge.gerrit.plugins.replication.pull.Source;
-import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
-import com.gerritforge.gerrit.plugins.replication.pull.fetch.RefUpdateState;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;

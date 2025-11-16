@@ -13,6 +13,7 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
+import com.gerritforge.gerrit.plugins.replication.pull.GerritConfigOps;
 import com.google.gerrit.extensions.api.access.PluginPermission;
 import com.google.gerrit.extensions.restapi.AuthException;
 import com.google.gerrit.extensions.restapi.BadRequestException;
@@ -29,7 +30,6 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.googlesource.gerrit.plugins.deleteproject.cache.CacheDeleteHandler;
 import com.googlesource.gerrit.plugins.deleteproject.fs.RepositoryDelete;
-import com.gerritforge.gerrit.plugins.replication.pull.GerritConfigOps;
 import java.io.IOException;
 import java.util.Optional;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;

@@ -14,12 +14,12 @@ package com.gerritforge.gerrit.plugins.replication.pull.event;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.base.Objects;
-import com.google.gerrit.server.events.EventGsonProvider;
-import com.google.gson.Gson;
 import com.gerritforge.gerrit.plugins.replication.pull.FetchRefReplicatedEvent;
 import com.gerritforge.gerrit.plugins.replication.pull.FetchReplicationScheduledEvent;
 import com.gerritforge.gerrit.plugins.replication.pull.ReplicationState;
+import com.google.common.base.Objects;
+import com.google.gerrit.server.events.EventGsonProvider;
+import com.google.gson.Gson;
 import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.transport.URIish;
 import org.junit.Before;
