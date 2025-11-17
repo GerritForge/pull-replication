@@ -22,6 +22,30 @@
       },
       "revId": "8e4253702fac83aec97bdf64f338073b49e1e001",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8a7e332b_fb2a3665",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 5
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-17T15:26:08Z",
+      "side": 1,
+      "message": "Done with https://review.gerrithub.io/c/GerritForge/pull-replication/+/1226564",
+      "parentUuid": "603ec892_aa91b90f",
+      "range": {
+        "startLine": 314,
+        "startChar": 0,
+        "endLine": 316,
+        "endChar": 28
+      },
+      "revId": "8e4253702fac83aec97bdf64f338073b49e1e001",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
