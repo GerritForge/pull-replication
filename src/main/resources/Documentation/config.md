@@ -313,7 +313,8 @@ replication.excludeRefs
     the ref `foo/bar`, but no other refs.
 
     By default, the following refs are excluded from the git fetch calls:
-    - refs/cache-automerge/*
+    - refs/cache-automerge/* (see [change.cacheAutomerge](/Documentation/config-gerrit.html#change.cacheAutomerge)
+      for more details about Gerrit's auto-merge mechanism.
 
     Note that if you are using @PLUGIN@ together with multi-site, you should
     explicitly exclude `refs/multi-site/version` from being replicated.
