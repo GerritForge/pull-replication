@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "603ec892_aa91b90f",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 5
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2025-11-17T15:19:15Z",
+      "side": 1,
+      "message": "Maybe as a follow-up it would be good to explain why cache-automerge is excluded",
+      "range": {
+        "startLine": 314,
+        "startChar": 0,
+        "endLine": 316,
+        "endChar": 28
+      },
+      "revId": "8e4253702fac83aec97bdf64f338073b49e1e001",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
