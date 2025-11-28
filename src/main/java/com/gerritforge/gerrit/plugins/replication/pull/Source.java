@@ -947,6 +947,10 @@ public class Source {
     return config.fetchEvery();
   }
 
+  public boolean storeRefLog() {
+    return config.storeRefLog();
+  }
+
   void scheduleUpdateHead(String apiUrl, Project.NameKey project, String newHead) {
     try {
       URIish apiURI = new URIish(apiUrl);

@@ -217,12 +217,18 @@ public class StreamEventListener implements EventListener {
       return false;
     }
 
+<<<<<<< PATCH SET (770bfd900235e685fe4fd31956966f90efb0c2a7 Use the new remote.NAME.storeRefLog for creating new reposit)
+    Source source = getSource(event);
+    if (source == null) return false;
+
+=======
     Optional<Source> maybeSource = getSource(event);
     if (!maybeSource.isPresent()) {
       return false;
     }
 
     Source source = maybeSource.get();
+>>>>>>> BASE      (0810f99e1b8f146d3eee81be7da497d02b0eaca2 Adapt pull-replication to support explicit project exclusion)
     if (event instanceof ProjectCreatedEvent) {
       ProjectCreatedEvent projectCreatedEvent = (ProjectCreatedEvent) event;
 
@@ -240,10 +246,25 @@ public class StreamEventListener implements EventListener {
     return source.wouldFetchProject(projectEvent.getProjectNameKey());
   }
 
+<<<<<<< PATCH SET (770bfd900235e685fe4fd31956966f90efb0c2a7 Use the new remote.NAME.storeRefLog for creating new reposit)
+  private Source getSource(Event event) {
+    Optional<Source> maybeSource =
+        sources.getAll().stream()
+            .filter(s -> s.getRemoteConfigName().equals(event.instanceId))
+            .findFirst();
+
+    if (!maybeSource.isPresent()) {
+      return null;
+    }
+
+    Source source = maybeSource.get();
+    return source;
+=======
   private Optional<Source> getSource(Event event) {
     return sources.getAll().stream()
         .filter(s -> s.getRemoteConfigName().equals(event.instanceId))
         .findFirst();
+>>>>>>> BASE      (0810f99e1b8f146d3eee81be7da497d02b0eaca2 Adapt pull-replication to support explicit project exclusion)
   }
 
   private static boolean isInterestingEventType(Event event) {

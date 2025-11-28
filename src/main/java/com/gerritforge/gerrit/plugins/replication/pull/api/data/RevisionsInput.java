@@ -22,6 +22,8 @@ public class RevisionsInput {
   private RevisionData[] revisionsData;
   private boolean storeRefLog;
 
+  private boolean storeRefLog;
+
   public RevisionsInput(
       String label,
       String refName,
@@ -51,7 +53,11 @@ public class RevisionsInput {
     return revisionsData;
   }
 
+<<<<<<< PATCH SET (770bfd900235e685fe4fd31956966f90efb0c2a7 Use the new remote.NAME.storeRefLog for creating new reposit)
+  public boolean storeRefLog() {
+=======
   public boolean isStoreRefLog() {
+>>>>>>> BASE      (0810f99e1b8f146d3eee81be7da497d02b0eaca2 Adapt pull-replication to support explicit project exclusion)
     return storeRefLog;
   }
 
@@ -71,7 +77,11 @@ public class RevisionsInput {
         + Arrays.toString(revisionsData)
         + ","
         + "storeRefLog = "
+<<<<<<< PATCH SET (770bfd900235e685fe4fd31956966f90efb0c2a7 Use the new remote.NAME.storeRefLog for creating new reposit)
+        + storeRefLog
+=======
         + isStoreRefLog()
+>>>>>>> BASE      (0810f99e1b8f146d3eee81be7da497d02b0eaca2 Adapt pull-replication to support explicit project exclusion)
         + "}";
   }
 }

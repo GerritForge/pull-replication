@@ -59,7 +59,11 @@ public class SourceConfiguration implements RemoteConfiguration {
   private int refsBatchSize;
   private boolean enableBatchedRefs;
   private final long fetchEvery;
+<<<<<<< PATCH SET (770bfd900235e685fe4fd31956966f90efb0c2a7 Use the new remote.NAME.storeRefLog for creating new reposit)
+  private boolean storeRefLog;
+=======
   private final boolean storeRefLog;
+>>>>>>> BASE      (0810f99e1b8f146d3eee81be7da497d02b0eaca2 Adapt pull-replication to support explicit project exclusion)
 
   public SourceConfiguration(RemoteConfig remoteConfig, Config cfg) {
     this.remoteConfig = remoteConfig;
@@ -137,6 +141,10 @@ public class SourceConfiguration implements RemoteConfiguration {
     fetchEvery =
         cfg.getTimeUnit(
             "remote", name, "fetchEvery", DEFAULT_PERIODIC_FETCH_DISABLED, TimeUnit.SECONDS);
+<<<<<<< PATCH SET (770bfd900235e685fe4fd31956966f90efb0c2a7 Use the new remote.NAME.storeRefLog for creating new reposit)
+
+=======
+>>>>>>> BASE      (0810f99e1b8f146d3eee81be7da497d02b0eaca2 Adapt pull-replication to support explicit project exclusion)
     storeRefLog = cfg.getBoolean("remote", name, "storeRefLog", false);
   }
 

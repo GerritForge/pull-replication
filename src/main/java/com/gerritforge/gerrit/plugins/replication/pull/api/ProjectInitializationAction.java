@@ -142,7 +142,11 @@ public class ProjectInitializationAction extends HttpServlet {
 
   public boolean initProject(String gitRepositoryName, String headName, boolean storeRefLog)
       throws AuthException, PermissionBackendException, IOException {
+<<<<<<< PATCH SET (770bfd900235e685fe4fd31956966f90efb0c2a7 Use the new remote.NAME.storeRefLog for creating new reposit)
+    if (initProject(gitRepositoryName, headName, true, false)) {
+=======
     if (initProject(gitRepositoryName, headName, true, storeRefLog)) {
+>>>>>>> BASE      (0810f99e1b8f146d3eee81be7da497d02b0eaca2 Adapt pull-replication to support explicit project exclusion)
       repLog.info("Init project {} with head {}", gitRepositoryName, headName);
       return true;
     }
@@ -161,7 +165,11 @@ public class ProjectInitializationAction extends HttpServlet {
 
     RevisionsInput input = PayloadSerDes.parseRevisionsInput(httpServletRequest);
     validateInput(input);
+<<<<<<< PATCH SET (770bfd900235e685fe4fd31956966f90efb0c2a7 Use the new remote.NAME.storeRefLog for creating new reposit)
+    if (!initProject(gitRepositoryName, headName, false, input.storeRefLog())) {
+=======
     if (!initProject(gitRepositoryName, headName, false, input.isStoreRefLog())) {
+>>>>>>> BASE      (0810f99e1b8f146d3eee81be7da497d02b0eaca2 Adapt pull-replication to support explicit project exclusion)
       return false;
     }
 
