@@ -214,16 +214,9 @@ public class StreamEventListener implements EventListener {
       return false;
     }
 
-    Optional<Source> maybeSource =
-        sources.getAll().stream()
-            .filter(s -> s.getRemoteConfigName().equals(event.instanceId))
-            .findFirst();
+    Source source = getSource(event);
+    if (source == null) return false;
 
-    if (!maybeSource.isPresent()) {
-      return false;
-    }
-
-    Source source = maybeSource.get();
     if (event instanceof ProjectCreatedEvent) {
       ProjectCreatedEvent projectCreatedEvent = (ProjectCreatedEvent) event;
 
@@ -239,6 +232,20 @@ public class StreamEventListener implements EventListener {
 
     ProjectEvent projectEvent = (ProjectEvent) event;
     return source.wouldFetchProject(projectEvent.getProjectNameKey());
+  }
+
+  private Source getSource(Event event) {
+    Optional<Source> maybeSource =
+        sources.getAll().stream()
+            .filter(s -> s.getRemoteConfigName().equals(event.instanceId))
+            .findFirst();
+
+    if (!maybeSource.isPresent()) {
+      return null;
+    }
+
+    Source source = maybeSource.get();
+    return source;
   }
 
   private static boolean isInterestingEventType(Event event) {
