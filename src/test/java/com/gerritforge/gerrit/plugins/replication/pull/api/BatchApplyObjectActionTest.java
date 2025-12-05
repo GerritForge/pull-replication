@@ -13,28 +13,26 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.apache.http.HttpStatus.SC_OK;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.google.common.collect.Lists;
-import com.google.gerrit.extensions.restapi.MergeConflictException;
 import com.google.gerrit.extensions.restapi.Response;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.server.project.ProjectResource;
 import java.util.Collections;
 import java.util.List;
-import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.RefUpdate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BatchApplyObjectActionTest {
@@ -71,16 +69,16 @@ public class BatchApplyObjectActionTest {
           + "Submitted-with: OK: Code-Review: Gerrit User 1000000"
           + " <1000000@69ec38f0-350e-4d9c-96d4-bc956f2faaac>";
 
-  @Mock private ApplyObjectAction applyObjectAction;
+  @Mock private ApplyObjectCommand applyObjectCommand;
   @Mock private ProjectResource projectResource;
 
   @Before
   public void setup() {
-    batchApplyObjectAction = new BatchApplyObjectAction(applyObjectAction);
+    batchApplyObjectAction = new BatchApplyObjectAction(applyObjectCommand);
   }
 
   @Test
-  public void shouldDelegateToApplyObjectActionForEveryRevision() throws RestApiException {
+  public void shouldDelegateToApplyObjectActionForEveryRevision() throws Exception {
     RevisionInput first =
         new RevisionInput(LABEL, REF_NAME, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
     RevisionInput second =
@@ -88,66 +86,21 @@ public class BatchApplyObjectActionTest {
 
     batchApplyObjectAction.apply(projectResource, List.of(first, second));
 
-    verify(applyObjectAction).apply(projectResource, first);
-    verify(applyObjectAction).apply(projectResource, second);
+    verify(applyObjectCommand)
+        .batchApplyObject(projectResource.getNameKey(), List.of(first, second));
   }
 
   @Test
   public void shouldReturnOkResponseCodeWhenAllRevisionsAreProcessedSuccessfully()
-      throws RestApiException {
+      throws Exception {
     RevisionInput first =
         new RevisionInput(LABEL, REF_NAME, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
     RevisionInput second =
         new RevisionInput(LABEL, "foo", DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
-
-    when(applyObjectAction.apply(projectResource, first))
-        .thenAnswer((Answer<Response<?>>) invocation -> Response.created(first));
-    when(applyObjectAction.apply(projectResource, second))
-        .thenAnswer((Answer<Response<?>>) invocation -> Response.created(second));
 
     Response<?> response = batchApplyObjectAction.apply(projectResource, List.of(first, second));
 
     assertThat(response.statusCode()).isEqualTo(SC_OK);
-  }
-
-  @Test
-  public void shouldReturnAListWithAllTheRevisionsInResponseBodyOnSuccess()
-      throws RestApiException {
-    RevisionInput first =
-        new RevisionInput(LABEL, REF_NAME, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
-    RevisionInput second =
-        new RevisionInput(LABEL, "foo", DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
-    Response<?> firstResponse = Response.created(first);
-    Response<?> secondResponse = Response.created(second);
-
-    when(applyObjectAction.apply(projectResource, first))
-        .thenAnswer((Answer<Response<?>>) invocation -> firstResponse);
-    when(applyObjectAction.apply(projectResource, second))
-        .thenAnswer((Answer<Response<?>>) invocation -> secondResponse);
-
-    Response<?> response = batchApplyObjectAction.apply(projectResource, List.of(first, second));
-
-    assertThat((List<Response<?>>) response.value())
-        .isEqualTo(List.of(firstResponse, secondResponse));
-  }
-
-  @Test
-  public void shouldAcceptAMixOfCreatesAndDeletes() throws RestApiException {
-    RevisionInput delete = new RevisionInput(LABEL, REF_NAME, DUMMY_EVENT_TIMESTAMP, null);
-    RevisionInput create =
-        new RevisionInput(LABEL, "foo", DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
-    Response<?> deleteResponse = Response.withStatusCode(HttpServletResponse.SC_NO_CONTENT, "");
-    Response<?> createResponse = Response.created(create);
-
-    when(applyObjectAction.apply(projectResource, delete))
-        .thenAnswer((Answer<Response<?>>) invocation -> deleteResponse);
-    when(applyObjectAction.apply(projectResource, create))
-        .thenAnswer((Answer<Response<?>>) invocation -> createResponse);
-
-    Response<?> response = batchApplyObjectAction.apply(projectResource, List.of(delete, create));
-
-    assertThat((List<Response<?>>) response.value())
-        .isEqualTo(List.of(deleteResponse, createResponse));
   }
 
   @Test
@@ -165,36 +118,18 @@ public class BatchApplyObjectActionTest {
   }
 
   @Test(expected = RestApiException.class)
-  public void shouldThrowARestApiExceptionIfProcessingFailsForAnyOfTheRevisions()
-      throws RestApiException {
+  public void shouldThrowARestApiExceptionIfProcessingFailsForAnyOfTheRevisions() throws Exception {
     RevisionInput good =
         new RevisionInput(LABEL, REF_NAME, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
     RevisionInput bad =
         new RevisionInput(LABEL, "bad", DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
 
-    when(applyObjectAction.apply(projectResource, good))
-        .thenAnswer((Answer<Response<?>>) invocation -> Response.created(good));
-    when(applyObjectAction.apply(projectResource, bad))
-        .thenThrow(new MergeConflictException("BOOM"));
+    when(applyObjectCommand.batchApplyObject(projectResource.getNameKey(), List.of(good, bad)))
+        .thenThrow(
+            new BatchRefUpdateException(
+                List.of(RefUpdate.Result.LOCK_FAILURE), "Could not update refs/heads/master"));
 
     batchApplyObjectAction.apply(projectResource, List.of(good, bad));
-  }
-
-  @Test
-  public void shouldStopProcessingWhenAFailureOccurs() throws RestApiException {
-    RevisionInput good =
-        new RevisionInput(LABEL, REF_NAME, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
-    RevisionInput bad =
-        new RevisionInput(LABEL, "bad", DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
-
-    when(applyObjectAction.apply(projectResource, bad))
-        .thenThrow(new MergeConflictException("BOOM"));
-
-    try {
-      batchApplyObjectAction.apply(projectResource, List.of(bad, good));
-    } catch (MergeConflictException e) {
-      verify(applyObjectAction, never()).apply(projectResource, good);
-    }
   }
 
   private RevisionData createSampleRevisionData() {
