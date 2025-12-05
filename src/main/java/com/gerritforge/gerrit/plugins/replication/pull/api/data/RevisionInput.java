@@ -86,4 +86,20 @@ public class RevisionInput {
           "Ref-update tree object for ref " + refName + " cannot be null");
     }
   }
+
+  @Override
+  public String toString() {
+    return "RevisionInput{"
+        + "label='"
+        + label
+        + '\''
+        + ", refName='"
+        + refName
+        + '\''
+        + ", eventCreatedOn="
+        + eventCreatedOn
+        + ", revisionData="
+        + revisionData
+        + '}';
+  }
 }

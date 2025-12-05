@@ -14,41 +14,76 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
+import com.gerritforge.gerrit.plugins.replication.pull.fetch.RefUpdateState;
+import com.google.gerrit.extensions.restapi.PreconditionFailedException;
+import com.google.gerrit.extensions.restapi.ResourceConflictException;
 import com.google.gerrit.extensions.restapi.Response;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.extensions.restapi.RestModifyView;
+import com.google.gerrit.extensions.restapi.UnprocessableEntityException;
 import com.google.gerrit.server.project.ProjectResource;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
 class BatchApplyObjectAction implements RestModifyView<ProjectResource, List<RevisionInput>> {
 
-  private final ApplyObjectAction applyObjectAction;
+  private final ApplyObjectCommand applyObjectCommand;
 
   @Inject
-  BatchApplyObjectAction(ApplyObjectAction applyObjectAction) {
-    this.applyObjectAction = applyObjectAction;
+  BatchApplyObjectAction(ApplyObjectCommand applyObjectCommand) {
+    this.applyObjectCommand = applyObjectCommand;
   }
 
   @Override
   public Response<?> apply(ProjectResource resource, List<RevisionInput> inputs)
       throws RestApiException {
 
+    String batchInputStr =
+        inputs.stream().map(RevisionInput::toString).collect(Collectors.joining(","));
     repLog.info(
-        "Batch Apply object API from {} for refs {}",
-        resource.getNameKey(),
-        inputs.stream().map(RevisionInput::getRefName).collect(Collectors.joining(",")));
+        "Batch Apply object API for project {} for refs {}", resource.getNameKey(), batchInputStr);
 
-    List<Response<?>> allResponses = new ArrayList<>();
-    for (RevisionInput input : inputs) {
-      Response<?> individualResponse = applyObjectAction.apply(resource, input);
-      allResponses.add(individualResponse);
+    // TODO: All pre-flight checks
+
+    try {
+      List<RefUpdateState> refUpdateStates =
+          applyObjectCommand.batchApplyObject(resource.getNameKey(), inputs);
+      return Response.ok(refUpdateStates);
+    } catch (MissingParentObjectException e) {
+      repLog.error(
+          "Batch Apply object for project {} *FAILED*: {}",
+          resource.getNameKey(),
+          batchInputStr,
+          e);
+      throw new ResourceConflictException(e.getMessage(), e);
+    } catch (NumberFormatException | IOException e) {
+      repLog.error(
+          "Batch Apply object for project {} *FAILED*: {}",
+          resource.getNameKey(),
+          batchInputStr,
+          e);
+      throw RestApiException.wrap(e.getMessage(), e);
+    } catch (BatchRefUpdateException e) {
+      repLog.error(
+          "Batch Apply object for project {} *FAILED*: {}",
+          resource.getNameKey(),
+          batchInputStr,
+          e);
+      throw new UnprocessableEntityException(e.getMessage());
+    } catch (MissingLatestPatchSetException e) {
+      repLog.error(
+          "Batch Apply object for project {} *FAILED*: {}",
+          resource.getNameKey(),
+          batchInputStr,
+          e);
+      throw new PreconditionFailedException(e.getMessage());
     }
-
-    return Response.ok(allResponses);
   }
 }

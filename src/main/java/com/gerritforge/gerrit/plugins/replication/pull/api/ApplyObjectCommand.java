@@ -25,7 +25,9 @@ import com.gerritforge.gerrit.plugins.replication.pull.ReplicationState.RefFetch
 import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
@@ -46,6 +48,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.transport.RefSpec;
 
@@ -188,5 +191,92 @@ public class ApplyObjectCommand {
 
   private Boolean isSuccessful(RefUpdate.Result result) {
     return SUCCESSFUL_RESULTS.contains(result);
+  }
+
+  public List<RefUpdateState> batchApplyObject(Project.NameKey name, List<RevisionInput> inputs)
+      throws IOException,
+          BatchRefUpdateException,
+          MissingParentObjectException,
+          ResourceNotFoundException,
+          MissingLatestPatchSetException {
+
+    if (inputs.isEmpty()) {
+      return List.of();
+    }
+
+    // TODO: Is this the same label for all inputs?
+    String sourceLabel = inputs.getFirst().getLabel();
+    Timer1.Context<String> context = metrics.start(sourceLabel);
+
+    List<RefUpdateState> refUpdateStates = applyObject.apply(name, inputs);
+    boolean isRefUpdateSuccessful =
+        refUpdateStates.stream().allMatch(r -> isSuccessful(r.getResult()));
+
+    if (isRefUpdateSuccessful) {
+      for (int i = 0; i < inputs.size(); i++) {
+        // TODO: Ensure these have the same cardinality
+        RevisionInput input = inputs.get(i);
+        RefUpdateState refUpdateState = refUpdateStates.get(i);
+        String refName = input.getRefName();
+        long eventCreatedOn = input.getEventCreatedOn();
+        RevisionData revisionData = input.getRevisionData();
+        RevisionObjectData commitObj = revisionData.getCommitObject();
+        List<RevisionObjectData> blobs = revisionData.getBlobs();
+
+        if (commitObj != null) {
+          refUpdatesSucceededCache.put(
+              ApplyObjectsCacheKey.create(
+                  revisionData.getCommitObject().getSha1(), refName, name.get()),
+              eventCreatedOn);
+        } else if (blobs != null) {
+          for (RevisionObjectData blob : blobs) {
+            refUpdatesSucceededCache.put(
+                ApplyObjectsCacheKey.create(blob.getSha1(), refName, name.get()), eventCreatedOn);
+          }
+        }
+        try {
+          Context.setLocalEvent(true);
+          Source source =
+              sourcesCollection
+                  .getByRemoteName(sourceLabel)
+                  .orElseThrow(
+                      () ->
+                          new IllegalStateException(
+                              String.format("Could not find URI for %s remote", sourceLabel)));
+          eventDispatcher
+              .get()
+              .postEvent(
+                  new FetchRefReplicatedEvent(
+                      name.get(),
+                      refName,
+                      source.getURI(name),
+                      getStatus(refUpdateState),
+                      refUpdateState.getResult()));
+        } catch (PermissionBackendException | IllegalStateException e) {
+          logger.atSevere().withCause(e).log(
+              "Cannot post event for ref '%s', project %s", refName, name);
+        } finally {
+          Context.unsetLocalEvent();
+        }
+      }
+    }
+    long elapsed = NANOSECONDS.toMillis(context.stop());
+
+    if (!isRefUpdateSuccessful) {
+      String message =
+          String.format(
+              "BatchRefUpdate failed for: sourceLabel=%s, project=%s: %s",
+              sourceLabel,
+              name,
+              refUpdateStates.stream()
+                  .map(RefUpdateState::toString)
+                  .collect(Collectors.joining(",")));
+      fetchStateLog.error(message);
+      throw new BatchRefUpdateException(
+          refUpdateStates.stream().map(RefUpdateState::getResult).toList(), message);
+    }
+    repLog.info(
+        "Batch Apply object from {} for project {}, completed in {}ms", sourceLabel, name, elapsed);
+    return refUpdateStates;
   }
 }
