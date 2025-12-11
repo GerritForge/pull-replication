@@ -54,8 +54,10 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
 import com.googlesource.gerrit.plugins.deleteproject.ProjectDeletedEvent;
+
 import java.io.IOException;
 import java.util.Optional;
+
 import org.eclipse.jgit.lib.ObjectId;
 
 public class StreamEventListener implements EventListener {
@@ -108,10 +110,10 @@ public class StreamEventListener implements EventListener {
     try {
       fetchRefsForEvent(event);
     } catch (AuthException
-        | PermissionBackendException
-        | IOException
-        | UnprocessableEntityException
-        | ResourceNotFoundException e) {
+             | PermissionBackendException
+             | IOException
+             | UnprocessableEntityException
+             | ResourceNotFoundException e) {
       logger.atSevere().withCause(e).log(
           "This is the event handler of Gerrit's event-bus. It isn't"
               + "supposed to throw any exception, otherwise the other handlers "
@@ -121,10 +123,10 @@ public class StreamEventListener implements EventListener {
 
   public void fetchRefsForEvent(Event event)
       throws AuthException,
-          PermissionBackendException,
-          IOException,
-          UnprocessableEntityException,
-          ResourceNotFoundException {
+      PermissionBackendException,
+      IOException,
+      UnprocessableEntityException,
+      ResourceNotFoundException {
     if (instanceId.equals(event.instanceId) || !shouldReplicateProject(event)) {
       return;
     }
@@ -161,8 +163,9 @@ public class StreamEventListener implements EventListener {
     } else if (event instanceof ProjectCreatedEvent) {
       ProjectCreatedEvent projectCreatedEvent = (ProjectCreatedEvent) event;
       try {
+        boolean isStoreRefLog = getSource(event).map(Source::isStoreReflog).orElse(false);
         projectInitializationAction.initProject(
-            getProjectRepositoryName(projectCreatedEvent), projectCreatedEvent.headName);
+            getProjectRepositoryName(projectCreatedEvent), projectCreatedEvent.headName, isStoreRefLog);
         fetchRefsAsync(
             FetchOne.ALL_REFS,
             projectCreatedEvent.instanceId,
@@ -214,12 +217,8 @@ public class StreamEventListener implements EventListener {
       return false;
     }
 
-    Optional<Source> maybeSource =
-        sources.getAll().stream()
-            .filter(s -> s.getRemoteConfigName().equals(event.instanceId))
-            .findFirst();
-
-    if (!maybeSource.isPresent()) {
+    Optional<Source> maybeSource = getSource(event);
+    if(!maybeSource.isPresent()) {
       return false;
     }
 
@@ -239,6 +238,12 @@ public class StreamEventListener implements EventListener {
 
     ProjectEvent projectEvent = (ProjectEvent) event;
     return source.wouldFetchProject(projectEvent.getProjectNameKey());
+  }
+
+  private Optional<Source> getSource(Event event) {
+    return sources.getAll().stream()
+        .filter(s -> s.getRemoteConfigName().equals(event.instanceId))
+        .findFirst();
   }
 
   private static boolean isInterestingEventType(Event event) {

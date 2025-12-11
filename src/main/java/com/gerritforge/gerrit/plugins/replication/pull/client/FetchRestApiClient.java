@@ -203,7 +203,8 @@ public class FetchRestApiClient implements FetchApiClient, ResponseHandler<HttpR
             instanceId,
             RefNames.REFS_CONFIG,
             eventCreatedOn,
-            refsMetaConfigRevisionData.toArray(inputData));
+            refsMetaConfigRevisionData.toArray(inputData),
+            source.isStoreReflog());
 
     HttpPut put = new HttpPut(url);
     put.setEntity(new StringEntity(GSON.toJson(input)));
@@ -307,7 +308,7 @@ public class FetchRestApiClient implements FetchApiClient, ResponseHandler<HttpR
 
     RevisionData[] inputData = new RevisionData[revisionData.size()];
     RevisionsInput input =
-        new RevisionsInput(instanceId, refName, eventCreatedOn, revisionData.toArray(inputData));
+        new RevisionsInput(instanceId, refName, eventCreatedOn, revisionData.toArray(inputData), source.isStoreReflog());
 
     String url = formatUrl(targetUri.toString(), project, "apply-objects");
     HttpPost post = new HttpPost(url);
