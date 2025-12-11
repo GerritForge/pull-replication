@@ -211,7 +211,7 @@ public class StreamEventListenerTest {
     objectUnderTest.onEvent(event);
 
     verify(projectInitializationAction)
-        .initProject(String.format("%s.git", TEST_PROJECT), RefNames.HEAD);
+        .initProject(String.format("%s.git", TEST_PROJECT), RefNames.HEAD, false);
   }
 
   @Test
@@ -225,7 +225,7 @@ public class StreamEventListenerTest {
 
     objectUnderTest.onEvent(event);
 
-    verify(projectInitializationAction, never()).initProject(any(), eq(RefNames.HEAD));
+    verify(projectInitializationAction, never()).initProject(any(), eq(RefNames.HEAD), eq(false));
   }
 
   @Test
@@ -239,7 +239,7 @@ public class StreamEventListenerTest {
 
     objectUnderTest.onEvent(event);
 
-    verify(projectInitializationAction, never()).initProject(any(), eq(RefNames.HEAD));
+    verify(projectInitializationAction, never()).initProject(any(), eq(RefNames.HEAD), eq(false));
   }
 
   @Test
@@ -285,6 +285,7 @@ public class StreamEventListenerTest {
     refUpdate.project = TEST_PROJECT;
     refUpdate.oldRev = ObjectId.zeroId().getName();
     refUpdate.newRev = NEW_REV;
+
     event.eventCreatedOn = eventTimestamp;
 
     cache.put(

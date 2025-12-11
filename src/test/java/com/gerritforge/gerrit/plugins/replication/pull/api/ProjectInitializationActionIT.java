@@ -275,7 +275,8 @@ public class ProjectInitializationActionIT extends ActionITBase {
             "someLabel",
             "refs/meta/config",
             System.currentTimeMillis(),
-            new RevisionData[] {revisionData});
+            new RevisionData[] {revisionData},
+            false);
     put.setEntity(new StringEntity(GSON.toJson(revisionsInput), StandardCharsets.UTF_8));
     return put;
   }
