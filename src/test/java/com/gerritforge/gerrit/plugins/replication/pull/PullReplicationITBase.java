@@ -38,11 +38,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import org.eclipse.jgit.internal.storage.dfs.InMemoryRepository;
 import org.eclipse.jgit.junit.TestRepository;
+import org.eclipse.jgit.lib.ConfigConstants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RemoteRefUpdate;
@@ -359,7 +362,7 @@ abstract class PullReplicationITBase extends PullReplicationSetupBase {
 
   @Test
   @GerritConfig(name = "gerrit.instanceId", value = TEST_REPLICATION_REMOTE)
-  public void shouldCreateNewProject() throws Exception {
+  public void shouldCreateNewProjectWithoutRefLog() throws Exception {
     NameKey projectToCreate = Project.nameKey(project.get() + "_created");
 
     setReplicationSource(TEST_REPLICATION_REMOTE, "", Optional.of(projectToCreate.get()));
@@ -379,6 +382,51 @@ abstract class PullReplicationITBase extends PullReplicationSetupBase {
         Collections.emptyList());
 
     waitUntil(() -> repoManager.list().contains(projectToCreate));
+    applyToRepositoryConfig(projectToCreate, assertStoreRefLog(false));
+  }
+
+  @Test
+  @GerritConfig(name = "gerrit.instanceId", value = TEST_REPLICATION_REMOTE)
+  public void shouldCreateNewProjectWithRefLog() throws Exception {
+    NameKey projectToCreate = Project.nameKey(project.get() + "_created");
+    config.setBoolean("remote", TEST_REPLICATION_REMOTE, "storeRefLog", true);
+
+    setReplicationSource(TEST_REPLICATION_REMOTE, "", Optional.of(projectToCreate.get()));
+    config.save();
+    AutoReloadConfigDecorator autoReloadConfigDecorator =
+        getInstance(AutoReloadConfigDecorator.class);
+    autoReloadConfigDecorator.reload();
+    Source source =
+        getInstance(SourcesCollection.class).getByRemoteName(TEST_REPLICATION_REMOTE).get();
+
+    FetchApiClient client = getInstance(FetchApiClient.Factory.class).create(source);
+    client.initProject(
+        projectToCreate,
+        null,
+        new URIish(source.getApis().getFirst()),
+        System.currentTimeMillis(),
+        Collections.emptyList());
+
+    waitUntil(() -> repoManager.list().contains(projectToCreate));
+
+    applyToRepositoryConfig(projectToCreate, assertStoreRefLog(true));
+  }
+
+  private static Consumer<StoredConfig> assertStoreRefLog(boolean expectedValue) {
+    return conf ->
+        assertThat(
+                conf.getBoolean(
+                    ConfigConstants.CONFIG_CORE_SECTION,
+                    null,
+                    ConfigConstants.CONFIG_KEY_LOGALLREFUPDATES))
+            .isEqualTo(expectedValue);
+  }
+
+  private void applyToRepositoryConfig(
+      Project.NameKey projectName, Consumer<StoredConfig> functionToApply) throws IOException {
+    try (Repository repo = repoManager.openRepository(projectName)) {
+      functionToApply.accept(repo.getConfig());
+    }
   }
 
   @Test

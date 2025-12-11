@@ -14,7 +14,6 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 import static com.google.gerrit.acceptance.AbstractPredicateTest.GSON;
 import static com.google.gerrit.acceptance.testsuite.project.TestProjectUpdate.allowCapability;
 
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionsInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionsInput;
@@ -25,6 +24,7 @@ import com.google.gerrit.common.data.GlobalCapability;
 import com.google.gerrit.extensions.restapi.Url;
 import com.google.gerrit.server.group.SystemGroupBackend;
 import com.google.inject.Inject;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -34,9 +34,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.eclipse.jgit.lib.Constants;
 import org.junit.Test;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 
 public class ProjectInitializationActionIT extends ActionITBase {
   public static final String INVALID_TEST_PROJECT_NAME = "\0";
@@ -264,18 +261,21 @@ public class ProjectInitializationActionIT extends ActionITBase {
             + " <1000000@69ec38f0-350e-4d9c-96d4-bc956f2faaac>";
     RevisionObjectData commitObject =
         new RevisionObjectData(
-            "d582c7695b04124999699797176475b4db9b25b6", Constants.OBJ_COMMIT, sampleCommitContent.getBytes());
+            "d582c7695b04124999699797176475b4db9b25b6",
+            Constants.OBJ_COMMIT,
+            sampleCommitContent.getBytes());
     RevisionObjectData treeObject =
-        new RevisionObjectData(
-            sampleTreeObjectId, Constants.OBJ_TREE, new byte[0]);
+        new RevisionObjectData(sampleTreeObjectId, Constants.OBJ_TREE, new byte[0]);
     RevisionData revisionData =
-        new RevisionData(Collections.emptyList(), commitObject, treeObject, Collections.emptyList());
+        new RevisionData(
+            Collections.emptyList(), commitObject, treeObject, Collections.emptyList());
     RevisionsInput revisionsInput =
         new RevisionsInput(
             "someLabel",
             "refs/meta/config",
             System.currentTimeMillis(),
-            new RevisionData[] {revisionData});
+            new RevisionData[] {revisionData},
+            false);
     put.setEntity(new StringEntity(GSON.toJson(revisionsInput), StandardCharsets.UTF_8));
     return put;
   }

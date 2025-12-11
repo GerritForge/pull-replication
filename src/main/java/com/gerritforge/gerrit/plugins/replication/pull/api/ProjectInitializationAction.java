@@ -112,8 +112,7 @@ public class ProjectInitializationAction extends HttpServlet {
             httpServletResponse,
             SC_BAD_REQUEST,
             String.format(
-                "Invalid Content Type. Only %s is supported.",
-                MediaType.JSON_UTF_8.toString()));
+                "Invalid Content Type. Only %s is supported.", MediaType.JSON_UTF_8.toString()));
         return;
       }
 
@@ -141,9 +140,9 @@ public class ProjectInitializationAction extends HttpServlet {
     }
   }
 
-  public boolean initProject(String gitRepositoryName, String headName)
+  public boolean initProject(String gitRepositoryName, String headName, boolean storeRefLog)
       throws AuthException, PermissionBackendException, IOException {
-    if (initProject(gitRepositoryName, headName, true)) {
+    if (initProject(gitRepositoryName, headName, true, storeRefLog)) {
       repLog.info("Init project {} with head {}", gitRepositoryName, headName);
       return true;
     }
@@ -162,7 +161,7 @@ public class ProjectInitializationAction extends HttpServlet {
 
     RevisionsInput input = PayloadSerDes.parseRevisionsInput(httpServletRequest);
     validateInput(input);
-    if (!initProject(gitRepositoryName, headName, false)) {
+    if (!initProject(gitRepositoryName, headName, false, input.isStoreRefLog())) {
       return false;
     }
 
@@ -202,7 +201,10 @@ public class ProjectInitializationAction extends HttpServlet {
   }
 
   private boolean initProject(
-      String gitRepositoryName, String headName, boolean needsProjectReindexing)
+      String gitRepositoryName,
+      String headName,
+      boolean needsProjectReindexing,
+      boolean storeRefLog)
       throws AuthException, PermissionBackendException, IOException {
     // When triggered internally(for example by consuming stream events) user is not provided
     // and internal user is returned. Project creation should be always allowed for internal user.
@@ -216,7 +218,7 @@ public class ProjectInitializationAction extends HttpServlet {
     }
     LocalFS localFS = new LocalFS(maybeUri.get());
     Project.NameKey projectNameKey = Project.NameKey.parse(gitRepositoryName);
-    if (localFS.createProject(projectNameKey, headName)) {
+    if (localFS.createProject(projectNameKey, headName, storeRefLog)) {
       if (needsProjectReindexing) {
         projectCache.onCreateProject(projectNameKey);
       }
