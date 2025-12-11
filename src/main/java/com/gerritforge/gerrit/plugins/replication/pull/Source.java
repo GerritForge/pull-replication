@@ -116,13 +116,13 @@ public class Source {
   private final ProjectCache projectCache;
   private volatile ScheduledExecutorService pool;
   private final PerThreadRequestScope.Scoper threadScoper;
-  private final SourceConfiguration config;
   private final DynamicItem<EventDispatcher> eventDispatcher;
   private CloseableHttpClient httpClient;
   private final DeleteProjectTask.Factory deleteProjectFactory;
   private final ReplicationQueueMetrics queueMetrics;
   private static final int DRAINED_CHECK_FREQUENCY_MS = 50;
   private static final int DRAINED_LOGGING_FREQUENCY_SECS = 5;
+  private final SourceConfiguration config;
 
   protected enum RetryReason {
     TRANSPORT_ERROR,
@@ -252,6 +252,10 @@ public class Source {
     synchronized (stateLock) {
       return new QueueInfo(pending, inFlight);
     }
+  }
+
+  public boolean getStoreReflog() {
+    return config.storeRefLog();
   }
 
   public void start(WorkQueue workQueue) {
