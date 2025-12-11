@@ -59,6 +59,7 @@ public class SourceConfiguration implements RemoteConfiguration {
   private int refsBatchSize;
   private boolean enableBatchedRefs;
   private final long fetchEvery;
+  private final boolean storeRefLog;
 
   public SourceConfiguration(RemoteConfig remoteConfig, Config cfg) {
     this.remoteConfig = remoteConfig;
@@ -135,6 +136,7 @@ public class SourceConfiguration implements RemoteConfiguration {
     fetchEvery =
         cfg.getTimeUnit(
             "remote", name, "fetchEvery", DEFAULT_PERIODIC_FETCH_DISABLED, TimeUnit.SECONDS);
+    storeRefLog = cfg.getBoolean("remote", name, "storeRefLog", false);
   }
 
   @Override
@@ -261,7 +263,7 @@ public class SourceConfiguration implements RemoteConfiguration {
 
   @Override
   public boolean storeRefLog() {
-    throw new NotImplementedException();
+    return storeRefLog;
   }
 
   public int getShutDownDrainTimeout() {
