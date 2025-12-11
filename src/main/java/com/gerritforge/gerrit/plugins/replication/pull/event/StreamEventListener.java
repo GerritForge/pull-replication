@@ -161,8 +161,11 @@ public class StreamEventListener implements EventListener {
     } else if (event instanceof ProjectCreatedEvent) {
       ProjectCreatedEvent projectCreatedEvent = (ProjectCreatedEvent) event;
       try {
+        boolean isStoreRefLog = getSource(event).map(Source::isStoreReflog).orElse(false);
         projectInitializationAction.initProject(
-            getProjectRepositoryName(projectCreatedEvent), projectCreatedEvent.headName);
+            getProjectRepositoryName(projectCreatedEvent),
+            projectCreatedEvent.headName,
+            isStoreRefLog);
         fetchRefsAsync(
             FetchOne.ALL_REFS,
             projectCreatedEvent.instanceId,
@@ -214,11 +217,7 @@ public class StreamEventListener implements EventListener {
       return false;
     }
 
-    Optional<Source> maybeSource =
-        sources.getAll().stream()
-            .filter(s -> s.getRemoteConfigName().equals(event.instanceId))
-            .findFirst();
-
+    Optional<Source> maybeSource = getSource(event);
     if (!maybeSource.isPresent()) {
       return false;
     }
@@ -239,6 +238,12 @@ public class StreamEventListener implements EventListener {
 
     ProjectEvent projectEvent = (ProjectEvent) event;
     return source.wouldFetchProject(projectEvent.getProjectNameKey());
+  }
+
+  private Optional<Source> getSource(Event event) {
+    return sources.getAll().stream()
+        .filter(s -> s.getRemoteConfigName().equals(event.instanceId))
+        .findFirst();
   }
 
   private static boolean isInterestingEventType(Event event) {
