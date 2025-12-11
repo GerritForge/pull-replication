@@ -20,13 +20,15 @@ public class RevisionsInput {
 
   private long eventCreatedOn;
   private RevisionData[] revisionsData;
+  private boolean storeReflog;
 
   public RevisionsInput(
-      String label, String refName, long eventCreatedOn, RevisionData[] revisionsData) {
+      String label, String refName, long eventCreatedOn, RevisionData[] revisionsData, boolean storeReflog) {
     this.label = label;
     this.refName = refName;
     this.eventCreatedOn = eventCreatedOn;
     this.revisionsData = revisionsData;
+    this.storeReflog = storeReflog;
   }
 
   public String getLabel() {
@@ -44,6 +46,9 @@ public class RevisionsInput {
   public RevisionData[] getRevisionsData() {
     return revisionsData;
   }
+  public boolean getStoreReflog() {
+    return storeReflog;
+  }
 
   public void validate() {
     for (RevisionData revisionData : revisionsData) {
@@ -59,6 +64,9 @@ public class RevisionsInput {
         + refName
         + " - "
         + Arrays.toString(revisionsData)
+        + ","
+        + "storeRefLog = "
+        + getStoreReflog()
         + "}";
   }
 }
