@@ -107,16 +107,13 @@ public class ProjectInitializationAction extends HttpServlet {
         // init project request includes project configuration in JSON format.
         initProjectStatus =
             initProjectWithConfiguration(httpServletRequest, gitRepositoryName, headName);
-      } else if (checkContentType(contentType, MediaType.PLAIN_TEXT_UTF_8)) {
-        // init project request does not include project configuration.
-        initProjectStatus = initProject(gitRepositoryName, RefNames.HEAD);
       } else {
         setResponse(
             httpServletResponse,
             SC_BAD_REQUEST,
             String.format(
-                "Invalid Content Type. Only %s or %s is supported.",
-                MediaType.JSON_UTF_8.toString(), MediaType.PLAIN_TEXT_UTF_8.toString()));
+                "Invalid Content Type. Only %s is supported.",
+                MediaType.JSON_UTF_8.toString()));
         return;
       }
 
