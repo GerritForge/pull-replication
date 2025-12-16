@@ -14,6 +14,7 @@ package com.gerritforge.gerrit.plugins.replication.pull;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.flogger.FluentLogger;
+import com.google.gerrit.extensions.restapi.NotImplementedException;
 import com.google.gerrit.server.config.ConfigUtil;
 import com.googlesource.gerrit.plugins.replication.RemoteConfiguration;
 import java.util.concurrent.TimeUnit;
@@ -256,6 +257,11 @@ public class SourceConfiguration implements RemoteConfiguration {
   @Override
   public boolean replicateNoteDbMetaRefs() {
     return true;
+  }
+
+  @Override
+  public boolean storeRefLog() {
+    throw new NotImplementedException();
   }
 
   public int getShutDownDrainTimeout() {
