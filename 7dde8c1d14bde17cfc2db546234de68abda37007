@@ -18,6 +18,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2347f115_5e686052",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2025-12-16T15:32:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2ac7679c_9d2e6389",
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a545f74f_77098924",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-12-16T14:59:15Z",
       "side": 1,
       "message": "Missing issue number",
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "632168c6_2503d203",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2025-12-16T15:32:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a545f74f_77098924",
       "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
