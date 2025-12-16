@@ -75,6 +75,48 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "48b91a03_acf70ccf",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourceConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2025-12-16T15:31:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8f95542e_4a407ac0",
+      "range": {
+        "startLine": 138,
+        "startChar": 4,
+        "endLine": 138,
+        "endChar": 15
+      },
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "98b13df3_c3f0bf17",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourceConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2025-12-16T15:31:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3b86d42f_7693ab8a",
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2a507da7_ce67eba9",
@@ -88,6 +130,24 @@
       "writtenOn": "2025-12-16T14:59:15Z",
       "side": 1,
       "message": "leftover",
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4bd78d82_2c543056",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/client/FetchRestApiClient.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2025-12-16T15:31:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2a507da7_ce67eba9",
       "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
