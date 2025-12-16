@@ -155,6 +155,47 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f6d99436_0ab3bc97",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourceConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2025-12-16T19:49:50Z",
+      "side": 1,
+      "message": "In the documentation I would mention what is the impact of enabling it, i.e.: performance, more disk space",
+      "parentUuid": "3b86d42f_7693ab8a",
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b2cb9ea4_2156db53",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/data/RevisionsInput.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2025-12-16T19:49:50Z",
+      "side": 1,
+      "message": "What about `isStoreReflog()` instead ?",
+      "range": {
+        "startLine": 49,
+        "startChar": 17,
+        "endLine": 49,
+        "endChar": 31
+      },
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2a507da7_ce67eba9",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/client/FetchRestApiClient.java",
         "patchSetId": 3
