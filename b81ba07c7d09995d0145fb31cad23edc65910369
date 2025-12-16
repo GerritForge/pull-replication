@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b0ce7050_58d29f65",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/ProjectInitializationAction.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-12-16T16:29:14Z",
+      "side": 1,
+      "message": "Nobody should be using this method anymore: I believe you should remove it and adapt the rest of the code to pass the correct `storeReflog` parameter.",
+      "range": {
+        "startLine": 147,
+        "startChar": 0,
+        "endLine": 150,
+        "endChar": 3
+      },
+      "revId": "b81ba07c7d09995d0145fb31cad23edc65910369",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7fa2a020_e82b2028",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-12-16T16:29:14Z",
+      "side": 1,
+      "message": "This is incorrect: you should read the configuration from the source and pass the `storeRefLog` parameter.",
+      "range": {
+        "startLine": 164,
+        "startChar": 0,
+        "endLine": 165,
+        "endChar": 89
+      },
+      "revId": "b81ba07c7d09995d0145fb31cad23edc65910369",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
