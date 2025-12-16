@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ac7679c_9d2e6389",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2025-12-16T14:59:15Z",
+      "side": 1,
+      "message": "Can you expand the comment similarly to [1]?\nMaybe you can also mention the change in the replication plugin.\n\n[1]: https://gerrit-review.googlesource.com/c/plugins/replication/+/531843",
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a545f74f_77098924",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2025-12-16T14:59:15Z",
+      "side": 1,
+      "message": "Missing issue number",
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f95542e_4a407ac0",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourceConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2025-12-16T14:59:15Z",
+      "side": 1,
+      "message": "nit: there is an inconsistency in the way you call the setting here and the variables all around. `storeRefLog` Vs `storeReflog`. Worth making it consistent.",
+      "range": {
+        "startLine": 138,
+        "startChar": 4,
+        "endLine": 138,
+        "endChar": 15
+      },
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3b86d42f_7693ab8a",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourceConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2025-12-16T14:59:15Z",
+      "side": 1,
+      "message": "Can you add this to the documentation?",
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2a507da7_ce67eba9",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/client/FetchRestApiClient.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2025-12-16T14:59:15Z",
+      "side": 1,
+      "message": "leftover",
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
