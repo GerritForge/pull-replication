@@ -171,6 +171,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0df7cb33_7d8f6b23",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourceConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-12-17T16:14:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f6d99436_0ab3bc97",
+      "revId": "7dde8c1d14bde17cfc2db546234de68abda37007",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b2cb9ea4_2156db53",

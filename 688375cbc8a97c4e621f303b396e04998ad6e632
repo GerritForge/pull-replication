@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5b576bd_57b2fc1f",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/ProjectInitializationAction.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-12-17T16:14:05Z",
+      "side": 1,
+      "message": "unrelated.",
+      "revId": "688375cbc8a97c4e621f303b396e04998ad6e632",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c538a05_a3fb9e11",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-12-17T16:14:05Z",
+      "side": 1,
+      "message": "```suggestion\n    if (source \u003d\u003d null) {\n      return false;\n    }\n```",
+      "revId": "688375cbc8a97c4e621f303b396e04998ad6e632",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c2e061d0_265779e3",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-12-17T16:14:05Z",
+      "side": 1,
+      "message": "The method should be labelled as `@Nullable`",
+      "range": {
+        "startLine": 245,
+        "startChar": 13,
+        "endLine": 245,
+        "endChar": 17
+      },
+      "revId": "688375cbc8a97c4e621f303b396e04998ad6e632",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "78f86067_1a0152f4",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-12-17T16:14:05Z",
+      "side": 1,
+      "message": "You could even just return the `Optional\u003cSource\u003e` so that you don\u0027t have to check for nulls.",
+      "range": {
+        "startLine": 248,
+        "startChar": 0,
+        "endLine": 249,
+        "endChar": 18
+      },
+      "revId": "688375cbc8a97c4e621f303b396e04998ad6e632",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ddc2bac3_264f59b2",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListenerTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-12-17T16:14:05Z",
+      "side": 1,
+      "message": "Unrelated",
+      "revId": "688375cbc8a97c4e621f303b396e04998ad6e632",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
