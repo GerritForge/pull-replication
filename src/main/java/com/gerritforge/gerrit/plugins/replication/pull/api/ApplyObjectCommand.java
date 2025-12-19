@@ -26,13 +26,12 @@ import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.ApplyObject;
-import com.gerritforge.gerrit.plugins.replication.pull.fetch.RefUpdateState;
+import com.gerritforge.gerrit.plugins.replication.pull.fetch.BatchRefUpdateState;
 import com.google.common.cache.Cache;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.extensions.registration.DynamicItem;
@@ -45,20 +44,16 @@ import com.google.inject.name.Named;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.RefUpdate;
+import org.eclipse.jgit.transport.ReceiveCommand;
 import org.eclipse.jgit.transport.RefSpec;
+import org.eclipse.jgit.transport.URIish;
 
 public class ApplyObjectCommand {
 
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
   private final Cache<ApplyObjectsCacheKey, Long> refUpdatesSucceededCache;
-  private static final Set<RefUpdate.Result> SUCCESSFUL_RESULTS =
-      ImmutableSet.of(
-          RefUpdate.Result.NEW,
-          RefUpdate.Result.FORCED,
-          RefUpdate.Result.NO_CHANGE,
-          RefUpdate.Result.FAST_FORWARD);
 
   private final PullReplicationStateLogger fetchStateLog;
   private final ApplyObject applyObject;
@@ -89,7 +84,7 @@ public class ApplyObjectCommand {
       String sourceLabel,
       long eventCreatedOn)
       throws IOException,
-          RefUpdateException,
+          BatchRefUpdateException,
           MissingParentObjectException,
           ResourceNotFoundException,
           MissingLatestPatchSetException {
@@ -103,7 +98,7 @@ public class ApplyObjectCommand {
       String sourceLabel,
       long eventCreatedOn)
       throws IOException,
-          RefUpdateException,
+          BatchRefUpdateException,
           MissingParentObjectException,
           ResourceNotFoundException,
           MissingLatestPatchSetException {
@@ -116,10 +111,10 @@ public class ApplyObjectCommand {
         Arrays.toString(revisionsData));
     Timer1.Context<String> context = metrics.start(sourceLabel);
 
-    RefUpdateState refUpdateState = applyObject.apply(name, new RefSpec(refName), revisionsData);
-    Boolean isRefUpdateSuccessful = isSuccessful(refUpdateState.getResult());
+    BatchRefUpdateState refUpdateState =
+        applyObject.apply(name, new RefSpec(refName), revisionsData);
 
-    if (isRefUpdateSuccessful) {
+    if (refUpdateState.isSuccessful()) {
       for (RevisionData revisionData : revisionsData) {
         RevisionObjectData commitObj = revisionData.getCommitObject();
         List<RevisionObjectData> blobs = revisionData.getBlobs();
@@ -148,15 +143,21 @@ public class ApplyObjectCommand {
                   () ->
                       new IllegalStateException(
                           String.format("Could not find URI for %s remote", sourceLabel)));
-      eventDispatcher
-          .get()
-          .postEvent(
-              new FetchRefReplicatedEvent(
-                  name.get(),
-                  refName,
-                  source.getURI(name),
-                  getStatus(refUpdateState),
-                  refUpdateState.getResult()));
+
+      for (ReceiveCommand receiveCommand : refUpdateState.getCommands()) {
+        String project = name.get();
+        URIish sourceURI = source.getURI(name);
+        RefFetchResult overallFetchStatus = getStatus(refUpdateState);
+        eventDispatcher
+            .get()
+            .postEvent(
+                new FetchRefReplicatedEvent(
+                    project,
+                    receiveCommand.getRefName(),
+                    sourceURI,
+                    overallFetchStatus,
+                    decodeResult(receiveCommand)));
+      }
     } catch (PermissionBackendException | IllegalStateException e) {
       logger.atSevere().withCause(e).log(
           "Cannot post event for ref '%s', project %s", refName, name);
@@ -164,13 +165,13 @@ public class ApplyObjectCommand {
       Context.unsetLocalEvent();
     }
 
-    if (!isRefUpdateSuccessful) {
+    if (!refUpdateState.isSuccessful()) {
       String message =
           String.format(
-              "RefUpdate failed with result %s for: sourceLabel=%s, project=%s, refName=%s",
-              refUpdateState.getResult().name(), sourceLabel, name, refName);
+              "RefUpdate failed for: sourceLabel=%s, project=%s. %s",
+              sourceLabel, name, refUpdateState.toLogLine());
       fetchStateLog.error(message);
-      throw new RefUpdateException(refUpdateState.getResult(), message);
+      throw new BatchRefUpdateException(refUpdateState, message);
     }
     repLog.info(
         "Apply object from {} for project {}, ref name {} completed in {}ms",
@@ -180,13 +181,28 @@ public class ApplyObjectCommand {
         elapsed);
   }
 
-  private RefFetchResult getStatus(RefUpdateState refUpdateState) {
-    return isSuccessful(refUpdateState.getResult())
+  private static RefFetchResult getStatus(BatchRefUpdateState refUpdateState) {
+    return refUpdateState.isSuccessful()
         ? ReplicationState.RefFetchResult.SUCCEEDED
         : ReplicationState.RefFetchResult.FAILED;
   }
 
-  private Boolean isSuccessful(RefUpdate.Result result) {
-    return SUCCESSFUL_RESULTS.contains(result);
+  private static RefUpdate.Result decodeResult(ReceiveCommand receiveCommand) {
+    return switch (receiveCommand.getResult()) {
+      case OK -> {
+        if (AnyObjectId.isEqual(receiveCommand.getOldId(), receiveCommand.getNewId()))
+          yield RefUpdate.Result.NO_CHANGE;
+        yield switch (receiveCommand.getType()) {
+          case CREATE -> RefUpdate.Result.NEW;
+          case UPDATE -> RefUpdate.Result.FAST_FORWARD;
+          default -> RefUpdate.Result.FORCED;
+        };
+      }
+      case REJECTED_NOCREATE, REJECTED_NODELETE, REJECTED_NONFASTFORWARD ->
+          RefUpdate.Result.REJECTED;
+      case REJECTED_CURRENT_BRANCH -> RefUpdate.Result.REJECTED_CURRENT_BRANCH;
+      case REJECTED_MISSING_OBJECT -> RefUpdate.Result.IO_FAILURE;
+      default -> RefUpdate.Result.LOCK_FAILURE;
+    };
   }
 }

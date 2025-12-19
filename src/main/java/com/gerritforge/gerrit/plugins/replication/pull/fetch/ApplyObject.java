@@ -16,18 +16,22 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
+import com.google.common.base.Optional;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.extensions.restapi.IdString;
 import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
+import com.google.gerrit.git.RefUpdateUtil;
 import com.google.gerrit.server.git.GitRepositoryManager;
 import com.google.inject.Inject;
 import java.io.IOException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
+import org.eclipse.jgit.lib.BatchRefUpdate;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectInserter;
-import org.eclipse.jgit.lib.RefUpdate;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.transport.ReceiveCommand;
 import org.eclipse.jgit.transport.RefSpec;
 
 public class ApplyObject {
@@ -43,7 +47,8 @@ public class ApplyObject {
     this.gitManager = gitManagerProvider.get();
   }
 
-  public RefUpdateState apply(Project.NameKey name, RefSpec refSpec, RevisionData[] revisionsData)
+  public BatchRefUpdateState apply(
+      Project.NameKey name, RefSpec refSpec, RevisionData[] revisionsData)
       throws MissingParentObjectException,
           IOException,
           ResourceNotFoundException,
@@ -51,7 +56,7 @@ public class ApplyObject {
     try (Repository git = gitManager.openRepository(name)) {
 
       ObjectId refHead = null;
-      RefUpdate ru = git.updateRef(refSpec.getSource());
+      BatchRefUpdate bru = git.getRefDatabase().newBatchUpdate();
       try (ObjectInserter oi = git.newObjectInserter()) {
         for (RevisionData revisionData : revisionsData) {
 
@@ -92,13 +97,19 @@ public class ApplyObject {
 
           if (commitObject == null) {
             // Non-commits must be forced as they do not have a graph associated
-            ru.setForceUpdate(true);
+            bru.setAllowNonFastForwards(true);
           }
         }
 
-        ru.setNewObjectId(refHead);
-        RefUpdate.Result result = ru.update();
-        return new RefUpdateState(refSpec.getSource(), result);
+        // If it's a commit we do this, is this the right way to construct a blob update?
+        ObjectId oldObjectId =
+            Optional.fromNullable(git.exactRef(refSpec.getSource()))
+                .transform(Ref::getObjectId)
+                .or(ObjectId.zeroId());
+        bru.addCommand(new ReceiveCommand(oldObjectId, refHead, refSpec.getSource()));
+        // TODO: might want to return all results not throw here
+        RefUpdateUtil.executeChecked(bru, git);
+        return new BatchRefUpdateState(bru);
       }
     } catch (RepositoryNotFoundException e) {
       throw new ResourceNotFoundException(IdString.fromDecoded(name.get()), e);
