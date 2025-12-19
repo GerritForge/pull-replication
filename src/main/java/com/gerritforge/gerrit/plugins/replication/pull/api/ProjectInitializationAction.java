@@ -21,9 +21,9 @@ import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
 import com.gerritforge.gerrit.plugins.replication.pull.GerritConfigOps;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionsInput;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.util.PayloadSerDes;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
@@ -130,7 +130,7 @@ public class ProjectInitializationAction extends HttpServlet {
           "Cannot initialize project " + gitRepositoryName);
     } catch (BadRequestException | IllegalArgumentException e) {
       logExceptionAndUpdateResponse(httpServletResponse, e, SC_BAD_REQUEST, gitRepositoryName);
-    } catch (RefUpdateException | MissingParentObjectException e) {
+    } catch (BatchRefUpdateException | MissingParentObjectException e) {
       logExceptionAndUpdateResponse(httpServletResponse, e, SC_CONFLICT, gitRepositoryName);
     } catch (ResourceNotFoundException e) {
       logExceptionAndUpdateResponse(
@@ -156,7 +156,7 @@ public class ProjectInitializationAction extends HttpServlet {
           IOException,
           BadRequestException,
           MissingParentObjectException,
-          RefUpdateException,
+          BatchRefUpdateException,
           ResourceNotFoundException {
 
     RevisionsInput input = PayloadSerDes.parseRevisionsInput(httpServletRequest);
