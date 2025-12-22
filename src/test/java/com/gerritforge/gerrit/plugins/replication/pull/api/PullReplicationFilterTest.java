@@ -61,6 +61,7 @@ public class PullReplicationFilterTest {
   @Mock private ApplyObjectAction applyObjectAction;
   @Mock private ApplyObjectsAction applyObjectsAction;
   @Mock private BatchApplyObjectAction batchApplyObjectAction;
+  @Mock private AtomicBatchApplyObjectAction atomicBatchApplyObjectAction;
   @Mock private ProjectInitializationAction projectInitializationAction;
   @Mock private UpdateHeadAction updateHEADAction;
   @Mock private ProjectDeletionAction projectDeletionAction;
@@ -104,6 +105,7 @@ public class PullReplicationFilterTest {
         applyObjectAction,
         applyObjectsAction,
         batchApplyObjectAction,
+        atomicBatchApplyObjectAction,
         projectInitializationAction,
         updateHEADAction,
         projectDeletionAction,
