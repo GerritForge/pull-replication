@@ -14,9 +14,9 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
 import com.google.common.base.Strings;
 import com.google.gerrit.entities.RefNames;
 import com.google.gerrit.extensions.restapi.AuthException;
@@ -32,7 +32,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.io.IOException;
 import java.util.Objects;
-import org.eclipse.jgit.lib.RefUpdate;
 
 @Singleton
 public class ApplyObjectAction implements RestModifyView<ProjectResource, RevisionInput> {
@@ -111,9 +110,8 @@ public class ApplyObjectAction implements RestModifyView<ProjectResource, Revisi
           input.getRevisionData(),
           e);
       throw RestApiException.wrap(e.getMessage(), e);
-    } catch (RefUpdateException e) {
-      if (RefNames.isRefsDraftsComments(input.getRefName())
-          && e.getResult().equals(RefUpdate.Result.REJECTED)) {
+    } catch (BatchRefUpdateException e) {
+      if (RefNames.isRefsDraftsComments(input.getRefName()) && e.containsRejectedResult()) {
         repLog.info(
             "Apply object API *REJECTED* from {} for {}:{} - {}",
             input.getLabel(),

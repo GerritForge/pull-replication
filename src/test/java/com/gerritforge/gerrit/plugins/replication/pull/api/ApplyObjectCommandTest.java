@@ -25,7 +25,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.ApplyObject;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.BatchRefUpdateState;
 import com.google.common.cache.Cache;
@@ -147,7 +147,7 @@ public class ApplyObjectCommandTest {
         .isEqualTo(TEST_EVENT_TIMESTAMP);
   }
 
-  @Test(expected = RefUpdateException.class)
+  @Test(expected = BatchRefUpdateException.class)
   public void shouldNotInsertIntoApplyObjectsCacheWhenApplyObjectIsFailure() throws Exception {
     RevisionData sampleRevisionData =
         createSampleRevisionData(sampleCommitObjectId, sampleTreeObjectId);
