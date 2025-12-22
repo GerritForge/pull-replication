@@ -13,7 +13,6 @@ package com.gerritforge.gerrit.plugins.replication.pull.fetch;
 
 import com.gerritforge.gerrit.plugins.replication.pull.LocalGitRepositoryManagerProvider;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
-import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
 import com.google.gerrit.entities.Project;
@@ -22,12 +21,12 @@ import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
 import com.google.gerrit.server.git.GitRepositoryManager;
 import com.google.inject.Inject;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectInserter;
-import org.eclipse.jgit.lib.RefUpdate;
+import org.eclipse.jgit.lib.NullProgressMonitor;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.RefSpec;
 
 public class ApplyObject {
@@ -43,62 +42,37 @@ public class ApplyObject {
     this.gitManager = gitManagerProvider.get();
   }
 
-  public RefUpdateState apply(Project.NameKey name, RefSpec refSpec, RevisionData[] revisionsData)
+  public BatchRefUpdateState apply(
+      Project.NameKey name, RefSpec refSpec, RevisionData[] revisionsData)
       throws MissingParentObjectException,
           IOException,
           ResourceNotFoundException,
           MissingLatestPatchSetException {
+    return applyBatch(name, List.of(refSpec), Collections.singletonList(revisionsData));
+  }
+
+  public BatchRefUpdateState applyBatch(
+      Project.NameKey name, List<RefSpec> refSpecs, List<RevisionData[]> revisionsDataList)
+      throws MissingParentObjectException,
+          IOException,
+          ResourceNotFoundException,
+          MissingLatestPatchSetException {
+    if (refSpecs.size() != revisionsDataList.size()) {
+      throw new IllegalArgumentException(
+          String.format(
+              "Mismatched batch sizes: refs=%d, revisions=%d",
+              refSpecs.size(), revisionsDataList.size()));
+    }
+
     try (Repository git = gitManager.openRepository(name)) {
-
-      ObjectId refHead = null;
-      RefUpdate ru = git.updateRef(refSpec.getSource());
-      try (ObjectInserter oi = git.newObjectInserter()) {
-        for (RevisionData revisionData : revisionsData) {
-
-          ObjectId newObjectID = null;
-          RevisionObjectData commitObject = revisionData.getCommitObject();
-
-          if (commitObject != null) {
-            RevCommit commit = RevCommit.parse(commitObject.getContent());
-            for (RevCommit parent : commit.getParents()) {
-              if (!git.getObjectDatabase().has(parent.getId())) {
-                throw new MissingParentObjectException(name, refSpec.getSource(), parent.getId());
-              }
-            }
-
-            StringBuffer error = new StringBuffer();
-            if (!ChangeMetaCommitValidator.isValid(
-                git, refSpec.getSource(), commit, error::append)) {
-              throw new MissingLatestPatchSetException(name, refSpec.getSource(), error.toString());
-            }
-          }
-
-          for (RevisionObjectData rev : revisionData.getBlobs()) {
-            ObjectId blobObjectId = oi.insert(rev.getType(), rev.getContent());
-            if (newObjectID == null) {
-              newObjectID = blobObjectId;
-            }
-            refHead = newObjectID;
-          }
-
-          if (commitObject != null) {
-            RevisionObjectData treeObject = revisionData.getTreeObject();
-            oi.insert(treeObject.getType(), treeObject.getContent());
-
-            refHead = oi.insert(commitObject.getType(), commitObject.getContent());
-          }
-
-          oi.flush();
-
-          if (commitObject == null) {
-            // Non-commits must be forced as they do not have a graph associated
-            ru.setForceUpdate(true);
-          }
+      try (BatchApplyObject batch = BatchApplyObject.create(git)) {
+        for (int i = 0; i < refSpecs.size(); i++) {
+          batch.add(name, refSpecs.get(i), revisionsDataList.get(i));
         }
-
-        ru.setNewObjectId(refHead);
-        RefUpdate.Result result = ru.update();
-        return new RefUpdateState(refSpec.getSource(), result);
+        try (RevWalk rw = new RevWalk(git)) {
+          batch.getBatchRefUpdate().execute(rw, NullProgressMonitor.INSTANCE);
+        }
+        return new BatchRefUpdateState(batch.getBatchRefUpdate());
       }
     } catch (RepositoryNotFoundException e) {
       throw new ResourceNotFoundException(IdString.fromDecoded(name.get()), e);
