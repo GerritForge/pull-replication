@@ -25,12 +25,10 @@ import com.google.gerrit.server.git.GitRepositoryManager;
 import com.google.inject.Inject;
 import java.io.IOException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
-import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.BatchRefUpdate;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectInserter;
 import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.ReceiveCommand;
@@ -49,7 +47,8 @@ public class ApplyObject {
     this.gitManager = gitManagerProvider.get();
   }
 
-  public RefUpdateState apply(Project.NameKey name, RefSpec refSpec, RevisionData[] revisionsData)
+  public BatchRefUpdateState apply(
+      Project.NameKey name, RefSpec refSpec, RevisionData[] revisionsData)
       throws MissingParentObjectException,
           IOException,
           ResourceNotFoundException,
@@ -106,32 +105,12 @@ public class ApplyObject {
             Optional.fromNullable(git.exactRef(refSpec.getSource()))
                 .transform(Ref::getObjectId)
                 .or(ObjectId.zeroId());
-        ReceiveCommand cmd = new ReceiveCommand(oldObjectId, refHead, refSpec.getSource());
-        bru.addCommand(cmd);
+        bru.addCommand(new ReceiveCommand(oldObjectId, refHead, refSpec.getSource()));
         RefUpdateUtil.executeChecked(bru, git);
-        return new RefUpdateState(refSpec.getSource(), decodeResult(cmd));
+        return new BatchRefUpdateState(bru);
       }
     } catch (RepositoryNotFoundException e) {
       throw new ResourceNotFoundException(IdString.fromDecoded(name.get()), e);
     }
-  }
-
-  private static RefUpdate.Result decodeResult(ReceiveCommand receiveCommand) {
-    return switch (receiveCommand.getResult()) {
-      case OK -> {
-        if (AnyObjectId.isEqual(receiveCommand.getOldId(), receiveCommand.getNewId()))
-          yield RefUpdate.Result.NO_CHANGE;
-        yield switch (receiveCommand.getType()) {
-          case CREATE -> RefUpdate.Result.NEW;
-          case UPDATE -> RefUpdate.Result.FAST_FORWARD;
-          default -> RefUpdate.Result.FORCED;
-        };
-      }
-      case REJECTED_NOCREATE, REJECTED_NODELETE, REJECTED_NONFASTFORWARD ->
-          RefUpdate.Result.REJECTED;
-      case REJECTED_CURRENT_BRANCH -> RefUpdate.Result.REJECTED_CURRENT_BRANCH;
-      case REJECTED_MISSING_OBJECT -> RefUpdate.Result.IO_FAILURE;
-      default -> RefUpdate.Result.LOCK_FAILURE;
-    };
   }
 }

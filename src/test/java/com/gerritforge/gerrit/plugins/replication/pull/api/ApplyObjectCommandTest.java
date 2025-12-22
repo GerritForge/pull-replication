@@ -27,7 +27,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.ApplyObject;
-import com.gerritforge.gerrit.plugins.replication.pull.fetch.RefUpdateState;
+import com.gerritforge.gerrit.plugins.replication.pull.fetch.BatchRefUpdateState;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
@@ -38,9 +38,12 @@ import com.google.gerrit.metrics.Timer1;
 import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.events.EventDispatcher;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import org.eclipse.jgit.lib.BatchRefUpdate;
 import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.RefUpdate;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.transport.ReceiveCommand;
 import org.eclipse.jgit.transport.URIish;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,7 +58,6 @@ public class ApplyObjectCommandTest {
   private static final String TEST_SOURCE_LABEL = "test-source-label";
   private static final String TEST_REF_NAME = "refs/changes/01/1/1";
   private static final NameKey TEST_PROJECT_NAME = Project.nameKey("test-project");
-  private static final String TEST_REMOTE_NAME = "test-remote-name";
   private static URIish TEST_REMOTE_URI;
   private static final long TEST_EVENT_TIMESTAMP = 1L;
 
@@ -73,6 +75,7 @@ public class ApplyObjectCommandTest {
   @Mock private Timer1.Context<String> timetContext;
   @Mock private SourcesCollection sourceCollection;
   @Mock private Source source;
+  @Mock private BatchRefUpdate bru;
   @Captor ArgumentCaptor<Event> eventCaptor;
   private Cache<ApplyObjectsCacheKey, Long> cache;
 
@@ -81,12 +84,12 @@ public class ApplyObjectCommandTest {
   @Before
   public void setup() throws Exception {
     cache = CacheBuilder.newBuilder().build();
-    RefUpdateState state = new RefUpdateState(TEST_REMOTE_NAME, RefUpdate.Result.NEW);
+    when(bru.getCommands()).thenReturn(List.of(receiveCommand(ReceiveCommand.Result.OK)));
     TEST_REMOTE_URI = new URIish("git://some.remote.uri");
     when(eventDispatcherDataItem.get()).thenReturn(eventDispatcher);
     when(metrics.start(anyString())).thenReturn(timetContext);
     when(timetContext.stop()).thenReturn(100L);
-    when(applyObject.apply(any(), any(), any())).thenReturn(state);
+    when(applyObject.apply(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
     when(sourceCollection.getByRemoteName(TEST_SOURCE_LABEL)).thenReturn(Optional.of(source));
     when(source.getURI(TEST_PROJECT_NAME)).thenReturn(TEST_REMOTE_URI);
 
@@ -148,8 +151,9 @@ public class ApplyObjectCommandTest {
   public void shouldNotInsertIntoApplyObjectsCacheWhenApplyObjectIsFailure() throws Exception {
     RevisionData sampleRevisionData =
         createSampleRevisionData(sampleCommitObjectId, sampleTreeObjectId);
-    RefUpdateState failureState = new RefUpdateState(TEST_REMOTE_NAME, RefUpdate.Result.IO_FAILURE);
-    when(applyObject.apply(any(), any(), any())).thenReturn(failureState);
+    when(bru.getCommands())
+        .thenReturn(List.of(receiveCommand(ReceiveCommand.Result.REJECTED_MISSING_OBJECT)));
+    when(applyObject.apply(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
     objectUnderTest.applyObject(
         TEST_PROJECT_NAME,
         TEST_REF_NAME,
@@ -172,5 +176,13 @@ public class ApplyObjectCommandTest {
     RevisionObjectData treeData =
         new RevisionObjectData(treeObjectId, Constants.OBJ_TREE, new byte[] {});
     return new RevisionData(Collections.emptyList(), commitData, treeData, Lists.newArrayList());
+  }
+
+  private ReceiveCommand receiveCommand(ReceiveCommand.Result result) {
+    ReceiveCommand receiveCommand =
+        new ReceiveCommand(
+            ObjectId.zeroId(), ObjectId.fromString(sampleCommitObjectId), TEST_REF_NAME);
+    receiveCommand.setResult(result);
+    return receiveCommand;
   }
 }
