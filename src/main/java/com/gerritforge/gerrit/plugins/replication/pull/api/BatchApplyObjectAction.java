@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
-class BatchApplyObjectAction implements RestModifyView<ProjectResource, List<RevisionInput>> {
+public class BatchApplyObjectAction
+    implements RestModifyView<ProjectResource, List<RevisionInput>> {
 
   private final ApplyObjectAction applyObjectAction;
 
