@@ -26,9 +26,9 @@ import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.ApplyObject;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.BatchRefUpdateState;
 import com.google.common.cache.Cache;
@@ -83,7 +83,7 @@ public class ApplyObjectCommand {
       String sourceLabel,
       long eventCreatedOn)
       throws IOException,
-          RefUpdateException,
+          BatchRefUpdateException,
           MissingParentObjectException,
           ResourceNotFoundException,
           MissingLatestPatchSetException {
@@ -97,7 +97,7 @@ public class ApplyObjectCommand {
       String sourceLabel,
       long eventCreatedOn)
       throws IOException,
-          RefUpdateException,
+          BatchRefUpdateException,
           MissingParentObjectException,
           ResourceNotFoundException,
           MissingLatestPatchSetException {
@@ -164,10 +164,10 @@ public class ApplyObjectCommand {
     if (!isRefUpdateSuccessful) {
       String message =
           String.format(
-              "RefUpdate failed with result %s for: sourceLabel=%s, project=%s, refName=%s",
-              decodeResult(singleCmd).name(), sourceLabel, name, refName);
+              "RefUpdate failed for: sourceLabel=%s, project=%s. %s",
+              sourceLabel, name, refUpdateState.toLogLine());
       fetchStateLog.error(message);
-      throw new RefUpdateException(decodeResult(singleCmd), message);
+      throw new BatchRefUpdateException(refUpdateState, message);
     }
     repLog.info(
         "Apply object from {} for project {}, ref name {} completed in {}ms",
