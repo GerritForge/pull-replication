@@ -48,6 +48,7 @@ import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.transport.ReceiveCommand;
 import org.eclipse.jgit.transport.RefSpec;
+import org.eclipse.jgit.transport.URIish;
 
 public class ApplyObjectCommand {
 
@@ -114,8 +115,6 @@ public class ApplyObjectCommand {
         applyObject.apply(name, new RefSpec(refName), revisionsData);
     boolean isRefUpdateSuccessful = refUpdateState.isSuccessful();
 
-    ReceiveCommand singleCmd = refUpdateState.getCommands().getFirst();
-
     if (isRefUpdateSuccessful) {
       for (RevisionData revisionData : revisionsData) {
         RevisionObjectData commitObj = revisionData.getCommitObject();
@@ -145,15 +144,21 @@ public class ApplyObjectCommand {
                   () ->
                       new IllegalStateException(
                           String.format("Could not find URI for %s remote", sourceLabel)));
-      eventDispatcher
-          .get()
-          .postEvent(
-              new FetchRefReplicatedEvent(
-                  name.get(),
-                  refName,
-                  source.getURI(name),
-                  getStatus(refUpdateState),
-                  decodeResult(singleCmd)));
+      String project = name.get();
+      URIish sourceURI = source.getURI(name);
+      RefFetchResult overallFetchStatus = getStatus(refUpdateState);
+
+      for (ReceiveCommand receiveCommand : refUpdateState.getCommands()) {
+        eventDispatcher
+            .get()
+            .postEvent(
+                new FetchRefReplicatedEvent(
+                    project,
+                    receiveCommand.getRefName(),
+                    sourceURI,
+                    overallFetchStatus,
+                    decodeResult(receiveCommand)));
+      }
     } catch (PermissionBackendException | IllegalStateException e) {
       logger.atSevere().withCause(e).log(
           "Cannot post event for ref '%s', project %s", refName, name);

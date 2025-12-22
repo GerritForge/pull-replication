@@ -14,6 +14,7 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +41,7 @@ import com.google.gerrit.server.events.EventDispatcher;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.eclipse.jgit.lib.BatchRefUpdate;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -170,6 +172,36 @@ public class ApplyObjectCommandTest {
         .isNull();
   }
 
+  @Test
+  public void shouldPostOneEventPerReceiveCommand() throws Exception {
+    RevisionData sampleRevisionData =
+        createSampleRevisionData(sampleCommitObjectId, sampleTreeObjectId);
+
+    String firstRef = "refs/changes/01/1/1";
+    String secondRef = "refs/changes/02/2/1";
+    when(bru.getCommands())
+        .thenReturn(
+            List.of(
+                receiveCommandForRef(firstRef, ReceiveCommand.Result.OK),
+                receiveCommandForRef(secondRef, ReceiveCommand.Result.OK)));
+    when(applyObject.apply(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
+
+    objectUnderTest.applyObject(
+        TEST_PROJECT_NAME,
+        TEST_REF_NAME,
+        sampleRevisionData,
+        TEST_SOURCE_LABEL,
+        TEST_EVENT_TIMESTAMP);
+
+    verify(eventDispatcher, times(2)).postEvent(eventCaptor.capture());
+    List<String> refs =
+        eventCaptor.getAllValues().stream()
+            .filter(e -> e instanceof FetchRefReplicatedEvent)
+            .map(e -> ((FetchRefReplicatedEvent) e).getRefName())
+            .collect(Collectors.toList());
+    assertThat(refs).containsExactly(TEST_REF_NAME, secondRef);
+  }
+
   private RevisionData createSampleRevisionData(String commitObjectId, String treeObjectId) {
     RevisionObjectData commitData =
         new RevisionObjectData(commitObjectId, Constants.OBJ_COMMIT, new byte[] {});
@@ -178,11 +210,14 @@ public class ApplyObjectCommandTest {
     return new RevisionData(Collections.emptyList(), commitData, treeData, Lists.newArrayList());
   }
 
-  private ReceiveCommand receiveCommand(ReceiveCommand.Result result) {
+  private ReceiveCommand receiveCommandForRef(String ref, ReceiveCommand.Result result) {
     ReceiveCommand receiveCommand =
-        new ReceiveCommand(
-            ObjectId.zeroId(), ObjectId.fromString(sampleCommitObjectId), TEST_REF_NAME);
+        new ReceiveCommand(ObjectId.zeroId(), ObjectId.fromString(sampleCommitObjectId), ref);
     receiveCommand.setResult(result);
     return receiveCommand;
+  }
+
+  private ReceiveCommand receiveCommand(ReceiveCommand.Result result) {
+    return receiveCommandForRef(TEST_REF_NAME, result);
   }
 }
