@@ -14,9 +14,9 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionsInput;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
 import com.google.common.base.Strings;
 import com.google.gerrit.extensions.restapi.AuthException;
 import com.google.gerrit.extensions.restapi.BadRequestException;
@@ -107,7 +107,7 @@ public class ApplyObjectsAction implements RestModifyView<ProjectResource, Revis
           Arrays.toString(input.getRevisionsData()),
           e);
       throw RestApiException.wrap(e.getMessage(), e);
-    } catch (RefUpdateException e) {
+    } catch (BatchRefUpdateException e) {
       repLog.error(
           "Apply object API *FAILED* from {} for {}:{} - {}",
           input.getLabel(),
