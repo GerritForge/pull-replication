@@ -14,13 +14,11 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
-import com.google.common.base.Strings;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.NonFastForwardException;
 import com.google.gerrit.entities.RefNames;
-import com.google.gerrit.extensions.restapi.AuthException;
-import com.google.gerrit.extensions.restapi.BadRequestException;
 import com.google.gerrit.extensions.restapi.PreconditionFailedException;
 import com.google.gerrit.extensions.restapi.ResourceConflictException;
 import com.google.gerrit.extensions.restapi.Response;
@@ -31,61 +29,33 @@ import com.google.gerrit.server.project.ProjectResource;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.io.IOException;
-import java.util.Objects;
-import org.eclipse.jgit.lib.RefUpdate;
 
 @Singleton
 public class ApplyObjectAction implements RestModifyView<ProjectResource, RevisionInput> {
 
   private final ApplyObjectCommand applyObjectCommand;
-  private final FetchPreconditions preConditions;
+  private final ApplyObjectInputValidator inputValidator;
 
   @Inject
   public ApplyObjectAction(
-      ApplyObjectCommand applyObjectCommand, FetchPreconditions preConditions) {
+      ApplyObjectCommand applyObjectCommand, ApplyObjectInputValidator inputValidator) {
     this.applyObjectCommand = applyObjectCommand;
-    this.preConditions = preConditions;
+    this.inputValidator = inputValidator;
   }
 
   @Override
   public Response<?> apply(ProjectResource resource, RevisionInput input) throws RestApiException {
 
-    if (!preConditions.canCallFetchApi()) {
-      throw new AuthException("Not allowed to call fetch command");
-    }
-    if (Strings.isNullOrEmpty(input.getLabel())) {
-      throw new BadRequestException("Source label cannot be null or empty");
-    }
-    if (Strings.isNullOrEmpty(input.getRefName())) {
-      throw new BadRequestException("Ref-update refname cannot be null or empty");
-    }
-    if (Objects.isNull(input.getRevisionData())) {
-      throw new BadRequestException("Revision data cannot be null");
-    }
+    inputValidator.validate(resource.getNameKey(), input);
+
+    repLog.info(
+        "Apply object API from {} for {}:{} - {}",
+        input.getLabel(),
+        resource.getNameKey(),
+        input.getRefName(),
+        input.getRevisionData());
 
     try {
-      repLog.info(
-          "Apply object API from {} for {}:{} - {}",
-          input.getLabel(),
-          resource.getNameKey(),
-          input.getRefName(),
-          input.getRevisionData());
-
-      try {
-        input.validate();
-      } catch (IllegalArgumentException e) {
-        BadRequestException bre =
-            new BadRequestException("Ref-update with invalid input: " + e.getMessage(), e);
-        repLog.error(
-            "Apply object API *FAILED* from {} for {}:{} - {}",
-            input.getLabel(),
-            resource.getNameKey(),
-            input.getRefName(),
-            input.getRevisionData(),
-            bre);
-        throw bre;
-      }
-
       applyObjectCommand.applyObject(
           resource.getNameKey(),
           input.getRefName(),
@@ -93,7 +63,17 @@ public class ApplyObjectAction implements RestModifyView<ProjectResource, Revisi
           input.getLabel(),
           input.getEventCreatedOn());
       return Response.created();
-    } catch (MissingParentObjectException e) {
+    } catch (MissingParentObjectException | NonFastForwardException e) {
+      if (e instanceof NonFastForwardException
+          && RefNames.isRefsDraftsComments(((NonFastForwardException) e).getRefName())) {
+        repLog.info(
+            "Apply object API *REJECTED* from {} for {}:{} - {}",
+            input.getLabel(),
+            resource.getNameKey(),
+            input.getRefName(),
+            input.getRevisionData());
+        throw new UnprocessableEntityException(e.getMessage());
+      }
       repLog.error(
           "Apply object API *FAILED* from {} for {}:{} - {}",
           input.getLabel(),
@@ -111,9 +91,8 @@ public class ApplyObjectAction implements RestModifyView<ProjectResource, Revisi
           input.getRevisionData(),
           e);
       throw RestApiException.wrap(e.getMessage(), e);
-    } catch (RefUpdateException e) {
-      if (RefNames.isRefsDraftsComments(input.getRefName())
-          && e.getResult().equals(RefUpdate.Result.REJECTED)) {
+    } catch (BatchRefUpdateException e) {
+      if (RefNames.isRefsDraftsComments(input.getRefName()) && e.containsRejectedResult()) {
         repLog.info(
             "Apply object API *REJECTED* from {} for {}:{} - {}",
             input.getLabel(),

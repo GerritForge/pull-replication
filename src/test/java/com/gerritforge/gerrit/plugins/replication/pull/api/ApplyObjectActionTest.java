@@ -23,13 +23,16 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.NonFastForwardException;
 import com.google.common.collect.Lists;
 import com.google.gerrit.entities.Project;
+import com.google.gerrit.entities.RefNames;
 import com.google.gerrit.extensions.restapi.AuthException;
 import com.google.gerrit.extensions.restapi.BadRequestException;
 import com.google.gerrit.extensions.restapi.ResourceConflictException;
 import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
 import com.google.gerrit.extensions.restapi.Response;
+import com.google.gerrit.extensions.restapi.UnprocessableEntityException;
 import com.google.gerrit.server.project.ProjectResource;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -89,7 +92,8 @@ public class ApplyObjectActionTest {
   public void setup() throws Exception {
     when(preConditions.canCallFetchApi()).thenReturn(true);
 
-    applyObjectAction = new ApplyObjectAction(applyObjectCommand, preConditions);
+    applyObjectAction =
+        new ApplyObjectAction(applyObjectCommand, new ApplyObjectInputValidator(preConditions));
   }
 
   @Test
@@ -203,6 +207,25 @@ public class ApplyObjectActionTest {
     doThrow(
             new MissingParentObjectException(
                 Project.nameKey("test_projects"), refName, ObjectId.zeroId()))
+        .when(applyObjectCommand)
+        .applyObject(any(), anyString(), any(), anyString(), anyLong());
+
+    applyObjectAction.apply(projectResource, inputParams);
+  }
+
+  @Test(expected = UnprocessableEntityException.class)
+  public void shouldTreatDraftCommentNonFastForwardAsRejected() throws Exception {
+    String draftCommentsRef = RefNames.REFS_DRAFT_COMMENTS + "01/1/1";
+    RevisionInput inputParams =
+        new RevisionInput(
+            label, draftCommentsRef, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
+
+    doThrow(
+            new NonFastForwardException(
+                Project.nameKey("test_projects"),
+                draftCommentsRef,
+                ObjectId.zeroId(),
+                ObjectId.fromString(sampleCommitObjectId)))
         .when(applyObjectCommand)
         .applyObject(any(), anyString(), any(), anyString(), anyLong());
 

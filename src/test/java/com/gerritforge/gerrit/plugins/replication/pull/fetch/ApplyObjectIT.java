@@ -210,6 +210,116 @@ public class ApplyObjectIT extends LightweightPluginDaemonTest {
     }
   }
 
+  @Test
+  public void shouldRejectBatchWhenRefAdvancedOutOfBandBeforeExecute() throws Exception {
+    // Pin the TOCTOU window inside ApplyObject.applyBatch between BatchApplyObject.add
+    // (which reads exactRef to snapshot oldObjectId) and BatchRefUpdate.execute (which
+    // verifies the snapshot against the current ref state). If a concurrent writer
+    // advances the ref between add and execute, JGit's BatchRefUpdate rejects with
+    // LOCK_FAILURE (or REJECTED_OTHER_REASON when the batch is atomic). The contract
+    // pinned here: out-of-band advance => batch fails => no ref state from the batch
+    // lands.
+    //
+    // Single-threaded controlled race: invoke BatchApplyObject directly (package-private
+    // helper, accessible from this test's package), drive add() to snapshot oldObjectId,
+    // then advance master via a direct RefUpdate, then call execute. No latch needed —
+    // the operations are sequential.
+    String testRepoProjectName = project + TEST_REPLICATION_SUFFIX;
+    NameKey p = createTestProject(testRepoProjectName);
+    testRepo = cloneProject(p);
+
+    org.eclipse.jgit.lib.ObjectId initialMaster;
+    try (Repository repo = repoManager.openRepository(p)) {
+      initialMaster = repo.exactRef("refs/heads/master").getObjectId();
+    }
+
+    // Ship initialMaster's RevisionData as the master update. The new tip equals the
+    // current tip, so the ReceiveCommand becomes (initialMaster, initialMaster, master)
+    // = NO_CHANGE on its own. The interesting bit is the out-of-band advance below: it
+    // moves master to a different OID, making the snapshotted cmd.oldId stale.
+    Optional<RevisionData> masterRevOpt;
+    try (Repository repo = repoManager.openRepository(p)) {
+      masterRevOpt = reader.read(p, initialMaster, "refs/heads/master", 0);
+    }
+    RevisionData masterRev = masterRevOpt.orElseThrow();
+
+    try (Repository git = repoManager.openRepository(p);
+        BatchApplyObject batch = BatchApplyObject.create(git)) {
+      // 1) add() snapshots oldObjectId = initialMaster.
+      batch.add(
+          p,
+          new org.eclipse.jgit.transport.RefSpec("refs/heads/master"),
+          new RevisionData[] {masterRev});
+
+      // 2) Out-of-band advance master via a direct RefUpdate. This moves the real ref
+      //    to a new OID while the batch still holds the stale snapshot.
+      org.eclipse.jgit.lib.ObjectId advancedOid;
+      try (org.eclipse.jgit.lib.ObjectInserter ins = git.newObjectInserter()) {
+        // Insert a brand-new dummy commit to advance master to.
+        org.eclipse.jgit.lib.CommitBuilder cb = new org.eclipse.jgit.lib.CommitBuilder();
+        cb.setTreeId(git.parseCommit(initialMaster).getTree().getId());
+        cb.setParentId(initialMaster);
+        cb.setAuthor(
+            new org.eclipse.jgit.lib.PersonIdent("Concurrent Writer", "writer@test.invalid"));
+        cb.setCommitter(
+            new org.eclipse.jgit.lib.PersonIdent("Concurrent Writer", "writer@test.invalid"));
+        cb.setMessage("Out-of-band advance during batch-apply-object race test");
+        advancedOid = ins.insert(cb);
+        ins.flush();
+      }
+      org.eclipse.jgit.lib.RefUpdate ru = git.updateRef("refs/heads/master");
+      ru.setNewObjectId(advancedOid);
+      ru.setExpectedOldObjectId(initialMaster);
+      org.eclipse.jgit.lib.RefUpdate.Result outOfBandResult = ru.update();
+      assertThat(outOfBandResult)
+          .isAnyOf(
+              org.eclipse.jgit.lib.RefUpdate.Result.FAST_FORWARD,
+              org.eclipse.jgit.lib.RefUpdate.Result.NEW);
+
+      // 3) Execute the batch — JGit's BatchRefUpdate compares each command's
+      //    snapshotted oldId to the current ref. master is now at advancedOid !=
+      //    initialMaster, so the command is rejected.
+      try (org.eclipse.jgit.revwalk.RevWalk rw = new org.eclipse.jgit.revwalk.RevWalk(git)) {
+        batch.getBatchRefUpdate().execute(rw, org.eclipse.jgit.lib.NullProgressMonitor.INSTANCE);
+      }
+
+      BatchRefUpdateState state = new BatchRefUpdateState(batch.getBatchRefUpdate());
+      assertThat(state.isSuccessful()).isFalse();
+      assertThat(state.getCommands().get(0).getResult())
+          .isAnyOf(
+              org.eclipse.jgit.transport.ReceiveCommand.Result.LOCK_FAILURE,
+              org.eclipse.jgit.transport.ReceiveCommand.Result.REJECTED_OTHER_REASON);
+
+      // master is at advancedOid (the out-of-band write), not the batch's intended OID.
+      try (Repository repo = repoManager.openRepository(p)) {
+        assertThat(repo.exactRef("refs/heads/master").getObjectId()).isEqualTo(advancedOid);
+      }
+    }
+  }
+
+  @Test
+  public void shouldThrowResourceNotFoundWhenProjectRepositoryMissing() throws Exception {
+    // Pin the RepositoryNotFoundException -> ResourceNotFoundException translation
+    // in ApplyObject.applyBatch. Without it, the underlying JGit
+    // RepositoryNotFoundException would surface as a generic IOException and the
+    // REST layer would respond 500 instead of 404.
+    NameKey missingProject = Project.nameKey("project-that-does-not-exist");
+    org.eclipse.jgit.transport.RefSpec refSpec =
+        new org.eclipse.jgit.transport.RefSpec("refs/heads/master");
+    RevisionData emptyRev =
+        new RevisionData(
+            ImmutableList.of(),
+            new RevisionObjectData(
+                "0".repeat(40), org.eclipse.jgit.lib.Constants.OBJ_COMMIT, new byte[] {}),
+            new RevisionObjectData(
+                "0".repeat(40), org.eclipse.jgit.lib.Constants.OBJ_TREE, new byte[] {}),
+            ImmutableList.of());
+
+    assertThrows(
+        com.google.gerrit.extensions.restapi.ResourceNotFoundException.class,
+        () -> objectUnderTest.apply(missingProject, refSpec, new RevisionData[] {emptyRev}));
+  }
+
   private void compareObjects(RevisionData expected, Optional<RevisionData> actualOption) {
     assertThat(actualOption.isPresent()).isTrue();
     RevisionData actual = actualOption.get();
