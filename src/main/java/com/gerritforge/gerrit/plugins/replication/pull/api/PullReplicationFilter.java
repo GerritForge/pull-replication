@@ -76,12 +76,15 @@ public class PullReplicationFilter extends AllRequestFilter implements PullRepli
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
   private static final Pattern projectNameInGerritUrl = Pattern.compile(".*/projects/([^/]+)/.*");
+  private static final boolean ATOMIC = true;
+  private static final boolean NON_ATOMIC = false;
 
   private FetchAction fetchAction;
   private BatchFetchAction batchFetchAction;
   private ApplyObjectAction applyObjectAction;
   private ApplyObjectsAction applyObjectsAction;
   private BatchApplyObjectAction batchApplyObjectAction;
+  private AtomicBatchApplyObjectAction atomicBatchApplyObjectAction;
   private ProjectInitializationAction projectInitializationAction;
   private UpdateHeadAction updateHEADAction;
   private ProjectDeletionAction projectDeletionAction;
@@ -97,6 +100,7 @@ public class PullReplicationFilter extends AllRequestFilter implements PullRepli
       ApplyObjectAction applyObjectAction,
       ApplyObjectsAction applyObjectsAction,
       BatchApplyObjectAction batchApplyObjectAction,
+      AtomicBatchApplyObjectAction atomicBatchApplyObjectAction,
       ProjectInitializationAction projectInitializationAction,
       UpdateHeadAction updateHEADAction,
       ProjectDeletionAction projectDeletionAction,
@@ -108,6 +112,7 @@ public class PullReplicationFilter extends AllRequestFilter implements PullRepli
     this.applyObjectAction = applyObjectAction;
     this.applyObjectsAction = applyObjectsAction;
     this.batchApplyObjectAction = batchApplyObjectAction;
+    this.atomicBatchApplyObjectAction = atomicBatchApplyObjectAction;
     this.projectInitializationAction = projectInitializationAction;
     this.updateHEADAction = updateHEADAction;
     this.projectDeletionAction = projectDeletionAction;
@@ -142,7 +147,12 @@ public class PullReplicationFilter extends AllRequestFilter implements PullRepli
         PayloadSerDes.writeResponse(httpResponse, doApplyObjects(httpRequest));
       } else if (isBatchApplyObjectsAction(httpRequest)) {
         failIfcurrentUserIsAnonymous();
-        PayloadSerDes.writeResponse(httpResponse, doBatchApplyObject(httpRequest));
+
+        if (httpRequest.getParameter("atomic") != null) {
+          PayloadSerDes.writeResponse(httpResponse, doBatchApplyObject(httpRequest, ATOMIC));
+        } else {
+          PayloadSerDes.writeResponse(httpResponse, doBatchApplyObject(httpRequest, NON_ATOMIC));
+        }
       } else if (isInitProjectAction(httpRequest)) {
         failIfcurrentUserIsAnonymous();
         if (!checkAcceptHeader(httpRequest, httpResponse)) {
@@ -225,14 +235,16 @@ public class PullReplicationFilter extends AllRequestFilter implements PullRepli
   }
 
   @SuppressWarnings("unchecked")
-  private Response<Map<String, Object>> doBatchApplyObject(HttpServletRequest httpRequest)
-      throws RestApiException, IOException {
+  private Response<Map<String, Object>> doBatchApplyObject(
+      HttpServletRequest httpRequest, boolean atomic) throws RestApiException, IOException {
     TypeLiteral<List<RevisionInput>> collectionType = new TypeLiteral<>() {};
     List<RevisionInput> inputs = readJson(httpRequest, collectionType.getType());
     IdString id = getProjectName(httpRequest).get();
 
     return (Response<Map<String, Object>>)
-        batchApplyObjectAction.apply(parseProjectResource(id), inputs);
+        (atomic
+            ? atomicBatchApplyObjectAction.apply(parseProjectResource(id), inputs)
+            : batchApplyObjectAction.apply(parseProjectResource(id), inputs));
   }
 
   @SuppressWarnings("unchecked")
