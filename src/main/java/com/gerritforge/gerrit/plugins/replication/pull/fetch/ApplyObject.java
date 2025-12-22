@@ -16,18 +16,24 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
+import com.google.common.base.Optional;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.extensions.restapi.IdString;
 import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
+import com.google.gerrit.git.RefUpdateUtil;
 import com.google.gerrit.server.git.GitRepositoryManager;
 import com.google.inject.Inject;
 import java.io.IOException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
+import org.eclipse.jgit.lib.AnyObjectId;
+import org.eclipse.jgit.lib.BatchRefUpdate;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectInserter;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.transport.ReceiveCommand;
 import org.eclipse.jgit.transport.RefSpec;
 
 public class ApplyObject {
@@ -51,7 +57,7 @@ public class ApplyObject {
     try (Repository git = gitManager.openRepository(name)) {
 
       ObjectId refHead = null;
-      RefUpdate ru = git.updateRef(refSpec.getSource());
+      BatchRefUpdate bru = git.getRefDatabase().newBatchUpdate();
       try (ObjectInserter oi = git.newObjectInserter()) {
         for (RevisionData revisionData : revisionsData) {
 
@@ -92,16 +98,40 @@ public class ApplyObject {
 
           if (commitObject == null) {
             // Non-commits must be forced as they do not have a graph associated
-            ru.setForceUpdate(true);
+            bru.setAllowNonFastForwards(true);
           }
         }
 
-        ru.setNewObjectId(refHead);
-        RefUpdate.Result result = ru.update();
-        return new RefUpdateState(refSpec.getSource(), result);
+        ObjectId oldObjectId =
+            Optional.fromNullable(git.exactRef(refSpec.getSource()))
+                .transform(Ref::getObjectId)
+                .or(ObjectId.zeroId());
+        ReceiveCommand cmd = new ReceiveCommand(oldObjectId, refHead, refSpec.getSource());
+        bru.addCommand(cmd);
+        RefUpdateUtil.executeChecked(bru, git);
+        return new RefUpdateState(refSpec.getSource(), decodeResult(cmd));
       }
     } catch (RepositoryNotFoundException e) {
       throw new ResourceNotFoundException(IdString.fromDecoded(name.get()), e);
     }
+  }
+
+  private static RefUpdate.Result decodeResult(ReceiveCommand receiveCommand) {
+    return switch (receiveCommand.getResult()) {
+      case OK -> {
+        if (AnyObjectId.isEqual(receiveCommand.getOldId(), receiveCommand.getNewId()))
+          yield RefUpdate.Result.NO_CHANGE;
+        yield switch (receiveCommand.getType()) {
+          case CREATE -> RefUpdate.Result.NEW;
+          case UPDATE -> RefUpdate.Result.FAST_FORWARD;
+          default -> RefUpdate.Result.FORCED;
+        };
+      }
+      case REJECTED_NOCREATE, REJECTED_NODELETE, REJECTED_NONFASTFORWARD ->
+          RefUpdate.Result.REJECTED;
+      case REJECTED_CURRENT_BRANCH -> RefUpdate.Result.REJECTED_CURRENT_BRANCH;
+      case REJECTED_MISSING_OBJECT -> RefUpdate.Result.IO_FAILURE;
+      default -> RefUpdate.Result.LOCK_FAILURE;
+    };
   }
 }
