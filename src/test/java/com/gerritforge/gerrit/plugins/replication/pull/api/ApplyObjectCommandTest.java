@@ -91,7 +91,7 @@ public class ApplyObjectCommandTest {
     when(eventDispatcherDataItem.get()).thenReturn(eventDispatcher);
     when(metrics.start(anyString())).thenReturn(timetContext);
     when(timetContext.stop()).thenReturn(100L);
-    when(applyObject.apply(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
+    when(applyObject.applyBatch(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
     when(sourceCollection.getByRemoteName(TEST_SOURCE_LABEL)).thenReturn(Optional.of(source));
     when(source.getURI(TEST_PROJECT_NAME)).thenReturn(TEST_REMOTE_URI);
 
@@ -155,7 +155,7 @@ public class ApplyObjectCommandTest {
         createSampleRevisionData(sampleCommitObjectId, sampleTreeObjectId);
     when(bru.getCommands())
         .thenReturn(List.of(receiveCommand(ReceiveCommand.Result.REJECTED_MISSING_OBJECT)));
-    when(applyObject.apply(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
+    when(applyObject.applyBatch(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
     objectUnderTest.applyObject(
         TEST_PROJECT_NAME,
         TEST_REF_NAME,
@@ -184,7 +184,7 @@ public class ApplyObjectCommandTest {
             List.of(
                 receiveCommandForRef(firstRef, ReceiveCommand.Result.OK),
                 receiveCommandForRef(secondRef, ReceiveCommand.Result.OK)));
-    when(applyObject.apply(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
+    when(applyObject.applyBatch(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
 
     objectUnderTest.applyObject(
         TEST_PROJECT_NAME,

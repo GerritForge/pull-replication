@@ -42,8 +42,11 @@ import com.google.gerrit.server.permissions.PermissionBackendException;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.transport.ReceiveCommand;
@@ -88,7 +91,13 @@ public class ApplyObjectCommand {
           MissingParentObjectException,
           ResourceNotFoundException,
           MissingLatestPatchSetException {
-    applyObjects(name, refName, new RevisionData[] {revisionsData}, sourceLabel, eventCreatedOn);
+    batchApplyObjects(
+        ApplyInvocationType.APPLY_OBJECT,
+        name,
+        Collections.singletonList(refName),
+        Collections.singletonList(new RevisionData[] {revisionsData}),
+        sourceLabel,
+        eventCreatedOn);
   }
 
   public void applyObjects(
@@ -103,36 +112,80 @@ public class ApplyObjectCommand {
           ResourceNotFoundException,
           MissingLatestPatchSetException {
 
+    batchApplyObjects(
+        ApplyInvocationType.APPLY_OBJECTS,
+        name,
+        Collections.singletonList(refName),
+        Collections.singletonList(revisionsData),
+        sourceLabel,
+        eventCreatedOn);
+  }
+
+  public void batchApplyObjects(
+      ApplyInvocationType invocationType,
+      Project.NameKey name,
+      List<String> refNames,
+      List<RevisionData[]> revisionsDataList,
+      String sourceLabel,
+      long eventCreatedOn)
+      throws IOException,
+          BatchRefUpdateException,
+          MissingParentObjectException,
+          ResourceNotFoundException,
+          MissingLatestPatchSetException {
+
+    String refsForLog = String.join(",", refNames);
+    String revisionsForLog =
+        revisionsDataList.stream().map(Arrays::toString).collect(Collectors.joining(", "));
+
     repLog.info(
-        "Apply object from {} for {}:{} - {}",
+        "{} object from {} for {}:{} - {}",
+        invocationType.logLabel(),
         sourceLabel,
         name,
-        refName,
-        Arrays.toString(revisionsData));
+        refsForLog,
+        revisionsForLog);
+
+    if (refNames.size() != revisionsDataList.size()) {
+      throw new IllegalArgumentException(
+          String.format(
+              "%s Mismatched refs and revisions sizes: refs=%d, revisions=%d",
+              invocationType.logLabel(), refNames.size(), revisionsDataList.size()));
+    }
+
     Timer1.Context<String> context = metrics.start(sourceLabel);
 
-    BatchRefUpdateState refUpdateState =
-        applyObject.apply(name, new RefSpec(refName), revisionsData);
+    List<RefSpec> refSpecs = new ArrayList<>(refNames.size());
+    for (String refName : refNames) {
+      refSpecs.add(new RefSpec(refName));
+    }
+
+    BatchRefUpdateState refUpdateState = applyObject.applyBatch(name, refSpecs, revisionsDataList);
     boolean isRefUpdateSuccessful = refUpdateState.isSuccessful();
 
     if (isRefUpdateSuccessful) {
-      for (RevisionData revisionData : revisionsData) {
-        RevisionObjectData commitObj = revisionData.getCommitObject();
-        List<RevisionObjectData> blobs = revisionData.getBlobs();
+      for (int i = 0; i < refNames.size(); i++) {
+        String refName = refNames.get(i);
+        RevisionData[] revisionsData = revisionsDataList.get(i);
 
-        if (commitObj != null) {
-          refUpdatesSucceededCache.put(
-              ApplyObjectsCacheKey.create(
-                  revisionData.getCommitObject().getSha1(), refName, name.get()),
-              eventCreatedOn);
-        } else if (blobs != null) {
-          for (RevisionObjectData blob : blobs) {
+        for (RevisionData revisionData : revisionsData) {
+          RevisionObjectData commitObj = revisionData.getCommitObject();
+          List<RevisionObjectData> blobs = revisionData.getBlobs();
+
+          if (commitObj != null) {
             refUpdatesSucceededCache.put(
-                ApplyObjectsCacheKey.create(blob.getSha1(), refName, name.get()), eventCreatedOn);
+                ApplyObjectsCacheKey.create(commitObj.getSha1(), refName, name.get()),
+                eventCreatedOn);
+          } else if (blobs != null) {
+            for (RevisionObjectData blob : blobs) {
+              refUpdatesSucceededCache.put(
+                  ApplyObjectsCacheKey.create(blob.getSha1(), refName, name.get()), eventCreatedOn);
+            }
           }
         }
       }
     }
+
     long elapsed = NANOSECONDS.toMillis(context.stop());
 
     try {
@@ -161,11 +214,10 @@ public class ApplyObjectCommand {
       }
     } catch (PermissionBackendException | IllegalStateException e) {
       logger.atSevere().withCause(e).log(
-          "Cannot post event for ref '%s', project %s", refName, name);
+          "Cannot post event for refs '%s', project %s", refsForLog, name);
     } finally {
       Context.unsetLocalEvent();
     }
-
     if (!isRefUpdateSuccessful) {
       String message =
           String.format(
@@ -174,11 +226,13 @@ public class ApplyObjectCommand {
       fetchStateLog.error(message);
       throw new BatchRefUpdateException(refUpdateState, message);
     }
+
     repLog.info(
-        "Apply object from {} for project {}, ref name {} completed in {}ms",
+        "{} from {} for project {}, refs {} completed in {}ms",
+        invocationType.logLabel(),
         sourceLabel,
         name,
-        refName,
+        refsForLog,
         elapsed);
   }
 
@@ -205,5 +259,21 @@ public class ApplyObjectCommand {
       case REJECTED_MISSING_OBJECT -> RefUpdate.Result.IO_FAILURE;
       default -> RefUpdate.Result.LOCK_FAILURE;
     };
+  }
+
+  public enum ApplyInvocationType {
+    APPLY_OBJECT("Apply object"),
+    APPLY_OBJECTS("Apply objects"),
+    BATCH_APPLY_OBJECT("Batch Apply object");
+
+    private final String logLabel;
+
+    ApplyInvocationType(String logLabel) {
+      this.logLabel = logLabel;
+    }
+
+    public String logLabel() {
+      return logLabel;
+    }
   }
 }
