@@ -22,6 +22,8 @@ import com.google.gerrit.git.RefUpdateUtil;
 import com.google.gerrit.server.git.GitRepositoryManager;
 import com.google.inject.Inject;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.RefSpec;
@@ -45,12 +47,38 @@ public class ApplyObject {
           IOException,
           ResourceNotFoundException,
           MissingLatestPatchSetException {
+<<<<<<< PATCH SET (adf3aea6915002a7e18d89378952f31af6bf18a3 Add ApplyObject.applyBatch for multi-ref BatchRefUpdate exec)
+    return applyBatch(name, List.of(refSpec), Collections.singletonList(revisionsData));
+  }
+=======
     try (Repository git = gitManager.openRepository(name)) {
       BatchApplyObject batch = BatchApplyObject.create(git);
       batch.add(name, refSpec, revisionsData, ChangeMetaCommitValidator::isValid);
       RefUpdateUtil.executeChecked(batch.getBatchRefUpdate(), git);
       return new BatchRefUpdateState(batch.getBatchRefUpdate());
+>>>>>>> BASE      (64d2dbde01766b092a7c04146b6fe6ba5c3d1bb9 Refactor ApplyObject to use reusable BatchRefUpdate builder)
 
+  public BatchRefUpdateState applyBatch(
+      Project.NameKey name, List<RefSpec> refSpecs, List<RevisionData[]> revisionsDataList)
+      throws MissingParentObjectException,
+          IOException,
+          ResourceNotFoundException,
+          MissingLatestPatchSetException {
+    if (refSpecs.size() != revisionsDataList.size()) {
+      throw new IllegalArgumentException(
+          String.format(
+              "Mismatched batch sizes: refs=%d, revisions=%d",
+              refSpecs.size(), revisionsDataList.size()));
+    }
+
+    try (Repository git = gitManager.openRepository(name)) {
+      try (BatchApplyObject batch = BatchApplyObject.create(git)) {
+        for (int i = 0; i < refSpecs.size(); i++) {
+          batch.add(name, refSpecs.get(i), revisionsDataList.get(i));
+        }
+        RefUpdateUtil.executeChecked(batch.getBatchRefUpdate(), git);
+        return new BatchRefUpdateState(batch.getBatchRefUpdate());
+      }
     } catch (RepositoryNotFoundException e) {
       throw new ResourceNotFoundException(IdString.fromDecoded(name.get()), e);
     }
