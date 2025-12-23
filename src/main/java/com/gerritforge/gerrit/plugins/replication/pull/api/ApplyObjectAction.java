@@ -18,10 +18,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
-import com.google.common.base.Strings;
 import com.google.gerrit.entities.RefNames;
-import com.google.gerrit.extensions.restapi.AuthException;
-import com.google.gerrit.extensions.restapi.BadRequestException;
 import com.google.gerrit.extensions.restapi.PreconditionFailedException;
 import com.google.gerrit.extensions.restapi.ResourceConflictException;
 import com.google.gerrit.extensions.restapi.Response;
@@ -32,28 +29,49 @@ import com.google.gerrit.server.project.ProjectResource;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.io.IOException;
-import java.util.Objects;
 
 @Singleton
 public class ApplyObjectAction implements RestModifyView<ProjectResource, RevisionInput> {
 
   private final ApplyObjectCommand applyObjectCommand;
+<<<<<<< PATCH SET (2bcf140a5c6535c60ecb31c98ae543b25b7c79ec Extract input validation and add ApplyObjectCommand batch ap)
+  private final ApplyObjectInputValidator inputValidator;
+=======
   private final FetchPreconditions preConditions;
   private final SourcesCollection sourcesCollection;
+>>>>>>> BASE      (adf3aea6915002a7e18d89378952f31af6bf18a3 Add ApplyObject.applyBatch for multi-ref BatchRefUpdate exec)
 
   @Inject
   public ApplyObjectAction(
+<<<<<<< PATCH SET (2bcf140a5c6535c60ecb31c98ae543b25b7c79ec Extract input validation and add ApplyObjectCommand batch ap)
+      ApplyObjectCommand applyObjectCommand, ApplyObjectInputValidator inputValidator) {
+=======
       ApplyObjectCommand applyObjectCommand,
       FetchPreconditions preConditions,
       SourcesCollection sourcesCollection) {
+>>>>>>> BASE      (adf3aea6915002a7e18d89378952f31af6bf18a3 Add ApplyObject.applyBatch for multi-ref BatchRefUpdate exec)
     this.applyObjectCommand = applyObjectCommand;
+<<<<<<< PATCH SET (2bcf140a5c6535c60ecb31c98ae543b25b7c79ec Extract input validation and add ApplyObjectCommand batch ap)
+    this.inputValidator = inputValidator;
+=======
     this.preConditions = preConditions;
     this.sourcesCollection = sourcesCollection;
+>>>>>>> BASE      (adf3aea6915002a7e18d89378952f31af6bf18a3 Add ApplyObject.applyBatch for multi-ref BatchRefUpdate exec)
   }
 
   @Override
   public Response<?> apply(ProjectResource resource, RevisionInput input) throws RestApiException {
 
+<<<<<<< PATCH SET (2bcf140a5c6535c60ecb31c98ae543b25b7c79ec Extract input validation and add ApplyObjectCommand batch ap)
+    inputValidator.validate(resource.getNameKey(), input);
+
+    repLog.info(
+        "Apply object API from {} for {}:{} - {}",
+        input.getLabel(),
+        resource.getNameKey(),
+        input.getRefName(),
+        input.getRevisionData());
+=======
     if (!preConditions.canCallFetchApi()) {
       throw new AuthException("Not allowed to call fetch command");
     }
@@ -70,30 +88,9 @@ public class ApplyObjectAction implements RestModifyView<ProjectResource, Revisi
     if (Objects.isNull(input.getRevisionData())) {
       throw new BadRequestException("Revision data cannot be null");
     }
+>>>>>>> BASE      (adf3aea6915002a7e18d89378952f31af6bf18a3 Add ApplyObject.applyBatch for multi-ref BatchRefUpdate exec)
 
     try {
-      repLog.info(
-          "Apply object API from {} for {}:{} - {}",
-          input.getLabel(),
-          resource.getNameKey(),
-          input.getRefName(),
-          input.getRevisionData());
-
-      try {
-        input.validate();
-      } catch (IllegalArgumentException e) {
-        BadRequestException bre =
-            new BadRequestException("Ref-update with invalid input: " + e.getMessage(), e);
-        repLog.error(
-            "Apply object API *FAILED* from {} for {}:{} - {}",
-            input.getLabel(),
-            resource.getNameKey(),
-            input.getRefName(),
-            input.getRevisionData(),
-            bre);
-        throw bre;
-      }
-
       applyObjectCommand.applyObject(
           resource.getNameKey(),
           input.getRefName(),
