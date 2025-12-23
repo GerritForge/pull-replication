@@ -17,10 +17,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
-import com.google.common.base.Strings;
 import com.google.gerrit.entities.RefNames;
-import com.google.gerrit.extensions.restapi.AuthException;
-import com.google.gerrit.extensions.restapi.BadRequestException;
 import com.google.gerrit.extensions.restapi.PreconditionFailedException;
 import com.google.gerrit.extensions.restapi.ResourceConflictException;
 import com.google.gerrit.extensions.restapi.Response;
@@ -31,60 +28,33 @@ import com.google.gerrit.server.project.ProjectResource;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.io.IOException;
-import java.util.Objects;
 
 @Singleton
 public class ApplyObjectAction implements RestModifyView<ProjectResource, RevisionInput> {
 
   private final ApplyObjectCommand applyObjectCommand;
-  private final FetchPreconditions preConditions;
+  private final ApplyObjectInputValidator inputValidator;
 
   @Inject
   public ApplyObjectAction(
-      ApplyObjectCommand applyObjectCommand, FetchPreconditions preConditions) {
+      ApplyObjectCommand applyObjectCommand, ApplyObjectInputValidator inputValidator) {
     this.applyObjectCommand = applyObjectCommand;
-    this.preConditions = preConditions;
+    this.inputValidator = inputValidator;
   }
 
   @Override
   public Response<?> apply(ProjectResource resource, RevisionInput input) throws RestApiException {
 
-    if (!preConditions.canCallFetchApi()) {
-      throw new AuthException("Not allowed to call fetch command");
-    }
-    if (Strings.isNullOrEmpty(input.getLabel())) {
-      throw new BadRequestException("Source label cannot be null or empty");
-    }
-    if (Strings.isNullOrEmpty(input.getRefName())) {
-      throw new BadRequestException("Ref-update refname cannot be null or empty");
-    }
-    if (Objects.isNull(input.getRevisionData())) {
-      throw new BadRequestException("Revision data cannot be null");
-    }
+    inputValidator.validate(resource.getNameKey(), input);
+
+    repLog.info(
+        "Apply object API from {} for {}:{} - {}",
+        input.getLabel(),
+        resource.getNameKey(),
+        input.getRefName(),
+        input.getRevisionData());
 
     try {
-      repLog.info(
-          "Apply object API from {} for {}:{} - {}",
-          input.getLabel(),
-          resource.getNameKey(),
-          input.getRefName(),
-          input.getRevisionData());
-
-      try {
-        input.validate();
-      } catch (IllegalArgumentException e) {
-        BadRequestException bre =
-            new BadRequestException("Ref-update with invalid input: " + e.getMessage(), e);
-        repLog.error(
-            "Apply object API *FAILED* from {} for {}:{} - {}",
-            input.getLabel(),
-            resource.getNameKey(),
-            input.getRefName(),
-            input.getRevisionData(),
-            bre);
-        throw bre;
-      }
-
       applyObjectCommand.applyObject(
           resource.getNameKey(),
           input.getRefName(),
