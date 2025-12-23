@@ -18,14 +18,15 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingPare
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.extensions.restapi.IdString;
 import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
-import com.google.gerrit.git.RefUpdateUtil;
 import com.google.gerrit.server.git.GitRepositoryManager;
 import com.google.inject.Inject;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
+import org.eclipse.jgit.lib.NullProgressMonitor;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.RefSpec;
 
 public class ApplyObject {
@@ -47,11 +48,18 @@ public class ApplyObject {
           IOException,
           ResourceNotFoundException,
           MissingLatestPatchSetException {
-    return applyBatch(name, List.of(refSpec), Collections.singletonList(revisionsData));
+    return applyBatch(
+        name,
+        List.of(refSpec),
+        Collections.singletonList(revisionsData),
+        ChangeMetaCommitValidator::isValid);
   }
 
   public BatchRefUpdateState applyBatch(
-      Project.NameKey name, List<RefSpec> refSpecs, List<RevisionData[]> revisionsDataList)
+      Project.NameKey name,
+      List<RefSpec> refSpecs,
+      List<RevisionData[]> revisionsDataList,
+      ApplyObjectCommitValidator commitValidator)
       throws MissingParentObjectException,
           IOException,
           ResourceNotFoundException,
@@ -66,10 +74,11 @@ public class ApplyObject {
     try (Repository git = gitManager.openRepository(name)) {
       try (BatchApplyObject batch = BatchApplyObject.create(git)) {
         for (int i = 0; i < refSpecs.size(); i++) {
-          batch.add(
-              name, refSpecs.get(i), revisionsDataList.get(i), ChangeMetaCommitValidator::isValid);
+          batch.add(name, refSpecs.get(i), revisionsDataList.get(i), commitValidator);
         }
-        RefUpdateUtil.executeChecked(batch.getBatchRefUpdate(), git);
+        try (RevWalk rw = new RevWalk(git)) {
+          batch.getBatchRefUpdate().execute(rw, NullProgressMonitor.INSTANCE);
+        }
         return new BatchRefUpdateState(batch.getBatchRefUpdate());
       }
     } catch (RepositoryNotFoundException e) {

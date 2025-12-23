@@ -24,7 +24,7 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.FooterKey;
 import org.eclipse.jgit.revwalk.RevCommit;
 
-class ChangeMetaCommitValidator {
+public class ChangeMetaCommitValidator {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
   private static final FooterKey FOOTER_CHANGE_META_PATCH_SET = new FooterKey("Patch-set");
 

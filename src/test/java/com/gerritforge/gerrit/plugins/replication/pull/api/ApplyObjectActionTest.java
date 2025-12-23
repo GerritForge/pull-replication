@@ -95,7 +95,12 @@ public class ApplyObjectActionTest {
     when(preConditions.canCallFetchApi()).thenReturn(true);
     when(sourcesCollection.getByRemoteName(label)).thenReturn(Optional.of(source));
 
-    applyObjectAction = new ApplyObjectAction(applyObjectCommand, preConditions, sourcesCollection);
+    applyObjectAction =
+        new ApplyObjectAction(
+            applyObjectCommand,
+            preConditions,
+            sourcesCollection,
+            new ApplyObjectInputValidator(preConditions));
   }
 
   @Test

@@ -30,7 +30,9 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpd
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.ApplyObject;
+import com.gerritforge.gerrit.plugins.replication.pull.fetch.ApplyObjectCommitValidator;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.BatchRefUpdateState;
+import com.gerritforge.gerrit.plugins.replication.pull.fetch.ChangeMetaCommitValidator;
 import com.google.common.cache.Cache;
 import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.entities.Project;
@@ -42,8 +44,11 @@ import com.google.gerrit.server.permissions.PermissionBackendException;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.transport.ReceiveCommand;
@@ -88,7 +93,14 @@ public class ApplyObjectCommand {
           MissingParentObjectException,
           ResourceNotFoundException,
           MissingLatestPatchSetException {
-    applyObjects(name, refName, new RevisionData[] {revisionsData}, sourceLabel, eventCreatedOn);
+    batchApplyObjects(
+        "Apply object",
+        name,
+        Collections.singletonList(refName),
+        Collections.singletonList(new RevisionData[] {revisionsData}),
+        sourceLabel,
+        eventCreatedOn,
+        ChangeMetaCommitValidator::isValid);
   }
 
   public void applyObjects(
@@ -103,36 +115,83 @@ public class ApplyObjectCommand {
           ResourceNotFoundException,
           MissingLatestPatchSetException {
 
+    batchApplyObjects(
+        "Apply objects",
+        name,
+        Collections.singletonList(refName),
+        Collections.singletonList(revisionsData),
+        sourceLabel,
+        eventCreatedOn,
+        ChangeMetaCommitValidator::isValid);
+  }
+
+  public void batchApplyObjects(
+      String invocationLabel,
+      Project.NameKey name,
+      List<String> refNames,
+      List<RevisionData[]> revisionsDataList,
+      String sourceLabel,
+      long eventCreatedOn,
+      ApplyObjectCommitValidator commitValidator)
+      throws IOException,
+          BatchRefUpdateException,
+          MissingParentObjectException,
+          ResourceNotFoundException,
+          MissingLatestPatchSetException {
+
+    String refsForLog = String.join(",", refNames);
+    String revisionsForLog =
+        revisionsDataList.stream().map(Arrays::toString).collect(Collectors.joining(", "));
+
     repLog.info(
-        "Apply object from {} for {}:{} - {}",
+        "{} object from {} for {}:{} - {}",
+        invocationLabel,
         sourceLabel,
         name,
-        refName,
-        Arrays.toString(revisionsData));
+        refsForLog,
+        revisionsForLog);
+
+    if (refNames.size() != revisionsDataList.size()) {
+      throw new IllegalArgumentException(
+          String.format(
+              "%s Mismatched refs and revisions sizes: refs=%d, revisions=%d",
+              invocationLabel, refNames.size(), revisionsDataList.size()));
+    }
+
     Timer1.Context<String> context = metrics.start(sourceLabel);
 
+    List<RefSpec> refSpecs = new ArrayList<>(refNames.size());
+    for (String refName : refNames) {
+      refSpecs.add(new RefSpec(refName));
+    }
+
     BatchRefUpdateState refUpdateState =
-        applyObject.apply(name, new RefSpec(refName), revisionsData);
+        applyObject.applyBatch(name, refSpecs, revisionsDataList, commitValidator);
     boolean isRefUpdateSuccessful = refUpdateState.isSuccessful();
 
     if (isRefUpdateSuccessful) {
-      for (RevisionData revisionData : revisionsData) {
-        RevisionObjectData commitObj = revisionData.getCommitObject();
-        List<RevisionObjectData> blobs = revisionData.getBlobs();
+      for (int i = 0; i < refNames.size(); i++) {
+        String refName = refNames.get(i);
+        RevisionData[] revisionsData = revisionsDataList.get(i);
 
-        if (commitObj != null) {
-          refUpdatesSucceededCache.put(
-              ApplyObjectsCacheKey.create(
-                  revisionData.getCommitObject().getSha1(), refName, name.get()),
-              eventCreatedOn);
-        } else if (blobs != null) {
-          for (RevisionObjectData blob : blobs) {
+        for (RevisionData revisionData : revisionsData) {
+          RevisionObjectData commitObj = revisionData.getCommitObject();
+          List<RevisionObjectData> blobs = revisionData.getBlobs();
+
+          if (commitObj != null) {
             refUpdatesSucceededCache.put(
-                ApplyObjectsCacheKey.create(blob.getSha1(), refName, name.get()), eventCreatedOn);
+                ApplyObjectsCacheKey.create(commitObj.getSha1(), refName, name.get()),
+                eventCreatedOn);
+          } else if (blobs != null) {
+            for (RevisionObjectData blob : blobs) {
+              refUpdatesSucceededCache.put(
+                  ApplyObjectsCacheKey.create(blob.getSha1(), refName, name.get()), eventCreatedOn);
+            }
           }
         }
       }
     }
+
     long elapsed = NANOSECONDS.toMillis(context.stop());
 
     try {
@@ -161,11 +220,10 @@ public class ApplyObjectCommand {
       }
     } catch (PermissionBackendException | IllegalStateException e) {
       logger.atSevere().withCause(e).log(
-          "Cannot post event for ref '%s', project %s", refName, name);
+          "Cannot post event for refs '%s', project %s", refsForLog, name);
     } finally {
       Context.unsetLocalEvent();
     }
-
     if (!isRefUpdateSuccessful) {
       String message =
           String.format(
@@ -174,11 +232,13 @@ public class ApplyObjectCommand {
       fetchStateLog.error(message);
       throw new BatchRefUpdateException(refUpdateState, message);
     }
+
     repLog.info(
-        "Apply object from {} for project {}, ref name {} completed in {}ms",
+        "{} from {} for project {}, refs {} completed in {}ms",
+        invocationLabel,
         sourceLabel,
         name,
-        refName,
+        refsForLog,
         elapsed);
   }
 
@@ -188,22 +248,27 @@ public class ApplyObjectCommand {
         : ReplicationState.RefFetchResult.FAILED;
   }
 
-  private static RefUpdate.Result decodeResult(ReceiveCommand receiveCommand) {
+  static RefUpdate.Result decodeResult(ReceiveCommand receiveCommand) {
     return switch (receiveCommand.getResult()) {
       case OK -> {
-        if (AnyObjectId.isEqual(receiveCommand.getOldId(), receiveCommand.getNewId()))
+        if (AnyObjectId.isEqual(receiveCommand.getOldId(), receiveCommand.getNewId())) {
           yield RefUpdate.Result.NO_CHANGE;
+        }
         yield switch (receiveCommand.getType()) {
           case CREATE -> RefUpdate.Result.NEW;
           case UPDATE -> RefUpdate.Result.FAST_FORWARD;
+          // UPDATE_NONFASTFORWARD and DELETE land here. RefUpdate.Result has no
+          // dedicated DELETE value (RefUpdate#delete returns FORCED for a
+          // forced delete), so FORCED is the most faithful mapping for both.
           default -> RefUpdate.Result.FORCED;
         };
       }
-      case REJECTED_NOCREATE, REJECTED_NODELETE, REJECTED_NONFASTFORWARD ->
+      case REJECTED_NOCREATE, REJECTED_NODELETE, REJECTED_NONFASTFORWARD, REJECTED_OTHER_REASON ->
           RefUpdate.Result.REJECTED;
       case REJECTED_CURRENT_BRANCH -> RefUpdate.Result.REJECTED_CURRENT_BRANCH;
-      case REJECTED_MISSING_OBJECT -> RefUpdate.Result.IO_FAILURE;
-      default -> RefUpdate.Result.LOCK_FAILURE;
+      case REJECTED_MISSING_OBJECT -> RefUpdate.Result.REJECTED_MISSING_OBJECT;
+      case LOCK_FAILURE -> RefUpdate.Result.LOCK_FAILURE;
+      case NOT_ATTEMPTED -> RefUpdate.Result.NOT_ATTEMPTED;
     };
   }
 }
