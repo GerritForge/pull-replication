@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jgit.lib.BatchRefUpdate;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.transport.ReceiveCommand;
 import org.eclipse.jgit.transport.URIish;
 import org.junit.Before;
@@ -91,7 +92,7 @@ public class ApplyObjectCommandTest {
     when(eventDispatcherDataItem.get()).thenReturn(eventDispatcher);
     when(metrics.start(anyString())).thenReturn(timetContext);
     when(timetContext.stop()).thenReturn(100L);
-    when(applyObject.apply(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
+    when(applyObject.applyBatch(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
     when(sourceCollection.getByRemoteName(TEST_SOURCE_LABEL)).thenReturn(Optional.of(source));
     when(source.getURI(TEST_PROJECT_NAME)).thenReturn(TEST_REMOTE_URI);
 
@@ -155,7 +156,7 @@ public class ApplyObjectCommandTest {
         createSampleRevisionData(sampleCommitObjectId, sampleTreeObjectId);
     when(bru.getCommands())
         .thenReturn(List.of(receiveCommand(ReceiveCommand.Result.REJECTED_MISSING_OBJECT)));
-    when(applyObject.apply(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
+    when(applyObject.applyBatch(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
     objectUnderTest.applyObject(
         TEST_PROJECT_NAME,
         TEST_REF_NAME,
@@ -184,7 +185,7 @@ public class ApplyObjectCommandTest {
             List.of(
                 receiveCommandForRef(firstRef, ReceiveCommand.Result.OK),
                 receiveCommandForRef(secondRef, ReceiveCommand.Result.OK)));
-    when(applyObject.apply(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
+    when(applyObject.applyBatch(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
 
     objectUnderTest.applyObject(
         TEST_PROJECT_NAME,
@@ -200,6 +201,81 @@ public class ApplyObjectCommandTest {
             .map(e -> ((FetchRefReplicatedEvent) e).getRefName())
             .collect(Collectors.toList());
     assertThat(refs).containsExactly(TEST_REF_NAME, secondRef);
+  }
+
+  @Test
+  public void decodeResultMapsEveryReceiveCommandResult() {
+    // Table test pinning the ReceiveCommand.Result -> RefUpdate.Result mapping
+    // in ApplyObjectCommand.decodeResult. Every value of ReceiveCommand.Result is
+    // exercised — adding a new value in jgit will (correctly) be a compile error
+    // on the production switch and a missing-row error here.
+    ObjectId oldId = ObjectId.zeroId();
+    ObjectId newId = ObjectId.fromString(sampleCommitObjectId);
+
+    // OK + CREATE: oldId zero, newId non-zero, auto-typed CREATE -> NEW
+    ReceiveCommand create = new ReceiveCommand(oldId, newId, TEST_REF_NAME);
+    create.setResult(ReceiveCommand.Result.OK);
+    assertThat(ApplyObjectCommand.decodeResult(create)).isEqualTo(RefUpdate.Result.NEW);
+
+    // OK + UPDATE: both non-zero, auto-typed UPDATE -> FAST_FORWARD
+    ObjectId otherId = ObjectId.fromString(sampleCommitObjectId2);
+    ReceiveCommand update = new ReceiveCommand(otherId, newId, TEST_REF_NAME);
+    update.setResult(ReceiveCommand.Result.OK);
+    assertThat(ApplyObjectCommand.decodeResult(update)).isEqualTo(RefUpdate.Result.FAST_FORWARD);
+
+    // OK + UPDATE_NONFASTFORWARD: forced update -> FORCED
+    ReceiveCommand forced =
+        new ReceiveCommand(
+            otherId, newId, TEST_REF_NAME, ReceiveCommand.Type.UPDATE_NONFASTFORWARD);
+    forced.setResult(ReceiveCommand.Result.OK);
+    assertThat(ApplyObjectCommand.decodeResult(forced)).isEqualTo(RefUpdate.Result.FORCED);
+
+    // OK + DELETE: newId zero -> default arm -> FORCED (no RefUpdate.Result.DELETE exists)
+    ReceiveCommand delete = new ReceiveCommand(newId, oldId, TEST_REF_NAME);
+    delete.setResult(ReceiveCommand.Result.OK);
+    assertThat(ApplyObjectCommand.decodeResult(delete)).isEqualTo(RefUpdate.Result.FORCED);
+
+    // OK + oldId == newId: NO_CHANGE regardless of type
+    ReceiveCommand noChange = new ReceiveCommand(newId, newId, TEST_REF_NAME);
+    noChange.setResult(ReceiveCommand.Result.OK);
+    assertThat(ApplyObjectCommand.decodeResult(noChange)).isEqualTo(RefUpdate.Result.NO_CHANGE);
+
+    // Rejection family -> REJECTED.
+    for (ReceiveCommand.Result r :
+        new ReceiveCommand.Result[] {
+          ReceiveCommand.Result.REJECTED_NOCREATE,
+          ReceiveCommand.Result.REJECTED_NODELETE,
+          ReceiveCommand.Result.REJECTED_NONFASTFORWARD,
+          ReceiveCommand.Result.REJECTED_OTHER_REASON
+        }) {
+      ReceiveCommand cmd = new ReceiveCommand(otherId, newId, TEST_REF_NAME);
+      cmd.setResult(r);
+      assertThat(ApplyObjectCommand.decodeResult(cmd)).isEqualTo(RefUpdate.Result.REJECTED);
+    }
+
+    // REJECTED_CURRENT_BRANCH -> REJECTED_CURRENT_BRANCH.
+    ReceiveCommand currentBranch = new ReceiveCommand(otherId, newId, TEST_REF_NAME);
+    currentBranch.setResult(ReceiveCommand.Result.REJECTED_CURRENT_BRANCH);
+    assertThat(ApplyObjectCommand.decodeResult(currentBranch))
+        .isEqualTo(RefUpdate.Result.REJECTED_CURRENT_BRANCH);
+
+    // REJECTED_MISSING_OBJECT -> REJECTED_MISSING_OBJECT (was wrongly IO_FAILURE).
+    ReceiveCommand missingObj = new ReceiveCommand(otherId, newId, TEST_REF_NAME);
+    missingObj.setResult(ReceiveCommand.Result.REJECTED_MISSING_OBJECT);
+    assertThat(ApplyObjectCommand.decodeResult(missingObj))
+        .isEqualTo(RefUpdate.Result.REJECTED_MISSING_OBJECT);
+
+    // LOCK_FAILURE -> LOCK_FAILURE.
+    ReceiveCommand lockFailure = new ReceiveCommand(otherId, newId, TEST_REF_NAME);
+    lockFailure.setResult(ReceiveCommand.Result.LOCK_FAILURE);
+    assertThat(ApplyObjectCommand.decodeResult(lockFailure))
+        .isEqualTo(RefUpdate.Result.LOCK_FAILURE);
+
+    // NOT_ATTEMPTED -> NOT_ATTEMPTED (was wrongly collapsed into LOCK_FAILURE).
+    ReceiveCommand notAttempted = new ReceiveCommand(otherId, newId, TEST_REF_NAME);
+    notAttempted.setResult(ReceiveCommand.Result.NOT_ATTEMPTED);
+    assertThat(ApplyObjectCommand.decodeResult(notAttempted))
+        .isEqualTo(RefUpdate.Result.NOT_ATTEMPTED);
   }
 
   private RevisionData createSampleRevisionData(String commitObjectId, String treeObjectId) {

@@ -18,14 +18,15 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingPare
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.extensions.restapi.IdString;
 import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
-import com.google.gerrit.git.RefUpdateUtil;
 import com.google.gerrit.server.git.GitRepositoryManager;
 import com.google.inject.Inject;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
+import org.eclipse.jgit.lib.NullProgressMonitor;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.RefSpec;
 
 public class ApplyObject {
@@ -69,7 +70,9 @@ public class ApplyObject {
           batch.add(
               name, refSpecs.get(i), revisionsDataList.get(i), ChangeMetaCommitValidator::isValid);
         }
-        RefUpdateUtil.executeChecked(batch.getBatchRefUpdate(), git);
+        try (RevWalk rw = new RevWalk(git)) {
+          batch.getBatchRefUpdate().execute(rw, NullProgressMonitor.INSTANCE);
+        }
         return new BatchRefUpdateState(batch.getBatchRefUpdate());
       }
     } catch (RepositoryNotFoundException e) {
