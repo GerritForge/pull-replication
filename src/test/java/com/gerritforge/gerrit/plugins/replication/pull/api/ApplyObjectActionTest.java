@@ -89,7 +89,8 @@ public class ApplyObjectActionTest {
   public void setup() throws Exception {
     when(preConditions.canCallFetchApi()).thenReturn(true);
 
-    applyObjectAction = new ApplyObjectAction(applyObjectCommand, preConditions);
+    applyObjectAction =
+        new ApplyObjectAction(applyObjectCommand, new ApplyObjectInputValidator(preConditions));
   }
 
   @Test
