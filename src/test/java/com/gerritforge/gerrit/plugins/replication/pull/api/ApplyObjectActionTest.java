@@ -95,7 +95,12 @@ public class ApplyObjectActionTest {
     when(preConditions.canCallFetchApi()).thenReturn(true);
     when(sourcesCollection.getByRemoteName(label)).thenReturn(Optional.of(source));
 
+<<<<<<< PATCH SET (2bcf140a5c6535c60ecb31c98ae543b25b7c79ec Extract input validation and add ApplyObjectCommand batch ap)
+    applyObjectAction =
+        new ApplyObjectAction(applyObjectCommand, new ApplyObjectInputValidator(preConditions));
+=======
     applyObjectAction = new ApplyObjectAction(applyObjectCommand, preConditions, sourcesCollection);
+>>>>>>> BASE      (adf3aea6915002a7e18d89378952f31af6bf18a3 Add ApplyObject.applyBatch for multi-ref BatchRefUpdate exec)
   }
 
   @Test
