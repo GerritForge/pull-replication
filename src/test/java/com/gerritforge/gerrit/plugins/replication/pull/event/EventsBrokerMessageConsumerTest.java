@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.gerritforge.gerrit.eventbroker.BrokerApi;
+import com.gerritforge.gerrit.eventbroker.MessageContext;
 import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
 import com.google.gerrit.extensions.registration.DynamicItem;
 import com.google.gerrit.server.events.RefUpdatedEvent;
@@ -51,19 +52,23 @@ public class EventsBrokerMessageConsumerTest {
   @Test
   public void shouldRethrowExceptionWhenFetchThrowsAuthException() throws Exception {
     doThrow(PermissionBackendException.class).when(eventListener).fetchRefsForEvent(any());
-    assertThrows(EventRejectedException.class, () -> objectUnderTest.accept(new RefUpdatedEvent()));
+    assertThrows(
+        EventRejectedException.class,
+        () -> objectUnderTest.accept(new RefUpdatedEvent(), MessageContext.noop()));
   }
 
   @Test
   public void shouldRethrowExceptionWhenFetchThrowsPermissionBackendException() throws Exception {
     doThrow(PermissionBackendException.class).when(eventListener).fetchRefsForEvent(any());
-    assertThrows(EventRejectedException.class, () -> objectUnderTest.accept(new RefUpdatedEvent()));
+    assertThrows(
+        EventRejectedException.class,
+        () -> objectUnderTest.accept(new RefUpdatedEvent(), MessageContext.noop()));
   }
 
   @Test
   public void shouldNotThrowExceptionWhenFetchSucceed() throws Exception {
     doNothing().when(eventListener).fetchRefsForEvent(any());
-    objectUnderTest.accept(new RefUpdatedEvent());
+    objectUnderTest.accept(new RefUpdatedEvent(), MessageContext.noop());
   }
 
   @Test
@@ -73,7 +78,7 @@ public class EventsBrokerMessageConsumerTest {
 
     shutdownState.setIsShuttingDown(true);
 
-    objectUnderTest.accept(new RefUpdatedEvent());
+    objectUnderTest.accept(new RefUpdatedEvent(), MessageContext.noop());
     verify(eventsBroker, times(1)).disconnect("topicName", null);
   }
 }
