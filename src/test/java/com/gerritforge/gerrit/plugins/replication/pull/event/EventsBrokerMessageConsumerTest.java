@@ -20,8 +20,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.gerritforge.gerrit.eventbroker.BrokerApi;
+import com.gerritforge.gerrit.eventbroker.MessageAcknowledgement;
 import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
 import com.google.gerrit.extensions.registration.DynamicItem;
+import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.events.RefUpdatedEvent;
 import com.google.gerrit.server.permissions.PermissionBackendException;
 import org.junit.Before;
@@ -40,6 +42,8 @@ public class EventsBrokerMessageConsumerTest {
   EventsBrokerMessageConsumer objectUnderTest;
   ShutdownState shutdownState;
 
+  private static final MessageAcknowledgement<Event> NOOP_ACK = (ignore) -> {};
+
   @Before
   public void setup() {
     shutdownState = new ShutdownState();
@@ -51,19 +55,23 @@ public class EventsBrokerMessageConsumerTest {
   @Test
   public void shouldRethrowExceptionWhenFetchThrowsAuthException() throws Exception {
     doThrow(PermissionBackendException.class).when(eventListener).fetchRefsForEvent(any());
-    assertThrows(EventRejectedException.class, () -> objectUnderTest.accept(new RefUpdatedEvent()));
+    assertThrows(
+        EventRejectedException.class,
+        () -> objectUnderTest.accept(new RefUpdatedEvent(), NOOP_ACK));
   }
 
   @Test
   public void shouldRethrowExceptionWhenFetchThrowsPermissionBackendException() throws Exception {
     doThrow(PermissionBackendException.class).when(eventListener).fetchRefsForEvent(any());
-    assertThrows(EventRejectedException.class, () -> objectUnderTest.accept(new RefUpdatedEvent()));
+    assertThrows(
+        EventRejectedException.class,
+        () -> objectUnderTest.accept(new RefUpdatedEvent(), NOOP_ACK));
   }
 
   @Test
   public void shouldNotThrowExceptionWhenFetchSucceed() throws Exception {
     doNothing().when(eventListener).fetchRefsForEvent(any());
-    objectUnderTest.accept(new RefUpdatedEvent());
+    objectUnderTest.accept(new RefUpdatedEvent(), NOOP_ACK);
   }
 
   @Test
@@ -73,7 +81,7 @@ public class EventsBrokerMessageConsumerTest {
 
     shutdownState.setIsShuttingDown(true);
 
-    objectUnderTest.accept(new RefUpdatedEvent());
+    objectUnderTest.accept(new RefUpdatedEvent(), NOOP_ACK);
     verify(eventsBroker, times(1)).disconnect("topicName", null);
   }
 }
