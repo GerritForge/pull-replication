@@ -14,7 +14,9 @@ package com.gerritforge.gerrit.plugins.replication.pull.event;
 import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule.STREAM_EVENTS_GROUP_ID;
 import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule.STREAM_EVENTS_TOPIC_NAME;
 
+import com.gerritforge.gerrit.eventbroker.AckAwareConsumer;
 import com.gerritforge.gerrit.eventbroker.BrokerApi;
+import com.gerritforge.gerrit.eventbroker.MessageAcknowledgement;
 import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
 import com.google.gerrit.common.Nullable;
 import com.google.gerrit.extensions.events.LifecycleListener;
@@ -27,14 +29,14 @@ import com.google.gerrit.server.permissions.PermissionBackendException;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.io.IOException;
-import java.util.function.Consumer;
 
-public class EventsBrokerMessageConsumer implements Consumer<Event>, LifecycleListener {
+public class EventsBrokerMessageConsumer implements AckAwareConsumer<Event>, LifecycleListener {
   private final DynamicItem<BrokerApi> eventsBrokerDi;
   private final StreamEventListener eventListener;
   private final ShutdownState shutdownState;
   private final String eventsTopicName;
   private final String groupId;
+  private boolean autoAck;
 
   @Inject
   public EventsBrokerMessageConsumer(
@@ -52,9 +54,12 @@ public class EventsBrokerMessageConsumer implements Consumer<Event>, LifecycleLi
   }
 
   @Override
-  public void accept(Event event) {
+  public void accept(Event event, MessageAcknowledgement<Event> msgAck) {
     try {
       eventListener.fetchRefsForEvent(event);
+      if (!autoAck) {
+        msgAck.ack(event);
+      }
       if (shutdownState.isShuttingDown()) stop();
     } catch (AuthException
         | PermissionBackendException
@@ -68,6 +73,7 @@ public class EventsBrokerMessageConsumer implements Consumer<Event>, LifecycleLi
   @Override
   public void start() {
     BrokerApi brokerApi = eventsBrokerDi.get();
+    this.autoAck = brokerApi.isAutoAck();
     if (groupId == null) {
       brokerApi.receiveAsync(eventsTopicName, this);
       return;
