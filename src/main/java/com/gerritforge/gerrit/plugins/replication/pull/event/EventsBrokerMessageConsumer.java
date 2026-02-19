@@ -15,6 +15,8 @@ import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBroker
 import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule.STREAM_EVENTS_TOPIC_NAME;
 
 import com.gerritforge.gerrit.eventbroker.BrokerApi;
+import com.gerritforge.gerrit.eventbroker.ContextAwareConsumer;
+import com.gerritforge.gerrit.eventbroker.MessageContext;
 import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
 import com.google.gerrit.common.Nullable;
 import com.google.gerrit.extensions.events.LifecycleListener;
@@ -27,9 +29,8 @@ import com.google.gerrit.server.permissions.PermissionBackendException;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.io.IOException;
-import java.util.function.Consumer;
 
-public class EventsBrokerMessageConsumer implements Consumer<Event>, LifecycleListener {
+public class EventsBrokerMessageConsumer implements ContextAwareConsumer<Event>, LifecycleListener {
   private final DynamicItem<BrokerApi> eventsBrokerDi;
   private final StreamEventListener eventListener;
   private final ShutdownState shutdownState;
@@ -52,9 +53,10 @@ public class EventsBrokerMessageConsumer implements Consumer<Event>, LifecycleLi
   }
 
   @Override
-  public void accept(Event event) {
+  public void accept(Event event, MessageContext messageContext) {
     try {
       eventListener.fetchRefsForEvent(event);
+      messageContext.ack();
       if (shutdownState.isShuttingDown()) stop();
     } catch (AuthException
         | PermissionBackendException
@@ -69,10 +71,10 @@ public class EventsBrokerMessageConsumer implements Consumer<Event>, LifecycleLi
   public void start() {
     BrokerApi brokerApi = eventsBrokerDi.get();
     if (groupId == null) {
-      brokerApi.receiveAsync(eventsTopicName, this);
+      brokerApi.receiveAsyncWithContext(eventsTopicName, this);
       return;
     }
-    brokerApi.receiveAsync(eventsTopicName, groupId, this);
+    brokerApi.receiveAsyncWithContext(eventsTopicName, groupId, this);
   }
 
   @Override
