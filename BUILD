@@ -21,7 +21,7 @@ gerrit_plugin(
         "//lib/commons:io",
         "//plugins/delete-project",
         "//plugins/replication",
-        "@commons-lang3//jar",
+        "//lib/commons:lang3",
     ],
 )
 
