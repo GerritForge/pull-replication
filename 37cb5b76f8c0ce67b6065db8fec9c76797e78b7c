@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd19cc9f_a3db8fb2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-07T14:28:44Z",
+      "side": 1,
+      "message": "```suggestion\nFor the time being we ack() blindly (unless an exception occurs) once the event is received.\n```",
+      "range": {
+        "startLine": 15,
+        "startChar": 65,
+        "endLine": 15,
+        "endChar": 72
+      },
+      "revId": "37cb5b76f8c0ce67b6065db8fec9c76797e78b7c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ed2e01f0_da94d404",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-07T14:28:44Z",
+      "side": 1,
+      "message": "```suggestion\nThe current change is merely for obtaining a green build and\nadapting to the new API interface; however, it is clearly not\nsuitable because acking needs to happen upon completion of the\noperation, which at the moment happens asynchronously.\n\nIn the follow-up change, the sync receiver would need to have\na different logic and including the consumption and acking of\nreplication events from a unique main loop.\n```",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 49
+      },
+      "revId": "37cb5b76f8c0ce67b6065db8fec9c76797e78b7c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c04f0d0_7b7473d7",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumerTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-07T14:28:44Z",
+      "side": 1,
+      "message": "```suggestion\n\n  private static MessageAcknowledgement\u003cEvent\u003e INSTANCE \u003d (e) -\u003e {};\n```",
+      "range": {
+        "startLine": 85,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 3
+      },
+      "revId": "37cb5b76f8c0ce67b6065db8fec9c76797e78b7c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
