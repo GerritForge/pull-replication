@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "41f36ade_2d529d7b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-05-08T15:22:33Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "dd19cc9f_a3db8fb2",
+      "range": {
+        "startLine": 15,
+        "startChar": 65,
+        "endLine": 15,
+        "endChar": 72
+      },
+      "revId": "37cb5b76f8c0ce67b6065db8fec9c76797e78b7c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ed2e01f0_da94d404",
@@ -47,6 +71,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "de0058f5_2bda5a80",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-05-08T15:22:33Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "ed2e01f0_da94d404",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 49
+      },
+      "revId": "37cb5b76f8c0ce67b6065db8fec9c76797e78b7c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2c04f0d0_7b7473d7",
@@ -60,6 +108,30 @@
       "writtenOn": "2026-05-07T14:28:44Z",
       "side": 1,
       "message": "```suggestion\n\n  private static MessageAcknowledgement\u003cEvent\u003e INSTANCE \u003d (e) -\u003e {};\n```",
+      "range": {
+        "startLine": 85,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 3
+      },
+      "revId": "37cb5b76f8c0ce67b6065db8fec9c76797e78b7c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "daa910f6_cdc7708d",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumerTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-05-08T15:22:33Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "2c04f0d0_7b7473d7",
       "range": {
         "startLine": 85,
         "startChar": 0,
