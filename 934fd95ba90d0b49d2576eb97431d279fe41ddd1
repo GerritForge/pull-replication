@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66c3b3a3_bfef40ec",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-12T05:32:11Z",
+      "side": 1,
+      "message": "You need to include the follow-ups with the real implementation:\n- https://review.gerrithub.io/c/GerritForge/pull-replication/+/1228134/7\n- https://review.gerrithub.io/c/GerritForge/pull-replication/+/1227875/14",
+      "revId": "934fd95ba90d0b49d2576eb97431d279fe41ddd1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
