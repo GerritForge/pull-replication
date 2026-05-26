@@ -12,6 +12,7 @@
 package com.gerritforge.gerrit.plugins.replication.pull;
 
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
+import static com.gerritforge.gerrit.plugins.replication.pull.ReplicationTaskId.withTaskId;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -377,7 +378,7 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
         long startedAt = context.getStartTime();
         long delay = NANOSECONDS.toMillis(startedAt - createdAt);
         git = gitManager.openRepository(projectName);
-        List<FetchRefSpec> fetchRefSpecs = runImpl();
+        List<FetchRefSpec> fetchRefSpecs = withTaskId(taskIdHex, this::runImpl);
 
         if (fetchRefSpecs.isEmpty()) {
           repLog.info(
@@ -577,18 +578,22 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
    * @return The list of refSpecs to fetch
    */
   public List<FetchRefSpec> getFetchRefSpecs(boolean lock) throws IOException {
-    List<FetchRefSpec> configRefSpecs =
-        config.getFetchRefSpecs().stream().map(FetchRefSpec::fromRefSpec).toList();
+    return withTaskId(
+        taskIdHex,
+        () -> {
+          List<FetchRefSpec> configRefSpecs =
+              config.getFetchRefSpecs().stream().map(FetchRefSpec::fromRefSpec).toList();
 
-    if (delta.isEmpty() && replicationFetchFilter().isEmpty()) {
-      return configRefSpecs;
-    }
+          if (delta.isEmpty() && replicationFetchFilter().isEmpty()) {
+            return configRefSpecs;
+          }
 
-    return runRefsFilter(computeDeltaIfNeeded(), lock).stream()
-        .map(ref -> refToFetchRefSpec(ref, configRefSpecs))
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .collect(Collectors.toList());
+          return runRefsFilter(computeDeltaIfNeeded(), lock).stream()
+              .map(ref -> refToFetchRefSpec(ref, configRefSpecs))
+              .filter(Optional::isPresent)
+              .map(Optional::get)
+              .collect(Collectors.toList());
+        });
   }
 
   public void unlockRefSpecs(Map<String, AutoCloseable> locks) {
