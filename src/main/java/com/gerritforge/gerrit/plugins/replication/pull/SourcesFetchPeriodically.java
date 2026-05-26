@@ -105,16 +105,9 @@ class SourcesFetchPeriodically {
    * internal set.
    */
   private static class SkipProjectsFilter extends ReplicationFilter {
-    private final Set<Project.NameKey> projectsToSkip;
 
     private SkipProjectsFilter(Set<Project.NameKey> projectsToSkip) {
-      super(Collections.emptyList());
-      this.projectsToSkip = projectsToSkip;
-    }
-
-    @Override
-    public boolean matches(Project.NameKey name) {
-      return !projectsToSkip.contains(name);
+      super(Collections.emptyList(), projectsToSkip.stream().map(Project.NameKey::get).toList());
     }
   }
 }

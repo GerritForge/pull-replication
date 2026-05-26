@@ -626,6 +626,22 @@ remote.NAME.remoteNameStyle
 	By default, replicates without matching, i.e. replicates
 	everything from all remotes.
 
+
+remote.NAME.excludeProjects
+:	Specifies which repositories should NOT be replicated from the
+	remote. It can be provided more than once, and supports the same
+	formats as `projects`, and may be specified in combination with
+	`projects`.
+
+	When both `projects` and `excludeProjects` are configured, a
+	project must match at least one `projects` pattern to be eligible
+	for replication, and must not match any `excludeProjects` pattern.
+	If a project matches both a `projects` pattern and an
+	`excludeProjects` pattern, it is excluded from replication.
+
+	By default, replicates without matching, i.e. replicates
+	everything from all remotes.
+
 remote.NAME.enableBatchedRefs
 :	Keep the synchronous replication actions together as a single call
 	with all the refs included in the batch ref update.
