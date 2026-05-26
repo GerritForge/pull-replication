@@ -791,12 +791,13 @@ public class Source {
 
   private boolean configSettingsAllowReplication(Project.NameKey project) {
     // by default fetch all projects
-    List<String> projects = config.getProjects();
-    if (projects.isEmpty()) {
+    List<String> includeProjects = config.getProjects();
+    ImmutableList<String> excludeProjects = config.getExcludeProjects();
+    if (includeProjects.isEmpty() && excludeProjects.isEmpty()) {
       return true;
     }
 
-    return (new ReplicationFilter(projects)).matches(project);
+    return (new ReplicationFilter(includeProjects, excludeProjects)).matches(project);
   }
 
   public boolean isSingleProjectMatch() {
