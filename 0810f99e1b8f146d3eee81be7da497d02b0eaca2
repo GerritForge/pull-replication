@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2bb1eae0_87e027c8",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/Source.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 794,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-05-27T13:01:54Z",
+      "side": 1,
+      "message": "Might be worth renaming to `includeProjectsPatterns` or something similar, now that we have both inclusion and exclusion filters",
+      "range": {
+        "startLine": 794,
+        "startChar": 17,
+        "endLine": 794,
+        "endChar": 25
+      },
+      "revId": "0810f99e1b8f146d3eee81be7da497d02b0eaca2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e906c63_bb24a4cb",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 633,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-05-27T13:01:54Z",
+      "side": 1,
+      "message": "link:#remote.name.projects[projects]",
+      "range": {
+        "startLine": 633,
+        "startChar": 12,
+        "endLine": 633,
+        "endChar": 22
+      },
+      "revId": "0810f99e1b8f146d3eee81be7da497d02b0eaca2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bcfdb1e0_74144c9c",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 640,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-05-27T13:01:54Z",
+      "side": 1,
+      "message": "```suggestion\n\tExcluded projects always take precedence over included projects.\n        A project matching any `excludeProjects` pattern is never replicated,\n        even if it also matches a `projects` pattern.\n```",
+      "range": {
+        "startLine": 636,
+        "startChar": 1,
+        "endLine": 640,
+        "endChar": 60
+      },
+      "revId": "0810f99e1b8f146d3eee81be7da497d02b0eaca2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2cdcfafa_6063e2ec",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 641,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-05-27T13:01:54Z",
+      "side": 1,
+      "message": "I would also add an example:\n\n```\n    [remote \"target\"] # Replicates all projects under `tools/*` except those under     `tools/tmp/*`.\n      projects \u003d tools/*\n      excludeProjects \u003d tools/tmp/*\n\n    [remote \"origin\"] # Replicates all projects except those under `sandbox/*`.\n      excludeProjects \u003d sandbox/*\n```",
+      "revId": "0810f99e1b8f146d3eee81be7da497d02b0eaca2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef5a5427_0fa58623",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 643,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-05-27T13:01:54Z",
+      "side": 1,
+      "message": "```suggestion\n\tBy default, no projects are excluded.\n```",
+      "range": {
+        "startLine": 642,
+        "startChar": 1,
+        "endLine": 643,
+        "endChar": 29
+      },
+      "revId": "0810f99e1b8f146d3eee81be7da497d02b0eaca2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}

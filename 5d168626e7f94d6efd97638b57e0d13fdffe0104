@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "572a1547_8c857b55",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourcesFetchPeriodically.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-05-27T13:01:54Z",
+      "side": 0,
+      "message": "This documentation is obsolete. Not sure if we want to amend it as part of this change.",
+      "range": {
+        "startLine": 103,
+        "startChar": 0,
+        "endLine": 106,
+        "endChar": 5
+      },
+      "revId": "5d168626e7f94d6efd97638b57e0d13fdffe0104",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef8494de_b8f78637",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourcesFetchPeriodically.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-05-27T13:01:54Z",
+      "side": 0,
+      "message": "This changes the exclusion logic. We no longer have a wildcard logic, but we use the logic implemented by `ReplicationFilter` [1].\n\nIs this done on purpose? Should we make it clear in the docs/release notes this is a breking change?\n\n[1]: https://gerrit.googlesource.com/plugins/replication/+/refs/heads/master/src/main/java/com/googlesource/gerrit/plugins/replication/ReplicationFilter.java#84",
+      "range": {
+        "startLine": 115,
+        "startChar": 4,
+        "endLine": 118,
+        "endChar": 5
+      },
+      "revId": "5d168626e7f94d6efd97638b57e0d13fdffe0104",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
