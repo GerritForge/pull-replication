@@ -72,6 +72,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c4ed564_488ed3f0",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourcesFetchPeriodically.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-27T22:03:23Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "31a3541a_ff80b70e",
+      "range": {
+        "startLine": 103,
+        "startChar": 0,
+        "endLine": 106,
+        "endChar": 5
+      },
+      "revId": "5d168626e7f94d6efd97638b57e0d13fdffe0104",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ef8494de_b8f78637",
@@ -109,6 +133,30 @@
       "side": 0,
       "message": "No, it was not supposed to be a breaking change. Let me add a test for it and ensure that isn\u0027t breaking existing behaviour.",
       "parentUuid": "ef8494de_b8f78637",
+      "range": {
+        "startLine": 115,
+        "startChar": 4,
+        "endLine": 118,
+        "endChar": 5
+      },
+      "revId": "5d168626e7f94d6efd97638b57e0d13fdffe0104",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7a47bb5a_a2706a70",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourcesFetchPeriodically.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-27T22:03:23Z",
+      "side": 0,
+      "message": "There\u0027s no need for additional tests: the mechanism already has test coverage, and tests are passing.\n\nWhy do you believe this is breaking existing functionality?",
+      "parentUuid": "0dac97ed_dc0614f9",
       "range": {
         "startLine": 115,
         "startChar": 4,
