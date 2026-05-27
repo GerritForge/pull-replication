@@ -73,6 +73,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "80dd606f_db42101a",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 633,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-27T22:12:12Z",
+      "side": 1,
+      "message": "Is `link:#anchor[name]` a valid markdown syntax?",
+      "parentUuid": "6e906c63_bb24a4cb",
+      "range": {
+        "startLine": 633,
+        "startChar": 12,
+        "endLine": 633,
+        "endChar": 22
+      },
+      "revId": "0810f99e1b8f146d3eee81be7da497d02b0eaca2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "bcfdb1e0_74144c9c",
         "filename": "src/main/resources/Documentation/config.md",
         "patchSetId": 1
@@ -84,6 +108,30 @@
       "writtenOn": "2026-05-27T13:01:54Z",
       "side": 1,
       "message": "```suggestion\n\tExcluded projects always take precedence over included projects.\n        A project matching any `excludeProjects` pattern is never replicated,\n        even if it also matches a `projects` pattern.\n```",
+      "range": {
+        "startLine": 636,
+        "startChar": 1,
+        "endLine": 640,
+        "endChar": 60
+      },
+      "revId": "0810f99e1b8f146d3eee81be7da497d02b0eaca2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9dc19d4e_cbbbe735",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 640,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-27T22:12:12Z",
+      "side": 1,
+      "message": "I\u0027ve used the same description from the replication plugin for consistency.\nIf you believe it must be clarified, I\u0027d suggest doing both at the same time as a follow-up change.",
+      "parentUuid": "bcfdb1e0_74144c9c",
       "range": {
         "startLine": 636,
         "startChar": 1,
@@ -111,6 +159,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "476ad054_134f28c3",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 641,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-27T22:12:12Z",
+      "side": 1,
+      "message": "I\u0027ve used the same description from the replication plugin for consistency.\nIf you believe it must be clarified, I\u0027d suggest doing both at the same time as a follow-up change.",
+      "parentUuid": "2cdcfafa_6063e2ec",
+      "revId": "0810f99e1b8f146d3eee81be7da497d02b0eaca2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ef5a5427_0fa58623",
@@ -124,6 +190,30 @@
       "writtenOn": "2026-05-27T13:01:54Z",
       "side": 1,
       "message": "```suggestion\n\tBy default, no projects are excluded.\n```",
+      "range": {
+        "startLine": 642,
+        "startChar": 1,
+        "endLine": 643,
+        "endChar": 29
+      },
+      "revId": "0810f99e1b8f146d3eee81be7da497d02b0eaca2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9eefd6cf_ab099bb3",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 643,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-27T22:12:12Z",
+      "side": 1,
+      "message": "I\u0027ve used the same description from the replication plugin for consistency.\nIf you believe it must be clarified, I\u0027d suggest doing both at the same time as a follow-up change.",
+      "parentUuid": "ef5a5427_0fa58623",
       "range": {
         "startLine": 642,
         "startChar": 1,
