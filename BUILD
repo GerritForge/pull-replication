@@ -18,7 +18,6 @@ gerrit_plugin(
     deps = [
         ":events-broker-neverlink",
         ":healthcheck-neverlink",
-        "//lib/commons:io",
         "//plugins/delete-project",
         "//plugins/replication",
     ],
