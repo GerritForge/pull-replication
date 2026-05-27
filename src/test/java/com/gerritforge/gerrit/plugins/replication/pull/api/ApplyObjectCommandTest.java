@@ -22,6 +22,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.ApplyObjectMetrics;
 import com.gerritforge.gerrit.plugins.replication.pull.ApplyObjectsCacheKey;
 import com.gerritforge.gerrit.plugins.replication.pull.FetchRefReplicatedEvent;
 import com.gerritforge.gerrit.plugins.replication.pull.PullReplicationStateLogger;
+import com.gerritforge.gerrit.plugins.replication.pull.ReplicationState;
 import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
@@ -174,7 +175,12 @@ public class ApplyObjectCommandTest {
   }
 
   @Test
-  public void shouldPostOneEventPerReceiveCommand() throws Exception {
+  public void shouldPostOneEventPerReceiveCommandInInputOrder() throws Exception {
+    // Pin two contracts at once:
+    //  1. Cardinality: one FetchRefReplicatedEvent per ReceiveCommand.
+    //  2. Ordering: events match the BatchRefUpdate.getCommands() input order.
+    // Downstream consumers (multi-site forwarders, log readers) rely on the
+    // ordering to attribute per-ref outcomes to specific commands.
     RevisionData sampleRevisionData =
         createSampleRevisionData(sampleCommitObjectId, sampleTreeObjectId);
 
@@ -200,7 +206,58 @@ public class ApplyObjectCommandTest {
             .filter(e -> e instanceof FetchRefReplicatedEvent)
             .map(e -> ((FetchRefReplicatedEvent) e).getRefName())
             .collect(Collectors.toList());
-    assertThat(refs).containsExactly(TEST_REF_NAME, secondRef);
+    assertThat(refs).containsExactly(TEST_REF_NAME, secondRef).inOrder();
+  }
+
+  @Test
+  public void shouldPostOneFailedEventPerReceiveCommandOnBatchFailure() throws Exception {
+    // Pin per-ref event cardinality and status on an atomic-batch failure.
+    //
+    // Contract: when the batch is rejected (BatchRefUpdateState.isSuccessful() == false),
+    // ApplyObjectCommand still emits one FetchRefReplicatedEvent per ReceiveCommand —
+    // each carrying RefFetchResult.FAILED — before throwing BatchRefUpdateException.
+    // Operators rely on the per-ref FAILED events for observability; multi-site
+    // forwarders rely on the cardinality matching the input batch.
+    //
+    // Regression pin: if the per-ref event emission is ever moved inside the
+    // `if (isRefUpdateSuccessful)` block (zero events on failure), this test fires.
+    RevisionData sampleRevisionData =
+        createSampleRevisionData(sampleCommitObjectId, sampleTreeObjectId);
+
+    String firstRef = "refs/changes/01/1/1";
+    String secondRef = "refs/changes/02/2/1";
+    when(bru.getCommands())
+        .thenReturn(
+            List.of(
+                receiveCommandForRef(firstRef, ReceiveCommand.Result.REJECTED_NONFASTFORWARD),
+                receiveCommandForRef(secondRef, ReceiveCommand.Result.REJECTED_OTHER_REASON)));
+    when(applyObject.applyBatch(any(), any(), any())).thenReturn(new BatchRefUpdateState(bru));
+
+    BatchRefUpdateException thrown =
+        org.junit.Assert.assertThrows(
+            BatchRefUpdateException.class,
+            () ->
+                objectUnderTest.applyObject(
+                    TEST_PROJECT_NAME,
+                    TEST_REF_NAME,
+                    sampleRevisionData,
+                    TEST_SOURCE_LABEL,
+                    TEST_EVENT_TIMESTAMP));
+    assertThat(thrown).isNotNull();
+
+    verify(eventDispatcher, times(2)).postEvent(eventCaptor.capture());
+    List<FetchRefReplicatedEvent> events =
+        eventCaptor.getAllValues().stream()
+            .filter(e -> e instanceof FetchRefReplicatedEvent)
+            .map(e -> (FetchRefReplicatedEvent) e)
+            .collect(Collectors.toList());
+    assertThat(
+            events.stream().map(FetchRefReplicatedEvent::getRefName).collect(Collectors.toList()))
+        .containsExactly(TEST_REF_NAME, secondRef);
+    assertThat(events.stream().map(FetchRefReplicatedEvent::getStatus).collect(Collectors.toList()))
+        .containsExactly(
+            ReplicationState.RefFetchResult.FAILED.toString(),
+            ReplicationState.RefFetchResult.FAILED.toString());
   }
 
   @Test
