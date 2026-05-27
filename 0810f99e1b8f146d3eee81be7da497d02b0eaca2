@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "73b07eeb_dd8951bd",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/Source.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 794,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-27T20:37:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2bb1eae0_87e027c8",
+      "range": {
+        "startLine": 794,
+        "startChar": 17,
+        "endLine": 794,
+        "endChar": 25
+      },
+      "revId": "0810f99e1b8f146d3eee81be7da497d02b0eaca2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6e906c63_bb24a4cb",
