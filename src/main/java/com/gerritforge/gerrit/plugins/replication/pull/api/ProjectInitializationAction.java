@@ -24,6 +24,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionsInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.NonFastForwardException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.util.PayloadSerDes;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
@@ -130,7 +131,7 @@ public class ProjectInitializationAction extends HttpServlet {
           "Cannot initialize project " + gitRepositoryName);
     } catch (BadRequestException | IllegalArgumentException e) {
       logExceptionAndUpdateResponse(httpServletResponse, e, SC_BAD_REQUEST, gitRepositoryName);
-    } catch (BatchRefUpdateException | MissingParentObjectException e) {
+    } catch (BatchRefUpdateException | MissingParentObjectException | NonFastForwardException e) {
       logExceptionAndUpdateResponse(httpServletResponse, e, SC_CONFLICT, gitRepositoryName);
     } catch (ResourceNotFoundException e) {
       logExceptionAndUpdateResponse(
@@ -156,6 +157,7 @@ public class ProjectInitializationAction extends HttpServlet {
           IOException,
           BadRequestException,
           MissingParentObjectException,
+          NonFastForwardException,
           BatchRefUpdateException,
           ResourceNotFoundException {
 

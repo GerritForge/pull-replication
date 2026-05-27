@@ -17,6 +17,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.NonFastForwardException;
 import com.google.gerrit.entities.RefNames;
 import com.google.gerrit.extensions.restapi.PreconditionFailedException;
 import com.google.gerrit.extensions.restapi.ResourceConflictException;
@@ -62,7 +63,17 @@ public class ApplyObjectAction implements RestModifyView<ProjectResource, Revisi
           input.getLabel(),
           input.getEventCreatedOn());
       return Response.created();
-    } catch (MissingParentObjectException e) {
+    } catch (MissingParentObjectException | NonFastForwardException e) {
+      if (e instanceof NonFastForwardException
+          && RefNames.isRefsDraftsComments(((NonFastForwardException) e).getRefName())) {
+        repLog.info(
+            "Apply object API *REJECTED* from {} for {}:{} - {}",
+            input.getLabel(),
+            resource.getNameKey(),
+            input.getRefName(),
+            input.getRevisionData());
+        throw new UnprocessableEntityException(e.getMessage());
+      }
       repLog.error(
           "Apply object API *FAILED* from {} for {}:{} - {}",
           input.getLabel(),

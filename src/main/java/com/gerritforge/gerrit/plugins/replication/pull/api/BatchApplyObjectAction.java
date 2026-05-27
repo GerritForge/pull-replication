@@ -18,6 +18,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.NonFastForwardException;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.entities.RefNames;
 import com.google.gerrit.extensions.restapi.BadRequestException;
@@ -98,7 +99,18 @@ class BatchApplyObjectAction implements RestModifyView<ProjectResource, List<Rev
           INVOCATION_LABEL, projectNameKey, refNames, revisionData, label, eventCreatedOn);
 
       return Response.ok();
-    } catch (MissingParentObjectException e) {
+    } catch (MissingParentObjectException | NonFastForwardException e) {
+      if (e instanceof NonFastForwardException
+          && RefNames.isRefsDraftsComments(((NonFastForwardException) e).getRefName())) {
+        repLog.info(
+            "{} API *REJECTED* from {} for {}:{} - {}",
+            INVOCATION_LABEL,
+            label,
+            projectNameKey,
+            refNames,
+            revisionsForLog);
+        throw new UnprocessableEntityException(e.getMessage());
+      }
       repLog.error(
           "{} API *FAILED* from {} for {}:{} - {}",
           INVOCATION_LABEL,

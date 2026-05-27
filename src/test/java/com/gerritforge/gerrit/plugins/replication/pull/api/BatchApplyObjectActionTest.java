@@ -26,11 +26,14 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.NonFastForwardException;
 import com.google.common.collect.Lists;
 import com.google.gerrit.entities.Project;
+import com.google.gerrit.entities.RefNames;
 import com.google.gerrit.extensions.restapi.BadRequestException;
 import com.google.gerrit.extensions.restapi.Response;
 import com.google.gerrit.extensions.restapi.RestApiException;
+import com.google.gerrit.extensions.restapi.UnprocessableEntityException;
 import com.google.gerrit.server.project.ProjectResource;
 import java.util.Collections;
 import java.util.List;
@@ -181,6 +184,24 @@ public class BatchApplyObjectActionTest {
         .batchApplyObjects(any(), any(), anyList(), anyList(), anyString(), anyLong());
 
     batchApplyObjectAction.apply(projectResource, List.of(good, bad));
+  }
+
+  @Test(expected = UnprocessableEntityException.class)
+  public void shouldTreatDraftCommentNonFastForwardAsRejected() throws Exception {
+    String draftCommentsRef = RefNames.REFS_DRAFT_COMMENTS + "01/1/1";
+    RevisionInput first =
+        new RevisionInput(LABEL, draftCommentsRef, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
+
+    doThrow(
+            new NonFastForwardException(
+                projectResource.getNameKey(),
+                draftCommentsRef,
+                ObjectId.zeroId(),
+                ObjectId.fromString(SAMPLE_COMMIT_OBJECT_ID)))
+        .when(applyObjectCommand)
+        .batchApplyObjects(any(), any(), anyList(), anyList(), anyString(), anyLong());
+
+    batchApplyObjectAction.apply(projectResource, List.of(first));
   }
 
   private RevisionData createSampleRevisionData() {

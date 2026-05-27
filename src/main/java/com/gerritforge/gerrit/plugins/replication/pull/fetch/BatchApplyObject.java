@@ -15,15 +15,17 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
-import com.google.common.base.Optional;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.NonFastForwardException;
 import com.google.gerrit.entities.Project;
 import java.io.IOException;
+import java.util.Optional;
 import org.eclipse.jgit.lib.BatchRefUpdate;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectInserter;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.ReceiveCommand;
 import org.eclipse.jgit.transport.RefSpec;
 
@@ -54,8 +56,12 @@ class BatchApplyObject implements AutoCloseable {
   }
 
   public void add(Project.NameKey name, RefSpec refSpec, RevisionData[] revisionsData)
-      throws IOException, MissingParentObjectException, MissingLatestPatchSetException {
+      throws IOException,
+          MissingParentObjectException,
+          MissingLatestPatchSetException,
+          NonFastForwardException {
     ObjectId refHead = null;
+    boolean isCommitRef = false;
 
     for (RevisionData revisionData : revisionsData) {
 
@@ -63,6 +69,7 @@ class BatchApplyObject implements AutoCloseable {
       RevisionObjectData commitObject = revisionData.getCommitObject();
 
       if (commitObject != null) {
+        isCommitRef = true;
         RevCommit commit = RevCommit.parse(commitObject.getContent());
         for (RevCommit parent : commit.getParents()) {
           if (!git.getObjectDatabase().has(parent.getId())) {
@@ -94,15 +101,34 @@ class BatchApplyObject implements AutoCloseable {
       inserter.flush();
 
       if (commitObject == null) {
-        // Non-commits must be forced as they do not have a graph associated
+        // Non-commits must be forced as they do not have a graph associated.
+        // JGit's BatchRefUpdate has no per-ReceiveCommand force API, so this is
+        // batch-wide. We compensate below by pre-flight-checking commit refs
+        // for non-FF and rejecting them before they reach bru.execute().
         bru.setAllowNonFastForwards(true);
       }
     }
 
     ObjectId oldObjectId =
-        Optional.fromNullable(git.exactRef(refSpec.getSource()))
-            .transform(Ref::getObjectId)
-            .or(ObjectId.zeroId());
+        Optional.ofNullable(git.exactRef(refSpec.getSource()))
+            .map(Ref::getObjectId)
+            .orElse(ObjectId.zeroId());
+
+    // Pre-flight FF check on commit refs. The per-batch setAllowNonFastForwards
+    // flag set above for blob inputs would otherwise leak into commit-ref
+    // commands in the same batch and silently allow non-FF updates on them.
+    // JGit applies isAllowNonFastForwards() uniformly per command (see
+    // BatchRefUpdate.java:656), so we enforce the per-ref intent here.
+    if (isCommitRef && !ObjectId.zeroId().equals(oldObjectId)) {
+      try (RevWalk rw = new RevWalk(git)) {
+        RevCommit oldCommit = rw.parseCommit(oldObjectId);
+        RevCommit newCommit = rw.parseCommit(refHead);
+        if (!rw.isMergedInto(oldCommit, newCommit)) {
+          throw new NonFastForwardException(name, refSpec.getSource(), oldObjectId, refHead);
+        }
+      }
+    }
+
     ReceiveCommand cmd = new ReceiveCommand(oldObjectId, refHead, refSpec.getSource());
     bru.addCommand(cmd);
   }

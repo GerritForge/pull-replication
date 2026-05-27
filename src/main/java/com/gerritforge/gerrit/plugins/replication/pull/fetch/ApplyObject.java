@@ -15,6 +15,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.LocalGitRepositoryManager
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.NonFastForwardException;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.extensions.restapi.IdString;
 import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
@@ -47,7 +48,8 @@ public class ApplyObject {
       throws MissingParentObjectException,
           IOException,
           ResourceNotFoundException,
-          MissingLatestPatchSetException {
+          MissingLatestPatchSetException,
+          NonFastForwardException {
     return applyBatch(name, List.of(refSpec), Collections.singletonList(revisionsData));
   }
 
@@ -56,7 +58,8 @@ public class ApplyObject {
       throws MissingParentObjectException,
           IOException,
           ResourceNotFoundException,
-          MissingLatestPatchSetException {
+          MissingLatestPatchSetException,
+          NonFastForwardException {
     if (refSpecs.size() != revisionsDataList.size()) {
       throw new IllegalArgumentException(
           String.format(
