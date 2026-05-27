@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "31a3541a_ff80b70e",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourcesFetchPeriodically.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-27T21:56:07Z",
+      "side": 0,
+      "message": "It looks like the test is there: `SourcesFetchPeriodicallyTest`.\nThe validation tests are passing, therefore the class continues to have the same behaviour, just with a different implementation.",
+      "parentUuid": "b94a6cbc_bb36d745",
+      "range": {
+        "startLine": 103,
+        "startChar": 0,
+        "endLine": 106,
+        "endChar": 5
+      },
+      "revId": "5d168626e7f94d6efd97638b57e0d13fdffe0104",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ef8494de_b8f78637",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourcesFetchPeriodically.java",
         "patchSetId": 1
