@@ -189,6 +189,30 @@
       },
       "revId": "5d168626e7f94d6efd97638b57e0d13fdffe0104",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "12478c03_62faeec4",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourcesFetchPeriodically.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-05-28T08:49:06Z",
+      "side": 0,
+      "message": "With the following configuration:\n\n```\n[remote \"target\"]\n      excludeProjects \u003d tools\n```\n\nBefore this change, you would match: `thetools`, `sometools`.\n\nWith this change, you would match only `tools`.\n\nThe logic moved from a simple `projectsToSkip.contains()` to this [1]. Unless I am missing something.\n\n[1]: https://gerrit.googlesource.com/plugins/replication/+/refs/heads/master/src/main/java/com/googlesource/gerrit/plugins/replication/ReplicationFilter.java#84",
+      "parentUuid": "67d6d4b7_0a84bd10",
+      "range": {
+        "startLine": 115,
+        "startChar": 4,
+        "endLine": 118,
+        "endChar": 5
+      },
+      "revId": "5d168626e7f94d6efd97638b57e0d13fdffe0104",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

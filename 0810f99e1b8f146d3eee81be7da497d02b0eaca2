@@ -97,6 +97,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7f2949ab_cb2e78f5",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 633,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-05-28T08:49:06Z",
+      "side": 1,
+      "message": "```suggestion\n\tformats as [projects][1], and may be specified in combination with\n```\n\nAnd later you can add the link, similarly to `remote.NAME.url` documentation\n\n```\n[1]: #remote.NAME.projects\n```",
+      "parentUuid": "80dd606f_db42101a",
+      "range": {
+        "startLine": 633,
+        "startChar": 12,
+        "endLine": 633,
+        "endChar": 22
+      },
+      "revId": "0810f99e1b8f146d3eee81be7da497d02b0eaca2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "bcfdb1e0_74144c9c",
         "filename": "src/main/resources/Documentation/config.md",
         "patchSetId": 1
