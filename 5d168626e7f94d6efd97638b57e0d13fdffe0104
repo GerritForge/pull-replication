@@ -213,6 +213,30 @@
       },
       "revId": "5d168626e7f94d6efd97638b57e0d13fdffe0104",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09431c49_6f380294",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/SourcesFetchPeriodically.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-05-28T18:25:55Z",
+      "side": 0,
+      "message": "\u003e With the following configuration:\n\u003e \n\u003e ```\n\u003e [remote \"target\"]\n\u003e       excludeProjects \u003d tools\n\u003e ```\n\u003e \n\u003e Before this change, you would match: `thetools`, `sometools`.\n\nNo, that\u0027s incorrect. Before this change, the above configuration would have been completely ignored, as we did not support `excludeProjects` at all.\n\nThe read of the settings is introduced in this change and didn\u0027t exist previously.\n\n\n\u003e With this change, you would match only `tools`.\n\nThat is incorrect, because this code-path doesn\u0027t really consider the `excludeProjects` but the `projects` having a periodic fetch configuration.\n\nThe behaviour implemented in this change is correct and is consistent with the documentation.\n\n\u003e The logic moved from a simple `projectsToSkip.contains()` to this [1]. Unless I am missing something.\n\u003e \n\u003e [1]: https://gerrit.googlesource.com/plugins/replication/+/refs/heads/master/src/main/java/com/googlesource/gerrit/plugins/replication/ReplicationFilter.java#84\n\nYou are missing the point that the \u0027contains\u0027 was incorrect, see https://github.com/GerritForge/pull-replication/blob/master/src/main/resources/Documentation/config.md#remote.NAME.projects for the behavior of the `remote.NAME.projects` configuration settings.\n\nThere is no mention of a substring, but rather:\n- full-regex\n- prefix\n- full-match\n\nThe _contains_ logic we had before was incorrect.",
+      "parentUuid": "12478c03_62faeec4",
+      "range": {
+        "startLine": 115,
+        "startChar": 4,
+        "endLine": 118,
+        "endChar": 5
+      },
+      "revId": "5d168626e7f94d6efd97638b57e0d13fdffe0104",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
