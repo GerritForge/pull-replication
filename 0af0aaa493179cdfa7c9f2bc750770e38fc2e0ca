@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fcd4a82d_f74853cd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-04T20:54:29Z",
+      "side": 1,
+      "message": "Need to have I7b3161c6f54972294366f767ff746d8f3fd30c27 on stable-3.14 first and *then* perform the merge.",
+      "revId": "0af0aaa493179cdfa7c9f2bc750770e38fc2e0ca",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
