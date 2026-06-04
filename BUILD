@@ -1,8 +1,20 @@
-load("//tools/bzl:junit.bzl", "junit_tests")
-load("//tools/bzl:plugin.bzl", "PLUGIN_DEPS", "PLUGIN_TEST_DEPS", "gerrit_plugin")
+load(
+    "@com_googlesource_gerrit_bazlets//:gerrit_plugin.bzl",
+    "gerrit_plugin",
+    "gerrit_plugin_test_util",
+    "gerrit_plugin_tests",
+)
+load("@rules_java//java:defs.bzl", "java_library")
+
+PLUGIN = "pull-replication"
+
+TEST_DEPS = [
+    "//plugins/delete-project",
+    "//plugins/healthcheck",
+    "//plugins/replication",
+]
 
 gerrit_plugin(
-    name = "pull-replication",
     srcs = glob(["src/main/java/**/*.java"]),
     manifest_entries = [
         "Implementation-Title: Pull Replication plugin",
@@ -14,50 +26,38 @@ gerrit_plugin(
         "Gerrit-HttpModule: com.gerritforge.gerrit.plugins.replication.pull.api.HttpModule",
         "Gerrit-ReloadMode: restart",
     ],
+    plugin = PLUGIN,
     resources = glob(["src/main/resources/**/*"]),
     deps = [
         ":events-broker-neverlink",
         ":healthcheck-neverlink",
-        "//lib/commons:io",
         "//plugins/delete-project",
         "//plugins/replication",
     ],
 )
 
-junit_tests(
-    name = "pull_replication_tests",
+gerrit_plugin_tests(
     size = "large",
-    srcs = glob([
-        "src/test/java/**/*Test.java",
-    ]),
-    tags = ["pull-replication"],
-    visibility = ["//visibility:public"],
-    deps = PLUGIN_TEST_DEPS + PLUGIN_DEPS + [
-        ":pull-replication__plugin",
-        ":pull_replication_util",
-        "//plugins/delete-project",
+    srcs = glob(["src/test/java/**/*Test.java"]),
+    plugin = PLUGIN,
+    deps = [
+        ":pull-replication_test_util",
         "//plugins/events-broker",
-        "//plugins/healthcheck",
-        "//plugins/replication",
     ],
 )
 
-[junit_tests(
+[gerrit_plugin_tests(
     name = f[:f.index(".")].replace("/", "_"),
     srcs = [f],
-    tags = ["pull-replication"],
-    visibility = ["//visibility:public"],
-    deps = PLUGIN_TEST_DEPS + PLUGIN_DEPS + [
+    plugin = PLUGIN,
+    deps = [
         ":healthcheck-neverlink",
-        ":pull-replication__plugin",
-        ":pull_replication_util",
-        "//plugins/replication",
+        ":pull-replication_test_util",
     ],
 ) for f in glob(["src/test/java/**/*IT.java"])]
 
-java_library(
-    name = "pull_replication_util",
-    testonly = True,
+gerrit_plugin_test_util(
+    name = "pull-replication_test_util",
     srcs = glob(
         ["src/test/java/**/*.java"],
         exclude = [
@@ -65,22 +65,8 @@ java_library(
             "src/test/java/**/*IT.java",
         ],
     ),
-    deps = PLUGIN_TEST_DEPS + PLUGIN_DEPS + [
-        ":pull-replication__plugin",
-        "//plugins/delete-project",
-        "//plugins/healthcheck",
-        "//plugins/replication",
-    ],
-)
-
-java_library(
-    name = "pull-replication__plugin_test_deps",
-    testonly = 1,
-    visibility = ["//visibility:public"],
-    exports = PLUGIN_DEPS + PLUGIN_TEST_DEPS + [
-        ":pull-replication__plugin",
-        "//plugins/events-broker",
-    ],
+    exports = TEST_DEPS,
+    deps = [":pull-replication__plugin"] + TEST_DEPS,
 )
 
 java_library(
