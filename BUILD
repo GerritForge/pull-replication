@@ -1,8 +1,24 @@
+load(
+    "@com_googlesource_gerrit_bazlets//:gerrit_plugin.bzl",
+    "gerrit_plugin",
+    "gerrit_plugin_tests",
+)
+load("@rules_java//java:defs.bzl", "java_library")
 load("//tools/bzl:junit.bzl", "junit_tests")
-load("//tools/bzl:plugin.bzl", "PLUGIN_DEPS", "PLUGIN_TEST_DEPS", "gerrit_plugin")
+
+PLUGIN = "pull-replication"
+
+# Constants inlined from //tools/bzl:plugin.bzl to remove legacy dependency.
+PLUGIN_DEPS = ["//plugins:plugin-lib"]
+
+PLUGIN_TEST_DEPS = [
+    "//java/com/google/gerrit/acceptance:lib",
+    "//lib/bouncycastle:bcpg",
+    "//lib/bouncycastle:bcpkix",
+    "//lib/bouncycastle:bcprov",
+]
 
 gerrit_plugin(
-    name = "pull-replication",
     srcs = glob(["src/main/java/**/*.java"]),
     manifest_entries = [
         "Implementation-Title: Pull Replication plugin",
@@ -14,6 +30,7 @@ gerrit_plugin(
         "Gerrit-HttpModule: com.gerritforge.gerrit.plugins.replication.pull.api.HttpModule",
         "Gerrit-ReloadMode: restart",
     ],
+    plugin = PLUGIN,
     resources = glob(["src/main/resources/**/*"]),
     deps = [
         ":events-broker-neverlink",
@@ -24,16 +41,14 @@ gerrit_plugin(
     ],
 )
 
-junit_tests(
+gerrit_plugin_tests(
     name = "pull_replication_tests",
     size = "large",
-    srcs = glob([
-        "src/test/java/**/*Test.java",
-    ]),
+    srcs = glob(["src/test/java/**/*Test.java"]),
+    plugin = PLUGIN,
     tags = ["pull-replication"],
     visibility = ["//visibility:public"],
-    deps = PLUGIN_TEST_DEPS + PLUGIN_DEPS + [
-        ":pull-replication__plugin",
+    deps = [
         ":pull_replication_util",
         "//plugins/delete-project",
         "//plugins/events-broker",
@@ -70,16 +85,6 @@ java_library(
         "//plugins/delete-project",
         "//plugins/healthcheck",
         "//plugins/replication",
-    ],
-)
-
-java_library(
-    name = "pull-replication__plugin_test_deps",
-    testonly = 1,
-    visibility = ["//visibility:public"],
-    exports = PLUGIN_DEPS + PLUGIN_TEST_DEPS + [
-        ":pull-replication__plugin",
-        "//plugins/events-broker",
     ],
 )
 

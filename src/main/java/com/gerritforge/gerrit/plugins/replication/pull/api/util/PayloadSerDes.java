@@ -81,7 +81,7 @@ public class PayloadSerDes {
         json.setLenient(true);
 
         try {
-          json.peek();
+          var unused = json.peek();
         } catch (EOFException e) {
           throw new BadRequestException("Expected JSON object", e);
         }
