@@ -271,9 +271,8 @@ public class StreamEventListener implements EventListener {
     input.refName = refName;
     input.label = sourceInstanceId;
     input.isDelete = isDelete;
-    workQueue
-        .getDefaultQueue()
-        .submit(fetchJobFactory.create(projectNameKey, fromInput(input), metrics));
+
+    fetchJobFactory.create(projectNameKey, fromInput(input), metrics).run();
   }
 
   private String getProjectRepositoryName(ProjectCreatedEvent projectCreatedEvent) {
