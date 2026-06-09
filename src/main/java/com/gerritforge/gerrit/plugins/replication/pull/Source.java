@@ -822,7 +822,7 @@ public class Source {
     if (config.getRemoteConfig().getURIs().size() != 1) {
       throw new IllegalStateException(
           String.format(
-              "Pull replication source %s must have only one url property.", project.get()));
+              "Pull replication remote %s must have only one url property.", config.getRemoteConfig().getName()));
     }
 
     URIish uri = config.getRemoteConfig().getURIs().get(0);
