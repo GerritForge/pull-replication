@@ -17,24 +17,25 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
+import com.gerritforge.gerrit.plugins.replication.pull.fetch.BatchRefUpdateState;
 import com.google.common.collect.Lists;
 import com.google.gerrit.entities.Project;
+import com.google.gerrit.extensions.restapi.BadRequestException;
 import com.google.gerrit.extensions.restapi.Response;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.extensions.restapi.UnprocessableEntityException;
 import com.google.gerrit.server.project.ProjectResource;
 import java.util.Collections;
 import java.util.List;
+import org.eclipse.jgit.lib.BatchRefUpdate;
 import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.RefUpdate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,9 +66,10 @@ public class BatchApplyObjectActionTest {
 
   private BatchApplyObjectAction batchApplyObjectAction;
 
-  @Mock private ApplyObjectCommand applyObjectCommand;
+  @Mock private BatchApplyObjectCommand batchApplyObjectCommand;
   @Mock private FetchPreconditions preConditions;
   @Mock private ProjectResource projectResource;
+  @Mock private BatchRefUpdate bru;
 
   @Before
   public void setup() throws Exception {
@@ -75,11 +77,11 @@ public class BatchApplyObjectActionTest {
     when(preConditions.canCallFetchApi()).thenReturn(true);
     batchApplyObjectAction =
         new BatchApplyObjectAction(
-            applyObjectCommand, new BatchApplyObjectInputValidator(preConditions));
+            batchApplyObjectCommand, new BatchApplyObjectInputValidator(preConditions));
   }
 
   @Test
-  public void shouldCallApplyObjectCommandForEveryRevision() throws Exception {
+  public void shouldCallBatchApplyObjectsOnce() throws Exception {
     RevisionInput first =
         new RevisionInput(LABEL, REF_NAME, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
     RevisionInput second =
@@ -88,18 +90,12 @@ public class BatchApplyObjectActionTest {
 
     batchApplyObjectAction.apply(projectResource, List.of(first, second));
 
-    verify(applyObjectCommand)
-        .applyObject(
+    verify(batchApplyObjectCommand)
+        .batchApplyObjects(
+            eq("Batch Apply object"),
             eq(PROJECT),
-            eq(REF_NAME),
-            eq(first.getRevisionData()),
-            eq(LABEL),
-            eq(DUMMY_EVENT_TIMESTAMP));
-    verify(applyObjectCommand)
-        .applyObject(
-            eq(PROJECT),
-            eq("refs/heads/other"),
-            eq(second.getRevisionData()),
+            eq(List.of(REF_NAME, "refs/heads/other")),
+            any(),
             eq(LABEL),
             eq(DUMMY_EVENT_TIMESTAMP));
   }
@@ -118,37 +114,45 @@ public class BatchApplyObjectActionTest {
     assertThat(response.statusCode()).isEqualTo(SC_OK);
   }
 
-  @Test(expected = UnprocessableEntityException.class)
-  public void shouldThrowOnFirstFailure() throws Exception {
-    RevisionInput bad =
-        new RevisionInput(LABEL, REF_NAME, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
-
-    doThrow(new RefUpdateException(RefUpdate.Result.LOCK_FAILURE, "BOOM"))
-        .when(applyObjectCommand)
-        .applyObject(any(), any(), any(), any(), anyLong());
-
-    batchApplyObjectAction.apply(projectResource, List.of(bad));
+  @Test(expected = BadRequestException.class)
+  public void shouldThrowBadRequestExceptionWhenInputIsEmpty() throws RestApiException {
+    batchApplyObjectAction.apply(projectResource, Collections.emptyList());
   }
 
-  @Test
-  public void shouldStopProcessingWhenAFailureOccurs() throws Exception {
-    RevisionInput bad =
-        new RevisionInput(LABEL, REF_NAME, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
-    RevisionInput good =
+  @Test(expected = BadRequestException.class)
+  public void shouldThrowBadRequestExceptionWhenLabelsDiffer() throws RestApiException {
+    RevisionInput first =
+        new RevisionInput("label-a", REF_NAME, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
+    RevisionInput second =
         new RevisionInput(
-            LABEL, "refs/heads/other", DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
+            "label-b", "refs/heads/other", DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
 
-    doThrow(new RefUpdateException(RefUpdate.Result.LOCK_FAILURE, "BOOM"))
-        .when(applyObjectCommand)
-        .applyObject(eq(PROJECT), eq(REF_NAME), any(), any(), anyLong());
+    batchApplyObjectAction.apply(projectResource, List.of(first, second));
+  }
 
-    try {
-      batchApplyObjectAction.apply(projectResource, List.of(bad, good));
-    } catch (RestApiException ignored) {
-      // expected
-    }
+  @Test(expected = BadRequestException.class)
+  public void shouldThrowBadRequestExceptionWhenEventTimestampsDiffer() throws RestApiException {
+    RevisionInput first =
+        new RevisionInput(LABEL, REF_NAME, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
+    RevisionInput second =
+        new RevisionInput(
+            LABEL, "refs/heads/other", DUMMY_EVENT_TIMESTAMP + 1, createSampleRevisionData());
 
-    verify(applyObjectCommand, times(1)).applyObject(any(), any(), any(), any(), anyLong());
+    batchApplyObjectAction.apply(projectResource, List.of(first, second));
+  }
+
+  @Test(expected = UnprocessableEntityException.class)
+  public void shouldThrowUnprocessableEntityOnBatchRefUpdateFailure() throws Exception {
+    RevisionInput input =
+        new RevisionInput(LABEL, REF_NAME, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
+
+    BatchRefUpdateException toThrow =
+        new BatchRefUpdateException(new BatchRefUpdateState(bru), "BOOM");
+    doThrow(toThrow)
+        .when(batchApplyObjectCommand)
+        .batchApplyObjects(any(), any(), any(), any(), any(), anyLong());
+
+    batchApplyObjectAction.apply(projectResource, List.of(input));
   }
 
   private RevisionData createSampleRevisionData() {

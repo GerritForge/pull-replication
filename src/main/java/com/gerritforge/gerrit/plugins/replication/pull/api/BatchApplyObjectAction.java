@@ -13,12 +13,14 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
-import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RefUpdateException;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.entities.RefNames;
+import com.google.gerrit.extensions.restapi.BadRequestException;
 import com.google.gerrit.extensions.restapi.PreconditionFailedException;
 import com.google.gerrit.extensions.restapi.ResourceConflictException;
 import com.google.gerrit.extensions.restapi.Response;
@@ -29,21 +31,21 @@ import com.google.gerrit.server.project.ProjectResource;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.eclipse.jgit.lib.RefUpdate;
 
 @Singleton
 class BatchApplyObjectAction implements RestModifyView<ProjectResource, List<RevisionInput>> {
+  private static final String INVOCATION_LABEL = "Batch Apply object";
 
-  private final ApplyObjectCommand applyObjectCommand;
+  private final BatchApplyObjectCommand batchApplyObjectCommand;
   private final BatchApplyObjectInputValidator inputValidator;
 
   @Inject
   BatchApplyObjectAction(
-      ApplyObjectCommand applyObjectCommand, BatchApplyObjectInputValidator inputValidator) {
-    this.applyObjectCommand = applyObjectCommand;
+      BatchApplyObjectCommand batchApplyObjectCommand,
+      BatchApplyObjectInputValidator inputValidator) {
+    this.batchApplyObjectCommand = batchApplyObjectCommand;
     this.inputValidator = inputValidator;
   }
 
@@ -52,88 +54,100 @@ class BatchApplyObjectAction implements RestModifyView<ProjectResource, List<Rev
       throws RestApiException {
     Project.NameKey projectNameKey = resource.getNameKey();
 
-    repLog.info(
-        "Batch Apply object API from {} for refs {}",
-        projectNameKey,
-        inputs.stream().map(RevisionInput::getRefName).collect(Collectors.joining(",")));
-
-    List<Response<?>> allResponses = new ArrayList<>();
-    for (RevisionInput input : inputs) {
-      allResponses.add(applyOne(projectNameKey, input));
+    if (inputs == null || inputs.isEmpty()) {
+      throw new BadRequestException(INVOCATION_LABEL + " input cannot be null or empty");
     }
-    return Response.ok(allResponses);
-  }
 
-  // Per-input handling matches ApplyObjectAction.apply byte-for-byte in
-  // semantics (validation, logging, exception mapping). Inlined here to
-  // break the dependency on ApplyObjectAction. The atomicity behavior is
-  // unchanged: each input is applied by its own RefUpdate via
-  // ApplyObjectCommand.applyObject; a failure mid-batch leaves the
-  // already-applied refs in place. Atomicity is addressed in the
-  // follow-up commit that introduces BatchApplyObject.
-  private Response<?> applyOne(Project.NameKey projectNameKey, RevisionInput input)
-      throws RestApiException {
-    inputValidator.validate(projectNameKey, input);
+    for (RevisionInput input : inputs) {
+      if (input == null) {
+        throw new BadRequestException(INVOCATION_LABEL + " input cannot contain null entries");
+      }
+      inputValidator.validate(projectNameKey, input);
+    }
 
-    repLog.info(
-        "Apply object API from {} for {}:{} - {}",
-        input.getLabel(),
-        projectNameKey,
-        input.getRefName(),
-        input.getRevisionData());
+    List<String> labels = inputs.stream().map(RevisionInput::getLabel).distinct().toList();
+    List<Long> eventCreatedOns =
+        inputs.stream().map(RevisionInput::getEventCreatedOn).distinct().toList();
+
+    if (labels.size() != 1) {
+      throw new BadRequestException(
+          String.format(
+              "Label for %s was expected to be exactly 1, but %s were found: [%s]",
+              INVOCATION_LABEL, labels.size(), String.join(",", labels)));
+    }
+
+    if (eventCreatedOns.size() != 1) {
+      throw new BadRequestException(
+          String.format(
+              "eventCreatedOn for %s was expected to be exactly 1, but %s were found: [%s]",
+              INVOCATION_LABEL,
+              eventCreatedOns.size(),
+              eventCreatedOns.stream().map(Object::toString).collect(Collectors.joining(","))));
+    }
+
+    List<String> refNames = inputs.stream().map(RevisionInput::getRefName).toList();
+    List<RevisionData[]> revisionData =
+        inputs.stream().map(r -> new RevisionData[] {r.getRevisionData()}).toList();
+    String label = labels.getFirst();
+    Long eventCreatedOn = eventCreatedOns.getFirst();
+
+    String revisionsForLog =
+        inputs.stream().map(r -> r.getRevisionData().toString()).collect(Collectors.joining(","));
 
     try {
-      applyObjectCommand.applyObject(
-          projectNameKey,
-          input.getRefName(),
-          input.getRevisionData(),
-          input.getLabel(),
-          input.getEventCreatedOn());
-      return Response.created();
+      batchApplyObjectCommand.batchApplyObjects(
+          INVOCATION_LABEL, projectNameKey, refNames, revisionData, label, eventCreatedOn);
+
+      return Response.ok();
     } catch (MissingParentObjectException e) {
       repLog.error(
-          "Apply object API *FAILED* from {} for {}:{} - {}",
-          input.getLabel(),
+          "{} API *FAILED* from {} for {}:{} - {}",
+          INVOCATION_LABEL,
+          label,
           projectNameKey,
-          input.getRefName(),
-          input.getRevisionData(),
+          refNames,
+          revisionsForLog,
           e);
       throw new ResourceConflictException(e.getMessage(), e);
     } catch (NumberFormatException | IOException e) {
       repLog.error(
-          "Apply object API *FAILED* from {} for {}:{} - {}",
-          input.getLabel(),
+          "{} API *FAILED* from {} for {}:{} - {}",
+          INVOCATION_LABEL,
+          label,
           projectNameKey,
-          input.getRefName(),
-          input.getRevisionData(),
+          refNames,
+          revisionsForLog,
           e);
       throw RestApiException.wrap(e.getMessage(), e);
-    } catch (RefUpdateException e) {
-      if (RefNames.isRefsDraftsComments(input.getRefName())
-          && e.getResult().equals(RefUpdate.Result.REJECTED)) {
+    } catch (BatchRefUpdateException e) {
+      if (refNames.stream().anyMatch(RefNames::isRefsDraftsComments)
+          && e.containsRejectedResult()) {
         repLog.info(
-            "Apply object API *REJECTED* from {} for {}:{} - {}",
-            input.getLabel(),
+            "{} API *REJECTED* from {} for {}:{} - {}",
+            INVOCATION_LABEL,
+            label,
             projectNameKey,
-            input.getRefName(),
-            input.getRevisionData());
+            refNames,
+            revisionsForLog);
       } else {
         repLog.error(
-            "Apply object API *FAILED* from {} for {}:{} - {}",
-            input.getLabel(),
+            "{} API *FAILED* from {} for {}:{} - {}",
+            INVOCATION_LABEL,
+            label,
             projectNameKey,
-            input.getRefName(),
-            input.getRevisionData(),
+            refNames,
+            revisionsForLog,
             e);
       }
       throw new UnprocessableEntityException(e.getMessage());
     } catch (MissingLatestPatchSetException e) {
       repLog.error(
-          "Apply object API *FAILED* from {} for {}:{} - {}",
-          input.getLabel(),
+          "{} API *FAILED* from {} for {}:{} - {}",
+          INVOCATION_LABEL,
+          label,
           projectNameKey,
-          input.getRefName(),
-          input.getRevisionData(),
+          refNames,
+          revisionsForLog,
           e);
       throw new PreconditionFailedException(e.getMessage());
     }
