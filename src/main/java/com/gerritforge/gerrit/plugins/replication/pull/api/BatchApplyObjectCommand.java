@@ -29,6 +29,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectDa
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.BatchRefUpdateException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.NonFastForwardException;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.BatchApplyObject;
 import com.gerritforge.gerrit.plugins.replication.pull.fetch.BatchRefUpdateState;
 import com.google.common.cache.Cache;
@@ -98,7 +99,8 @@ public class BatchApplyObjectCommand {
           BatchRefUpdateException,
           MissingParentObjectException,
           ResourceNotFoundException,
-          MissingLatestPatchSetException {
+          MissingLatestPatchSetException,
+          NonFastForwardException {
 
     if (refNames.size() != revisionsDataList.size()) {
       throw new IllegalArgumentException(
