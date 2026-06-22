@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d190a1d6_6b683dc3",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:09:28Z",
+      "side": 0,
+      "message": "This isn\u0027t used anywhere else, other than here and in the tests.\nWe shouldn\u0027t rely on the internals of a class in our tests. Are those assertions really needed?",
+      "range": {
+        "startLine": 191,
+        "startChar": 2,
+        "endLine": 191,
+        "endChar": 9
+      },
+      "revId": "d3d8aac50284062d537dbf0b424a410358b32fe1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}

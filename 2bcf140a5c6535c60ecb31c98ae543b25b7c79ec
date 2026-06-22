@@ -62,6 +62,138 @@
       },
       "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0bfddaa6_09c3f4a9",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:09:28Z",
+      "side": 1,
+      "message": "Unrelated change?",
+      "range": {
+        "startLine": 248,
+        "startChar": 0,
+        "endLine": 250,
+        "endChar": 9
+      },
+      "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ebf21e97_f5128e8b",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/BatchApplyObjectAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:09:28Z",
+      "side": 1,
+      "message": "Unrelated change? This check is useful, however, it\u0027s unrelated to the fix.",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 58,
+        "endChar": 5
+      },
+      "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "65e2ca53_436adffd",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/BatchApplyObjectAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:09:28Z",
+      "side": 1,
+      "message": "This condition is impossible: adding a null element to a collection would trigger an NPE upon addition.",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 63,
+        "endChar": 7
+      },
+      "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5dfeb09f_aaf7ef58",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/BatchApplyObjectAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:09:28Z",
+      "side": 1,
+      "message": "You cannot receive multiple instance-ids from a single request.\n\nThere is a refactoring needed here:\n- Change the parameter from `List\u003cRevisionInput\u003e` to a complex type\n- Pass the `label` once and not one per `RevisionInput`\n\nIt should be done as a pre-requisite to this change.\nYou must also account for zero-downtime rollout, accepting the previous payload.",
+      "range": {
+        "startLine": 67,
+        "startChar": 17,
+        "endLine": 67,
+        "endChar": 23
+      },
+      "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "20543227_98ace0f7",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/BatchApplyObjectAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:09:28Z",
+      "side": 1,
+      "message": "Same as above: the `eventCreatedOn` must be passed once and not on a per-`RevisionInput` basis.",
+      "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea7d426d_74b865dc",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/BatchApplyObjectAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:09:28Z",
+      "side": 1,
+      "message": "We should pass them as related, e.g. map of `refNames` to their associated `revisionData`.",
+      "range": {
+        "startLine": 98,
+        "startChar": 44,
+        "endLine": 98,
+        "endChar": 67
+      },
+      "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
