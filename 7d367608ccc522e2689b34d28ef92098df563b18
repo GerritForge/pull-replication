@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5100a209_f795a743",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/exception/NonFastForwardException.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T14:30:48Z",
+      "side": 1,
+      "message": "Apply-object can never be a forced update because their order cannot be guaranteed.",
+      "range": {
+        "startLine": 20,
+        "startChar": 60,
+        "endLine": 21,
+        "endChar": 24
+      },
+      "revId": "7d367608ccc522e2689b34d28ef92098df563b18",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
