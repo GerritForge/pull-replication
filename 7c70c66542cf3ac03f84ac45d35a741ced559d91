@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2a22bcfc_6996b451",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectCommand.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T21:55:46Z",
+      "side": 1,
+      "message": "This decoding is problematic because the lookup table between `RefUpdate.Result` and `ReceiveCommand.Result` isn\u0027t invertible.\n\nSee https://github.com/eclipse-jgit/jgit/blob/master/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java#L807.\n\nSome examples:\n\n- `ReceiveCommand.Result \u003d LOCK_FAILURE` could have been caused by `RefUpdate.Result \u003d LOCK_FAILURE` or `RefUpdate.Result \u003d IO_FAILURE`.\n\n- `ReceiveCommand.Result \u003d OK` doesn\u0027t remember which type of update was successful. It could have been `RefUpdate.Result \u003d NO_CHANGE` or `RefUpdate.Result \u003d NEW` or `RefUpdate.Result \u003d FORCED` or `RefUpdate.Result \u003d FAST_FORWARD`\n\n... and what about the `ReceiveCommand.Result \u003d REJECTED_NODELETE`, `ReceiveCommand.Result \u003d REJECT_NOCREATE`?\n\nThis status remapping is only used in the `FetchRefReplicatedEvent`, why not simply change the event and use the `ReceiveCommand.Result` instead? We may also need to store the `ReceiveCommand.Type`.",
+      "range": {
+        "startLine": 186,
+        "startChar": 0,
+        "endLine": 186,
+        "endChar": 79
+      },
+      "revId": "7c70c66542cf3ac03f84ac45d35a741ced559d91",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d05b7c05_63a39afd",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectCommand.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T21:55:46Z",
+      "side": 1,
+      "message": "Missing `{` `}` which is then fixed in I60bd68ea. Why not apply the formatting fix when the code has been introduced rather than adding to a different change? Pushed by mistake?",
+      "range": {
+        "startLine": 189,
+        "startChar": 0,
+        "endLine": 190,
+        "endChar": 43
+      },
+      "revId": "7c70c66542cf3ac03f84ac45d35a741ced559d91",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6151d193_111ae831",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectCommand.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T21:55:46Z",
+      "side": 1,
+      "message": "This isn\u0027t true: the update could have been a non-fast-forward (e.g. updating blobs).",
+      "range": {
+        "startLine": 193,
+        "startChar": 10,
+        "endLine": 193,
+        "endChar": 55
+      },
+      "revId": "7c70c66542cf3ac03f84ac45d35a741ced559d91",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "947373cd_faf0a5d9",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectCommand.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T21:55:46Z",
+      "side": 1,
+      "message": "This doesn\u0027t correspond to what the batch-ref-update does at https://github.com/eclipse-jgit/jgit/blob/master/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java#L807",
+      "range": {
+        "startLine": 197,
+        "startChar": 11,
+        "endLine": 197,
+        "endChar": 47
+      },
+      "revId": "7c70c66542cf3ac03f84ac45d35a741ced559d91",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "387b20de_180479a1",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectCommand.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T21:55:46Z",
+      "side": 1,
+      "message": "This is wrong, according to https://github.com/eclipse-jgit/jgit/blob/master/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java#L807.\n\n\n\n```suggestion\n      case REJECTED_MISSING_OBJECT -\u003e RefUpdate.Result.MISSING_OBJECT;\n```",
+      "range": {
+        "startLine": 200,
+        "startChar": 11,
+        "endLine": 200,
+        "endChar": 34
+      },
+      "revId": "7c70c66542cf3ac03f84ac45d35a741ced559d91",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef684e79_00ba144f",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectCommand.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T21:55:46Z",
+      "side": 1,
+      "message": "Missing the `NOT_ATTEMPTED` case.\n\n\n\n```suggestion\n      case NOT_ATTEMPTED -\u003e RefUpdate.Result.NOT_ATTEMPTED;\n      default -\u003e RefUpdate.Result.LOCK_FAILURE;\n```",
+      "range": {
+        "startLine": 201,
+        "startChar": 6,
+        "endLine": 201,
+        "endChar": 47
+      },
+      "revId": "7c70c66542cf3ac03f84ac45d35a741ced559d91",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
