@@ -240,6 +240,29 @@
       },
       "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb93abe0_158ea45b",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/fetch/ApplyObject.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:23:59Z",
+      "side": 1,
+      "message": "This should be incapsulated inside the `BatchApplyObject` implementation.\n\n```suggestion\n        try (RevWalk rw \u003d new RevWalk(git)) {\n          batch.executeChecked();\n        }\n```\n\nThen the `BatchApplyObject` in its `executeChecked()` command should do:\n\n\n```\npublic void executeChecked() {\n  try (RevWalk rw \u003d new RevWalk(git)) {\n    getBatchRefUpdate().execute(rw, NullProgressMonitor.INSTANCE);\n  }\n}\n```",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 9
+      },
+      "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
