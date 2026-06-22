@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "44301041_7d1f3fb5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T20:22:18Z",
+      "side": 1,
+      "message": "Is this the same issue?",
+      "revId": "7d367608ccc522e2689b34d28ef92098df563b18",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5100a209_f795a743",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/exception/NonFastForwardException.java",
         "patchSetId": 1
@@ -19,6 +36,52 @@
         "startChar": 60,
         "endLine": 21,
         "endChar": 24
+      },
+      "revId": "7d367608ccc522e2689b34d28ef92098df563b18",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec8edf65_dde2d6dc",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/fetch/BatchApplyObject.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T20:22:18Z",
+      "side": 1,
+      "message": "Can you create an issue and explain the problem we want to solve?\nCan you also explain how was it manifesting and what was the impact of the issue?",
+      "range": {
+        "startLine": 117,
+        "startChar": 0,
+        "endLine": 121,
+        "endChar": 71
+      },
+      "revId": "7d367608ccc522e2689b34d28ef92098df563b18",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "881e9dd2_9e08ab51",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/fetch/BatchApplyObject.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T20:22:18Z",
+      "side": 1,
+      "message": "I don\u0027t understand this check: we already verify that we have the parent object in the repository. How is this different?\n\nMaybe the only thing we have to check is that the parent object *IS* the `oldCommit`. Why are we using the `isMergedInfo` here?",
+      "range": {
+        "startLine": 126,
+        "startChar": 0,
+        "endLine": 128,
+        "endChar": 9
       },
       "revId": "7d367608ccc522e2689b34d28ef92098df563b18",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
