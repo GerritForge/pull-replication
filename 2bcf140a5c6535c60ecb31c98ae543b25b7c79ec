@@ -217,6 +217,29 @@
       },
       "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "de349516_f082b498",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/BatchApplyObjectAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:19:21Z",
+      "side": 1,
+      "message": "Do we need to manage all these exceptions with an almost identical body? Is there any difference seen by the client and how it manages its fallback actions?",
+      "range": {
+        "startLine": 101,
+        "startChar": 0,
+        "endLine": 141,
+        "endChar": 61
+      },
+      "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
