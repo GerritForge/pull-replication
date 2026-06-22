@@ -13,6 +13,7 @@ package com.gerritforge.gerrit.plugins.replication.pull.api;
 
 import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLogger.repLog;
 
+import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingLatestPatchSetException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.MissingParentObjectException;
@@ -39,12 +40,16 @@ public class ApplyObjectAction implements RestModifyView<ProjectResource, Revisi
 
   private final ApplyObjectCommand applyObjectCommand;
   private final FetchPreconditions preConditions;
+  private final SourcesCollection sourcesCollection;
 
   @Inject
   public ApplyObjectAction(
-      ApplyObjectCommand applyObjectCommand, FetchPreconditions preConditions) {
+      ApplyObjectCommand applyObjectCommand,
+      FetchPreconditions preConditions,
+      SourcesCollection sourcesCollection) {
     this.applyObjectCommand = applyObjectCommand;
     this.preConditions = preConditions;
+    this.sourcesCollection = sourcesCollection;
   }
 
   @Override
@@ -55,6 +60,10 @@ public class ApplyObjectAction implements RestModifyView<ProjectResource, Revisi
     }
     if (Strings.isNullOrEmpty(input.getLabel())) {
       throw new BadRequestException("Source label cannot be null or empty");
+    }
+    if (sourcesCollection.getByRemoteName(input.getLabel()).isEmpty()) {
+      throw new BadRequestException(
+          "Source label " + input.getLabel() + " is not a configured remote");
     }
     if (Strings.isNullOrEmpty(input.getRefName())) {
       throw new BadRequestException("Ref-update refname cannot be null or empty");
