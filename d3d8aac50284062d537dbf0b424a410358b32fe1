@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "683bdaae_77cfe8ab",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T20:44:20Z",
+      "side": 1,
+      "message": "This looks the wrong abstraction to me: `ApplyObject` can be part of a batch, but it isn\u0027t the batch and shouldn\u0027t manage the batch.",
+      "range": {
+        "startLine": 9,
+        "startChar": 11,
+        "endLine": 9,
+        "endChar": 53
+      },
+      "revId": "d3d8aac50284062d537dbf0b424a410358b32fe1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab0348c8_3ef0862a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T20:44:20Z",
+      "side": 1,
+      "message": "There isn\u0027t any change in behaviour here and no difference in implementation: the code is identical to me. It was using the batch operations also before this change.",
+      "range": {
+        "startLine": 13,
+        "startChar": 13,
+        "endLine": 14,
+        "endChar": 59
+      },
+      "revId": "d3d8aac50284062d537dbf0b424a410358b32fe1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f26037a7_a8d13cb9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T20:44:20Z",
+      "side": 1,
+      "message": "This change cannot be reviewed standalone as-is: IMHO it is small enough to be merged with the change that implements the atomic execution.\n\nThe argument that the destination change would be too big to review doens\u0027t apply here: this change is a single file with 25 LOC changes, it is too small to be reviewed and doesn\u0027t make sense standalone as-is IMHO.",
+      "revId": "d3d8aac50284062d537dbf0b424a410358b32fe1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1eb99ec_13290ac5",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/fetch/ApplyObject.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T20:44:20Z",
+      "side": 1,
+      "message": "How can this be possible? This method did not exist before and the size are always equal to one, see L50.",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 5
+      },
+      "revId": "d3d8aac50284062d537dbf0b424a410358b32fe1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "267221e9_284f0faa",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/fetch/ApplyObject.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T20:44:20Z",
+      "side": 1,
+      "message": "This is identical to the previous code, because refSpecs.size() is always going to be one.",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 9
+      },
+      "revId": "d3d8aac50284062d537dbf0b424a410358b32fe1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
