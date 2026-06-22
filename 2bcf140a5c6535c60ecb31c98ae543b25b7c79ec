@@ -39,6 +39,29 @@
       "message": "Before reviewing it, I\u0027d need some explanation on why is this needed and how this correlates with fixing the issue.",
       "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "40d1768a_a726669a",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T20:48:34Z",
+      "side": 1,
+      "message": "This looks wrong to me and it\u0027s the wrong granularity. It should be a map of `refnames` and their associated `revisionData[]` so that the linking is direct and not simply the _corresponding elements in the arryay_.\n\nAlso, this method is in the wrong place: this class manages the apply object for a *single ref* and not for a *set of refs*.",
+      "range": {
+        "startLine": 127,
+        "startChar": 0,
+        "endLine": 128,
+        "endChar": 45
+      },
+      "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
