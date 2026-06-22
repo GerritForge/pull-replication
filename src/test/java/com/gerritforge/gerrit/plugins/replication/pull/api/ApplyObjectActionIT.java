@@ -175,6 +175,21 @@ public class ApplyObjectActionIT extends ActionITBase {
 
   @Test
   @GerritConfig(name = "gerrit.instanceId", value = "testInstanceId")
+  public void shouldReturnBadRequestCodeWhenLabelIsNotAConfiguredRemote() throws Exception {
+    String payloadWithUnknownLabelTemplate =
+        "{\"label\":\"unknown-remote\",\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]}}";
+
+    String sendObjectPayload = createPayloadFromNewRef(payloadWithUnknownLabelTemplate, createRef());
+
+    httpClientFactory
+        .create(source)
+        .execute(
+            withBasicAuthenticationAsAdmin(createRequest(sendObjectPayload)),
+            assertHttpResponseCode(400));
+  }
+
+  @Test
+  @GerritConfig(name = "gerrit.instanceId", value = "testInstanceId")
   public void shouldReturnBadRequestCodeWhenPayloadIsNotAProperJSON() throws Exception {
     String wrongPayloadTemplate =
         "{\"label\":\""
@@ -247,6 +262,11 @@ public class ApplyObjectActionIT extends ActionITBase {
         .execute(
             withBearerTokenAuthentication(createRequest(sendObjectPayload), "some-bearer-token"),
             assertHttpResponseCode(201));
+  }
+
+  private String createPayloadFromNewRef(String template, String refName) throws Exception {
+    Optional<RevisionData> revisionDataOption = createRevisionData(refName);
+    return createPayload(template, refName, revisionDataOption.orElseThrow());
   }
 
   private String createPayload(
