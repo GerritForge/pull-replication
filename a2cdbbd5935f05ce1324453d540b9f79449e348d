@@ -45,6 +45,46 @@
       },
       "revId": "a2cdbbd5935f05ce1324453d540b9f79449e348d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a241c914_975aa78f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:32:25Z",
+      "side": 1,
+      "message": "I don\u0027t believe this change makes sense standalone, whilst in the context of another bigger change it can be reviewed and can make sense.\n\nConsider squashing it.",
+      "revId": "a2cdbbd5935f05ce1324453d540b9f79449e348d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d5d37be_b0fadc3f",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/fetch/ApplyObject.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:32:25Z",
+      "side": 1,
+      "message": "Why do we need to decode the result? The association between `ReceiveCommand.Result` and `RefUpdate.Result` isn\u0027t 1:1 and therefore the mapping would never be correct.\n\nIf we change the ref-update mechanism, let\u0027s just return what the `ReceiveCommand` is returning to us.",
+      "range": {
+        "startLine": 119,
+        "startChar": 0,
+        "endLine": 136,
+        "endChar": 3
+      },
+      "revId": "a2cdbbd5935f05ce1324453d540b9f79449e348d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
