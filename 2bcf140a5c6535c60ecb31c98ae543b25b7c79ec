@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e43b720f_4e13c335",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T14:16:42Z",
+      "side": 1,
+      "message": "The diff already mentions what you\u0027ve applied. Can you explain why is this needed and how this relates to the input validation extraction?\n\nIs this coupled with this change?",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 13
+      },
+      "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "972a3255_9b1142f1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T14:16:42Z",
+      "side": 1,
+      "message": "Before reviewing it, I\u0027d need some explanation on why is this needed and how this correlates with fixing the issue.",
+      "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
