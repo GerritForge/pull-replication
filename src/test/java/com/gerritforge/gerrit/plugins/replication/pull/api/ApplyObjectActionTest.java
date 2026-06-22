@@ -19,6 +19,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
+import com.gerritforge.gerrit.plugins.replication.pull.Source;
+import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionObjectData;
@@ -34,6 +36,7 @@ import com.google.gerrit.server.project.ProjectResource;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Before;
@@ -84,12 +87,15 @@ public class ApplyObjectActionTest {
   @Mock ApplyObjectCommand applyObjectCommand;
   @Mock ProjectResource projectResource;
   @Mock FetchPreconditions preConditions;
+  @Mock SourcesCollection sourcesCollection;
+  @Mock Source source;
 
   @Before
   public void setup() throws Exception {
     when(preConditions.canCallFetchApi()).thenReturn(true);
+    when(sourcesCollection.getByRemoteName(label)).thenReturn(Optional.of(source));
 
-    applyObjectAction = new ApplyObjectAction(applyObjectCommand, preConditions);
+    applyObjectAction = new ApplyObjectAction(applyObjectCommand, preConditions, sourcesCollection);
   }
 
   @Test
@@ -140,6 +146,16 @@ public class ApplyObjectActionTest {
   public void shouldThrowBadRequestExceptionWhenEmptyLabel() throws Exception {
     RevisionInput inputParams =
         new RevisionInput("", refName, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
+
+    applyObjectAction.apply(projectResource, inputParams);
+  }
+
+  @Test(expected = BadRequestException.class)
+  public void shouldThrowBadRequestExceptionWhenLabelIsNotAConfiguredRemote() throws Exception {
+    String unknownLabel = "unknown-remote";
+    when(sourcesCollection.getByRemoteName(unknownLabel)).thenReturn(Optional.empty());
+    RevisionInput inputParams =
+        new RevisionInput(unknownLabel, refName, DUMMY_EVENT_TIMESTAMP, createSampleRevisionData());
 
     applyObjectAction.apply(projectResource, inputParams);
   }

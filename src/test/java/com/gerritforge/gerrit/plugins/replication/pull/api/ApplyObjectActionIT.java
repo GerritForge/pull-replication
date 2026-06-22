@@ -138,13 +138,7 @@ public class ApplyObjectActionIT extends ActionITBase {
             + TEST_REPLICATION_REMOTE
             + "\",\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]}}";
 
-    String refName = createRef();
-    Optional<RevisionData> revisionDataOption = createRevisionData(refName);
-    assertThat(revisionDataOption.isPresent()).isTrue();
-
-    RevisionData revisionData = revisionDataOption.get();
-    String sendObjectPayload =
-        createPayload(payloadWithoutAsyncFieldTemplate, refName, revisionData);
+    String sendObjectPayload = createPayloadFromNewRef(payloadWithoutAsyncFieldTemplate);
 
     httpClientFactory
         .create(source)
@@ -158,13 +152,22 @@ public class ApplyObjectActionIT extends ActionITBase {
         "{\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]},"
             + " \"async\":true}";
 
-    String refName = createRef();
-    Optional<RevisionData> revisionDataOption = createRevisionData(refName);
-    assertThat(revisionDataOption.isPresent()).isTrue();
+    String sendObjectPayload = createPayloadFromNewRef(payloadWithoutLabelFieldTemplate);
 
-    RevisionData revisionData = revisionDataOption.get();
-    String sendObjectPayload =
-        createPayload(payloadWithoutLabelFieldTemplate, refName, revisionData);
+    httpClientFactory
+        .create(source)
+        .execute(
+            withBasicAuthenticationAsAdmin(createRequest(sendObjectPayload)),
+            assertHttpResponseCode(400));
+  }
+
+  @Test
+  @GerritConfig(name = "gerrit.instanceId", value = "testInstanceId")
+  public void shouldReturnBadRequestCodeWhenLabelIsNotAConfiguredRemote() throws Exception {
+    String payloadWithUnknownLabelTemplate =
+        "{\"label\":\"unknown-remote\",\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]}}";
+
+    String sendObjectPayload = createPayloadFromNewRef(payloadWithUnknownLabelTemplate);
 
     httpClientFactory
         .create(source)
@@ -182,12 +185,7 @@ public class ApplyObjectActionIT extends ActionITBase {
             + "\",\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]},"
             + " \"async\":true,}";
 
-    String refName = createRef();
-    Optional<RevisionData> revisionDataOption = createRevisionData(refName);
-    assertThat(revisionDataOption.isPresent()).isTrue();
-
-    RevisionData revisionData = revisionDataOption.get();
-    String sendObjectPayload = createPayload(wrongPayloadTemplate, refName, revisionData);
+    String sendObjectPayload = createPayloadFromNewRef(wrongPayloadTemplate);
 
     httpClientFactory
         .create(source)
@@ -207,13 +205,7 @@ public class ApplyObjectActionIT extends ActionITBase {
             + TEST_REPLICATION_REMOTE
             + "\",\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]}}";
 
-    String refName = createRef();
-    Optional<RevisionData> revisionDataOption = createRevisionData(refName);
-    assertThat(revisionDataOption.isPresent()).isTrue();
-
-    RevisionData revisionData = revisionDataOption.get();
-    String sendObjectPayload =
-        createPayload(payloadWithoutAsyncFieldTemplate, refName, revisionData);
+    String sendObjectPayload = createPayloadFromNewRef(payloadWithoutAsyncFieldTemplate);
 
     httpClientFactory
         .create(source)
@@ -247,6 +239,13 @@ public class ApplyObjectActionIT extends ActionITBase {
         .execute(
             withBearerTokenAuthentication(createRequest(sendObjectPayload), "some-bearer-token"),
             assertHttpResponseCode(201));
+  }
+
+  private String createPayloadFromNewRef(String template) throws Exception {
+    String refName = createRef();
+    Optional<RevisionData> revisionDataOption = createRevisionData(refName);
+    assertThat(revisionDataOption.isPresent()).isTrue();
+    return createPayload(template, refName, revisionDataOption.get());
   }
 
   private String createPayload(
