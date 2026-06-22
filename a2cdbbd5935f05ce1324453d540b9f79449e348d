@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45736980_f1db80da",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/fetch/ApplyObject.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:44:36Z",
+      "side": 0,
+      "message": "This method was just introduced in the parent change: what\u0027s the point of adding it in the first place then? Can we squash the two changes instead?",
+      "revId": "a2cdbbd5935f05ce1324453d540b9f79449e348d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}

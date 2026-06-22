@@ -137,6 +137,23 @@
       },
       "revId": "7c70c66542cf3ac03f84ac45d35a741ced559d91",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b5d2677c_df191d37",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/fetch/ApplyObject.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:44:36Z",
+      "side": 1,
+      "message": "Unrelated change?",
+      "revId": "7c70c66542cf3ac03f84ac45d35a741ced559d91",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
