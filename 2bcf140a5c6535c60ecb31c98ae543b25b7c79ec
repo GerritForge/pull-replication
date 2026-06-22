@@ -175,6 +175,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "da8e0360_e8655132",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/BatchApplyObjectAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-22T22:15:18Z",
+      "side": 1,
+      "message": "This method should belong to a `BatchApplyObjectCommand` which is able to work on a set of apply object commands.\n\nWe now have a misleading class organisation here:\n- `ApplyObjectCommand` doesn\u0027t work on a single command but on a batch of commands\n- `BatchApplyObjectCommand` doesn\u0027t exist\n\nWhat I believe we should do instead is:\n\na) Create a brand-new command called `BatchApplyObjectCommand` which implements the transactional execution of multiple apply objects in a single batch\n\nb) Have the `ApplyObjectAction` call the `BatchApplyObjectCommand` with a set of one apply object action.\n\nIn terms of execution, we should first implement and run it side by side with the existing code. Then we can make a separate change to remove the legacy `ApplyObjectCommand` and use the new implementation.\n\nAt the moment, the class names are misleading, as the single command actually manages a batch of commands.",
+      "range": {
+        "startLine": 97,
+        "startChar": 25,
+        "endLine": 97,
+        "endChar": 42
+      },
+      "revId": "2bcf140a5c6535c60ecb31c98ae543b25b7c79ec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ea7d426d_74b865dc",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/BatchApplyObjectAction.java",
         "patchSetId": 3
