@@ -18,6 +18,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ccd8d59e_95261800",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectActionIT.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-06-23T13:44:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec33062c_d78a3c91",
+      "revId": "d6522af1bebaaf8bf66288ee8a2006c745eaf41d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "434c3a18_0beacb4f",
@@ -49,6 +67,24 @@
       "side": 1,
       "message": "Agreed, but the pattern seems to be that across the board and didn\u0027t want to change behaviour with this change.",
       "parentUuid": "434c3a18_0beacb4f",
+      "revId": "d6522af1bebaaf8bf66288ee8a2006c745eaf41d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "81a4e7e6_d4079595",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectActionIT.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-06-23T13:44:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "08f32367_ef4ef32c",
       "revId": "d6522af1bebaaf8bf66288ee8a2006c745eaf41d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
