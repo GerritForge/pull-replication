@@ -38,12 +38,7 @@ public class ApplyObjectActionIT extends ActionITBase {
             + "\",\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]},"
             + " \"async\":true}";
 
-    Optional<RevisionData> revisionDataOption = createRevisionData(REFS_HEADS_MASTER);
-    assertThat(revisionDataOption.isPresent()).isTrue();
-
-    RevisionData revisionData = revisionDataOption.get();
-    String sendObjectPayload =
-        createPayload(payloadWithAsyncFieldTemplate, REFS_HEADS_MASTER, revisionData);
+    String sendObjectPayload = createPayloadFromMaster(payloadWithAsyncFieldTemplate);
 
     deleteTestProjectBranch(REFS_HEADS_MASTER);
     httpClientFactory
@@ -62,12 +57,7 @@ public class ApplyObjectActionIT extends ActionITBase {
             + TEST_REPLICATION_REMOTE
             + "\",\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]}}";
 
-    Optional<RevisionData> revisionDataOption = createRevisionData(REFS_HEADS_MASTER);
-    assertThat(revisionDataOption.isPresent()).isTrue();
-
-    RevisionData revisionData = revisionDataOption.get();
-    String sendObjectPayload =
-        createPayload(payloadWithoutAsyncFieldTemplate, REFS_HEADS_MASTER, revisionData);
+    String sendObjectPayload = createPayloadFromMaster(payloadWithoutAsyncFieldTemplate);
 
     deleteTestProjectBranch(REFS_HEADS_MASTER);
     httpClientFactory
@@ -87,12 +77,7 @@ public class ApplyObjectActionIT extends ActionITBase {
             + TEST_REPLICATION_REMOTE
             + "\",\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]}}";
 
-    Optional<RevisionData> revisionDataOption = createRevisionData(REFS_HEADS_MASTER);
-    assertThat(revisionDataOption.isPresent()).isTrue();
-
-    RevisionData revisionData = revisionDataOption.get();
-    String sendObjectPayload =
-        createPayload(payloadWithoutAsyncFieldTemplate, REFS_HEADS_MASTER, revisionData);
+    String sendObjectPayload = createPayloadFromMaster(payloadWithoutAsyncFieldTemplate);
 
     deleteTestProjectBranch(REFS_HEADS_MASTER);
     httpClientFactory
@@ -138,13 +123,7 @@ public class ApplyObjectActionIT extends ActionITBase {
             + TEST_REPLICATION_REMOTE
             + "\",\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]}}";
 
-    String refName = createRef();
-    Optional<RevisionData> revisionDataOption = createRevisionData(refName);
-    assertThat(revisionDataOption.isPresent()).isTrue();
-
-    RevisionData revisionData = revisionDataOption.get();
-    String sendObjectPayload =
-        createPayload(payloadWithoutAsyncFieldTemplate, refName, revisionData);
+    String sendObjectPayload = createPayloadFromNewRef(payloadWithoutAsyncFieldTemplate);
 
     httpClientFactory
         .create(source)
@@ -158,13 +137,7 @@ public class ApplyObjectActionIT extends ActionITBase {
         "{\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]},"
             + " \"async\":true}";
 
-    String refName = createRef();
-    Optional<RevisionData> revisionDataOption = createRevisionData(refName);
-    assertThat(revisionDataOption.isPresent()).isTrue();
-
-    RevisionData revisionData = revisionDataOption.get();
-    String sendObjectPayload =
-        createPayload(payloadWithoutLabelFieldTemplate, refName, revisionData);
+    String sendObjectPayload = createPayloadFromNewRef(payloadWithoutLabelFieldTemplate);
 
     httpClientFactory
         .create(source)
@@ -197,12 +170,7 @@ public class ApplyObjectActionIT extends ActionITBase {
             + "\",\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]},"
             + " \"async\":true,}";
 
-    String refName = createRef();
-    Optional<RevisionData> revisionDataOption = createRevisionData(refName);
-    assertThat(revisionDataOption.isPresent()).isTrue();
-
-    RevisionData revisionData = revisionDataOption.get();
-    String sendObjectPayload = createPayload(wrongPayloadTemplate, refName, revisionData);
+    String sendObjectPayload = createPayloadFromNewRef(wrongPayloadTemplate);
 
     httpClientFactory
         .create(source)
@@ -222,13 +190,7 @@ public class ApplyObjectActionIT extends ActionITBase {
             + TEST_REPLICATION_REMOTE
             + "\",\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]}}";
 
-    String refName = createRef();
-    Optional<RevisionData> revisionDataOption = createRevisionData(refName);
-    assertThat(revisionDataOption.isPresent()).isTrue();
-
-    RevisionData revisionData = revisionDataOption.get();
-    String sendObjectPayload =
-        createPayload(payloadWithoutAsyncFieldTemplate, refName, revisionData);
+    String sendObjectPayload = createPayloadFromNewRef(payloadWithoutAsyncFieldTemplate);
 
     httpClientFactory
         .create(source)
@@ -249,12 +211,7 @@ public class ApplyObjectActionIT extends ActionITBase {
             + TEST_REPLICATION_REMOTE
             + "\",\"ref_name\":\"%s\",\"revision_data\":{\"commit_object\":{\"sha1\":\"%s\",\"type\":1,\"content\":\"%s\"},\"tree_object\":{\"type\":2,\"content\":\"%s\"},\"blobs\":[]}}";
 
-    Optional<RevisionData> revisionDataOption = createRevisionData(REFS_HEADS_MASTER);
-    assertThat(revisionDataOption.isPresent()).isTrue();
-
-    RevisionData revisionData = revisionDataOption.get();
-    String sendObjectPayload =
-        createPayload(payloadWithoutAsyncFieldTemplate, REFS_HEADS_MASTER, revisionData);
+    String sendObjectPayload = createPayloadFromMaster(payloadWithoutAsyncFieldTemplate);
 
     deleteTestProjectBranch(REFS_HEADS_MASTER);
     httpClientFactory
@@ -268,6 +225,11 @@ public class ApplyObjectActionIT extends ActionITBase {
     String refName = createRef();
     Optional<RevisionData> revisionDataOption = createRevisionData(refName);
     return createPayload(template, refName, revisionDataOption.orElseThrow());
+  }
+
+  private String createPayloadFromMaster(String template) throws Exception {
+    Optional<RevisionData> revisionDataOption = createRevisionData(REFS_HEADS_MASTER);
+    return createPayload(template, REFS_HEADS_MASTER, revisionDataOption.orElseThrow());
   }
 
   private String createPayload(
