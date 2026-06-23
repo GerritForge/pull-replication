@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec33062c_d78a3c91",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectActionIT.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-23T11:41:43Z",
+      "side": 1,
+      "message": "This is a nice refactoring. Can you extract it into a separate change?",
+      "revId": "d6522af1bebaaf8bf66288ee8a2006c745eaf41d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "434c3a18_0beacb4f",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectActionIT.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-23T11:41:43Z",
+      "side": 1,
+      "message": "This method is for creating a payload; I would not have expected to also assert anything.",
+      "revId": "d6522af1bebaaf8bf66288ee8a2006c745eaf41d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
