@@ -16,6 +16,24 @@
       "message": "Can you expand what you dry-ed in the ApplyObjectActionIT ?",
       "revId": "82973c65004df106f8625836a873887a6dc619d1",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d96f99a_96f77b68",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-06-25T14:20:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a764c6e5_8f7a3411",
+      "revId": "82973c65004df106f8625836a873887a6dc619d1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
