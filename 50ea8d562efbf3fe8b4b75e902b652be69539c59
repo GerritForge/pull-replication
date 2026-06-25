@@ -16,6 +16,24 @@
       "message": "See my comment in previous review: https://review.gerrithub.io/c/GerritForge/pull-replication/+/1240040/comment/02b7785a_92309ed4/",
       "revId": "50ea8d562efbf3fe8b4b75e902b652be69539c59",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "97a580ea_c29c62b2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-06-25T14:02:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6508b449_bee7a0e8",
+      "revId": "50ea8d562efbf3fe8b4b75e902b652be69539c59",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
