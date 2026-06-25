@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "02b7785a_92309ed4",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/api/ApplyObjectActionIT.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-06-25T07:57:24Z",
+      "side": 1,
+      "message": "nit: What about passing the `ref` as parameter?  In the followup change you can have a single method to use with any ref, including master.",
+      "range": {
+        "startLine": 267,
+        "startChar": 17,
+        "endLine": 267,
+        "endChar": 40
+      },
+      "revId": "c444cca5bdca3520ea70a8b13f17939955d8b355",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
