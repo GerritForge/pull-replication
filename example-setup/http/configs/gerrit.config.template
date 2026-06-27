@@ -26,3 +26,5 @@
     directory = cache
 [plugins]
     allowRemoteAdmin = true
+[event "stream-events"]
+    enableBatchRefUpdatedEvents = true

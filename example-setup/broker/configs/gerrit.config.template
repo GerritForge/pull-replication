@@ -38,3 +38,5 @@
     autoCommitIntervalMs = 1000
     autoOffsetReset = latest
     sendStreamEvents = true
+[event "stream-events"]
+    enableBatchRefUpdatedEvents = true
