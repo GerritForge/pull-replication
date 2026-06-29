@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "00b903b0_cf4bc59f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-29T22:10:28Z",
+      "side": 1,
+      "message": "@david.ostrovsky@gmail.com @syntonyze@gmail.com this approach would have two advantages:\n\n1. Zero-impact on the existing apply-object API\n2. Zero-impact on the performance of the batch-apply-objects API\n3. Ability for the client to request atomicity with the `?atomic` parameter\n\nThe code is still too big IMHO, but at least it\u0027s isolated from the existing logic.",
+      "revId": "9835f5ceaba2896ec8dcdd27612d0bff74555d33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
