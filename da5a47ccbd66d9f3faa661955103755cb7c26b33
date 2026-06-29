@@ -35,6 +35,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b30cb22_44730b33",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/fetch/BatchApplyObject.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-29T14:25:52Z",
+      "side": 1,
+      "message": "The validator will have to be different between batch and single apply object.",
+      "parentUuid": "a6ae2261_07d44108",
+      "revId": "da5a47ccbd66d9f3faa661955103755cb7c26b33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "af04e7b1_3e62468b",
