@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "586f65d9_728c123c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-29T13:46:17Z",
+      "side": 1,
+      "message": "This creates a functional regression.",
+      "revId": "da5a47ccbd66d9f3faa661955103755cb7c26b33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6ae2261_07d44108",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/fetch/BatchApplyObject.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-29T13:46:17Z",
+      "side": 1,
+      "message": "The overall concept is flawed: the `BatchApplyObject` needs to work with the visibility of the batch of commits together, and check their consistency together.\n\nThis is instead using the same logic of the single apply object and just added as-is in the batch implementation.\n\nThis refactoring introduced a regression: creating any change now fails.",
+      "revId": "da5a47ccbd66d9f3faa661955103755cb7c26b33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af04e7b1_3e62468b",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/fetch/BatchApplyObject.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-06-29T13:46:17Z",
+      "side": 1,
+      "message": "This is correct when applied with a single-ref, but is incorrect when applied to a batch of refs.\n\nWe need to have the visibility of the whole set of refs to make a decision, not simply on the individual ref passed as parameter.",
+      "range": {
+        "startLine": 75,
+        "startChar": 16,
+        "endLine": 75,
+        "endChar": 50
+      },
+      "revId": "da5a47ccbd66d9f3faa661955103755cb7c26b33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
