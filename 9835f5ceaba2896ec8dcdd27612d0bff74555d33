@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "cb52075f_3f54fa15",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-06-30T07:40:34Z",
+      "side": 1,
+      "message": "I wonder if requesting `atomic` transactions should really a client choice:\nRequesting a non-atomic `batch-apply-object` would potentially lead to partially failing and half-executed `batch-apply-objects`, which is exactly the bug we want to fix.\n\nIn what cases should a client decide not to want atomicity?",
+      "range": {
+        "startLine": 12,
+        "startChar": 16,
+        "endLine": 12,
+        "endChar": 23
+      },
+      "revId": "9835f5ceaba2896ec8dcdd27612d0bff74555d33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "00b903b0_cf4bc59f",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
