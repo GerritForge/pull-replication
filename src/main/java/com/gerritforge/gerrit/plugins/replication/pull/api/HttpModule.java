@@ -29,6 +29,7 @@ public class HttpModule extends ServletModule {
 
   @Override
   protected void configureServlets() {
+    install(new com.gerritforge.gerrit.plugins.bsl.HttpModule());
     DynamicSet.bind(binder(), AllRequestFilter.class)
         .to(PullReplicationApiMetricsFilter.class)
         .in(Scopes.SINGLETON);
