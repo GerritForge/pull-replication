@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "849d31a4_5d831d44",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-07-03T15:49:44Z",
+      "side": 1,
+      "message": "```suggestion\nthe meta ref\u0027s whole history from being sent and forces the entire batch to fail\n```",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 69
+      },
+      "revId": "af41e5c1740f4cff5f8f01257401be22306e891e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "131820b6_c07d667e",
+        "filename": "src/main/java/com/googlesource/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-07-03T15:49:44Z",
+      "side": 1,
+      "message": "What if we have multiple meta refs in the batch-apply object?\nOr is that impossible?",
+      "range": {
+        "startLine": 542,
+        "startChar": 14,
+        "endLine": 542,
+        "endChar": 80
+      },
+      "revId": "af41e5c1740f4cff5f8f01257401be22306e891e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
