@@ -30,6 +30,7 @@ gerrit_plugin(
     resources = glob(["src/main/resources/**/*"]),
     deps = [
         ":events-broker-neverlink",
+        "//plugins/gerrit-bsl-license",
         ":healthcheck-neverlink",
         "//plugins/delete-project",
         "//plugins/replication",
