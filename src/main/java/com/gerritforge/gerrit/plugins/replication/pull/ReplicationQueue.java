@@ -208,7 +208,7 @@ public class ReplicationQueue
                           u.newRev);
                       return ReferenceUpdatedEvent.from(u, eventCreatedOn);
                     })
-                .sorted(ReplicationQueue::sortByMetaRefAsLast)
+                .sorted(ReplicationQueue::sortRefs)
                 .collect(Collectors.toList());
 
         if (!refs.isEmpty()) {
@@ -254,10 +254,23 @@ public class ReplicationQueue
                 source.getApis().forEach(apiUrl -> source.scheduleDeleteProject(apiUrl, project)));
   }
 
-  private static int sortByMetaRefAsLast(ReferenceUpdatedEvent a, ReferenceUpdatedEvent b) {
-    repLog.debug("sortByMetaRefAsLast({} <=> {})", a.refName(), b.refName());
-    return Boolean.compare(
-        RefNames.isNoteDbMetaRef(a.refName()), RefNames.isNoteDbMetaRef(b.refName()));
+  // Replication order within a batch: patchset objects must exist on the replica before their
+  // meta ref is applied, and change refs must be present before anything else (e.g. branches)
+  // can safely point to them. Priority: 0 = refs/changes (non-meta), 1 = refs/changes meta,
+  // 2 = everything else.
+  private static int refSortPriority(String refName) {
+    if (RefNames.isRefsChanges(refName) && !RefNames.isNoteDbMetaRef(refName)) {
+      return 0;
+    }
+    if (RefNames.isRefsChanges(refName) && RefNames.isNoteDbMetaRef(refName)) {
+      return 1;
+    }
+    return 2;
+  }
+
+  private static int sortRefs(ReferenceUpdatedEvent a, ReferenceUpdatedEvent b) {
+    repLog.debug("sortRefs({} <=> {})", a.refName(), b.refName());
+    return Integer.compare(refSortPriority(a.refName()), refSortPriority(b.refName()));
   }
 
   private static String refUpdateType(String oldRev, String newRev) {
