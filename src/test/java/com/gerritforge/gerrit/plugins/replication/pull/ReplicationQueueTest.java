@@ -290,6 +290,27 @@ public class ReplicationQueueTest {
   }
 
   @Test
+  public void shouldCallSendObjectReorderingRefs() throws Exception {
+    Event event =
+        generateBatchRefUpdateEvent(
+            "refs/heads/main",
+            "refs/changes/01/1/meta",
+            "refs/tags/v1.0",
+            "refs/notes/foo",
+            "refs/meta/config",
+            "refs/changes/01/1/1");
+    objectUnderTest.start();
+    objectUnderTest.onEvent(event);
+    verifySendObjectOrdering(
+        "refs/changes/01/1/1",
+        "refs/changes/01/1/meta",
+        "refs/heads/main",
+        "refs/tags/v1.0",
+        "refs/meta/config",
+        "refs/notes/foo");
+  }
+
+  @Test
   public void shouldNotCallInitProjectWhenReplicateNewRepositoriesNotSet() throws Exception {
     Event event = new TestEvent("refs/changes/01/1/meta");
 
@@ -680,13 +701,14 @@ public class ReplicationQueueTest {
     return event;
   }
 
-  private void verifySendObjectOrdering(String firstRef, String secondRef) throws Exception {
+  private void verifySendObjectOrdering(String... expectedRefs) throws Exception {
     verify(fetchRestApiClient)
         .callBatchSendObject(any(), batchRefsCaptor.capture(), anyLong(), any());
     List<BatchApplyObjectData> batchRefs = batchRefsCaptor.getValue();
 
-    assertThat(batchRefs.get(0).refName()).isEqualTo(firstRef);
-    assertThat(batchRefs.get(1).refName()).isEqualTo(secondRef);
+    assertThat(batchRefs.stream().map(BatchApplyObjectData::refName).collect(Collectors.toList()))
+        .containsExactlyElementsIn(expectedRefs)
+        .inOrder();
   }
 
   private class TestEvent extends RefUpdatedEvent {
