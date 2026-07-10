@@ -208,13 +208,23 @@ public class ReplicationQueue
                           u.newRev);
                       return ReferenceUpdatedEvent.from(u, eventCreatedOn);
                     })
-                .sorted(ReplicationQueue::sortByMetaRefAsLast)
-                .collect(Collectors.toList());
+                .toList();
 
-        if (!refs.isEmpty()) {
+        List<ReferenceUpdatedEvent> sortedRefs =
+            refs.stream().sorted(ReplicationQueue::sortRefs).toList();
+        if (repLog.isDebugEnabled()) {
+          repLog.debug(
+              "Refs sorted for replication on project {}: {}",
+              event.getProjectNameKey().get(),
+              sortedRefs.stream()
+                  .map(ReferenceUpdatedEvent::refName)
+                  .collect(Collectors.joining(",")));
+        }
+
+        if (!sortedRefs.isEmpty()) {
           ReferenceBatchUpdatedEvent referenceBatchUpdatedEvent =
               ReferenceBatchUpdatedEvent.create(
-                  event.getProjectNameKey().get(), refs, eventCreatedOn);
+                  event.getProjectNameKey().get(), sortedRefs, eventCreatedOn);
           fire(referenceBatchUpdatedEvent);
         }
       }
@@ -254,10 +264,32 @@ public class ReplicationQueue
                 source.getApis().forEach(apiUrl -> source.scheduleDeleteProject(apiUrl, project)));
   }
 
-  private static int sortByMetaRefAsLast(ReferenceUpdatedEvent a, ReferenceUpdatedEvent b) {
-    repLog.debug("sortByMetaRefAsLast({} <=> {})", a.refName(), b.refName());
-    return Boolean.compare(
-        RefNames.isNoteDbMetaRef(a.refName()), RefNames.isNoteDbMetaRef(b.refName()));
+  // Apply refs in dependency order:
+  // 1. Patch-set refs, so the referenced patch-set objects exist.
+  // 2. Change meta refs, so the change is valid and navigable.
+  // 3. Branches, at this point, as the meta and the patchset are already replicated,
+  // we can replicate the branches too, as all commits on it will be fully reachable.
+  // 4. Tags, which may point to the previous commits
+  // 5. Anything else, ordered alphabetically
+  private static int refSortOrder(String refName) {
+    if (RefNames.isNoteDbMetaRef(refName)) {
+      return 2;
+    }
+    if (RefNames.isRefsChanges(refName)) {
+      return 1;
+    }
+    if (refName.startsWith(RefNames.REFS_HEADS)) {
+      return 3;
+    }
+    if (RefNames.isTagRef(refName)) {
+      return 4;
+    }
+    return 5;
+  }
+
+  private static int sortRefs(ReferenceUpdatedEvent a, ReferenceUpdatedEvent b) {
+    int priorityCompare = Integer.compare(refSortOrder(a.refName()), refSortOrder(b.refName()));
+    return priorityCompare == 0 ? a.refName().compareTo(b.refName()) : priorityCompare;
   }
 
   private static String refUpdateType(String oldRev, String newRev) {
