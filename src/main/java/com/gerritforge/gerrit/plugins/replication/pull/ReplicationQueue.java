@@ -208,8 +208,13 @@ public class ReplicationQueue
                           u.newRev);
                       return ReferenceUpdatedEvent.from(u, eventCreatedOn);
                     })
-                .sorted(ReplicationQueue::sortByMetaRefAsLast)
+                .sorted(ReplicationQueue::sortRefs)
                 .collect(Collectors.toList());
+
+        repLog.debug(
+            "Refs sorted for replication on project {}: {}",
+            event.getProjectNameKey().get(),
+            refs.stream().map(ReferenceUpdatedEvent::refName).collect(Collectors.joining(",")));
 
         if (!refs.isEmpty()) {
           ReferenceBatchUpdatedEvent referenceBatchUpdatedEvent =
@@ -254,10 +259,38 @@ public class ReplicationQueue
                 source.getApis().forEach(apiUrl -> source.scheduleDeleteProject(apiUrl, project)));
   }
 
-  private static int sortByMetaRefAsLast(ReferenceUpdatedEvent a, ReferenceUpdatedEvent b) {
-    repLog.debug("sortByMetaRefAsLast({} <=> {})", a.refName(), b.refName());
-    return Boolean.compare(
-        RefNames.isNoteDbMetaRef(a.refName()), RefNames.isNoteDbMetaRef(b.refName()));
+  // Apply refs in dependency order:
+  // 1. Patch-set refs, so the referenced patch-set objects exist.
+  // 2. Change meta refs, so the change is valid and navigable.
+  // 3. Branches, at this point, as the meta and the patchset are already replicated,
+  // we can replicate the branches too, as all commits on it will be fully reachable.
+  // 4. Tags, which may point to the previous commits
+  // 5. Anything else, ordered alphabetically
+  private static final int LOWEST_PRIORITY = 5;
+
+  private static int refSortOrder(String refName) {
+    if (RefNames.isNoteDbMetaRef(refName)) {
+      return 2;
+    }
+    if (RefNames.isRefsChanges(refName)) {
+      return 1;
+    }
+    if (refName.startsWith(RefNames.REFS_HEADS)) {
+      return 3;
+    }
+    if (RefNames.isTagRef(refName)) {
+      return 4;
+    }
+    return LOWEST_PRIORITY;
+  }
+
+  private static int sortRefs(ReferenceUpdatedEvent a, ReferenceUpdatedEvent b) {
+    int aPriority = refSortOrder(a.refName());
+    int bPriority = refSortOrder(b.refName());
+    if (aPriority == LOWEST_PRIORITY && bPriority == LOWEST_PRIORITY) {
+      return a.refName().compareTo(b.refName());
+    }
+    return Integer.compare(aPriority, bPriority);
   }
 
   private static String refUpdateType(String oldRev, String newRev) {
