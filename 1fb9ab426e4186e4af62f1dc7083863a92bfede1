@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d0789c0_98e6a4cf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-07-13T07:35:09Z",
+      "side": 1,
+      "message": "Wrong repo: this fix should land into the stable-3.12 on gerrit-review",
+      "revId": "1fb9ab426e4186e4af62f1dc7083863a92bfede1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
