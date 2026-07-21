@@ -85,6 +85,7 @@ public class CGitFetch implements Fetch {
             String.format("Cannot fetch from %s, error message: %s", uri, errorMessage));
       }
 
+      repLog.info("[{}] Fetched references {} from {}", taskIdHex, refs, uri);
       return refsSpec.stream()
           .map(
               value -> {

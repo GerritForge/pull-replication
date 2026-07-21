@@ -60,7 +60,9 @@ public class JGitFetch implements Fetch {
   private FetchResult fetchVia(Transport tn, List<RefSpec> fetchRefSpecs) throws IOException {
     repLog.info("[{}] Fetch references {} from {}", taskIdHex, fetchRefSpecs, uri);
     try {
-      return tn.fetch(NullProgressMonitor.INSTANCE, fetchRefSpecs);
+      FetchResult result = tn.fetch(NullProgressMonitor.INSTANCE, fetchRefSpecs);
+      repLog.info("[{}] Fetched references {} from {}", taskIdHex, fetchRefSpecs, uri);
+      return result;
     } catch (TransportException e) {
       throw PermanentTransportException.wrapIfPermanentTransportException(e);
     }
