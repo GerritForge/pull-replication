@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ce829a9_e4a90c74",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/fetch/CGitFetch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-07-21T08:05:47Z",
+      "side": 1,
+      "message": "Best to use StopWatch or alternatively Instance or Duration. There\u0027s no need to go lower level with `System.nanoTime`",
+      "revId": "97c31c44490f6cfeb338c2abbef1d5b29aee57ce",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
