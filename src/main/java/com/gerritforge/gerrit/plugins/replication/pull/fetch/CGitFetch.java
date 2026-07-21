@@ -15,6 +15,7 @@ import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLog
 
 import com.gerritforge.gerrit.plugins.replication.pull.FetchRefSpec;
 import com.gerritforge.gerrit.plugins.replication.pull.SourceConfiguration;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -68,6 +69,7 @@ public class CGitFetch implements Fetch {
     command.addAll(refs);
     ProcessBuilder pb = new ProcessBuilder().command(command).directory(localProjectDirectory);
     repLog.info("[{}] Fetch references {} from {}", taskIdHex, refs, uri);
+    Stopwatch stopwatch = Stopwatch.createStarted();
     Process process = pb.start();
 
     try {
@@ -85,6 +87,12 @@ public class CGitFetch implements Fetch {
             String.format("Cannot fetch from %s, error message: %s", uri, errorMessage));
       }
 
+      repLog.info(
+          "[{}] Fetched references {} from {} in {}ms",
+          taskIdHex,
+          refs,
+          uri,
+          stopwatch.elapsed().toMillis());
       return refsSpec.stream()
           .map(
               value -> {

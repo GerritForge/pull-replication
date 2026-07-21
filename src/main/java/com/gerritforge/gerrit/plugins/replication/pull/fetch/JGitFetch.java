@@ -15,6 +15,7 @@ import static com.gerritforge.gerrit.plugins.replication.pull.PullReplicationLog
 
 import com.gerritforge.gerrit.plugins.replication.pull.FetchRefSpec;
 import com.gerritforge.gerrit.plugins.replication.pull.transport.TransportProvider;
+import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import java.io.IOException;
@@ -59,8 +60,16 @@ public class JGitFetch implements Fetch {
 
   private FetchResult fetchVia(Transport tn, List<RefSpec> fetchRefSpecs) throws IOException {
     repLog.info("[{}] Fetch references {} from {}", taskIdHex, fetchRefSpecs, uri);
+    Stopwatch stopwatch = Stopwatch.createStarted();
     try {
-      return tn.fetch(NullProgressMonitor.INSTANCE, fetchRefSpecs);
+      FetchResult result = tn.fetch(NullProgressMonitor.INSTANCE, fetchRefSpecs);
+      repLog.info(
+          "[{}] Fetched references {} from {} in {}ms",
+          taskIdHex,
+          fetchRefSpecs,
+          uri,
+          stopwatch.elapsed().toMillis());
+      return result;
     } catch (TransportException e) {
       throw PermanentTransportException.wrapIfPermanentTransportException(e);
     }
