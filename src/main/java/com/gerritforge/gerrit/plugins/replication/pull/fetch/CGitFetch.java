@@ -68,6 +68,7 @@ public class CGitFetch implements Fetch {
     command.addAll(refs);
     ProcessBuilder pb = new ProcessBuilder().command(command).directory(localProjectDirectory);
     repLog.info("[{}] Fetch references {} from {}", taskIdHex, refs, uri);
+    long startedAt = System.nanoTime();
     Process process = pb.start();
 
     try {
@@ -85,6 +86,8 @@ public class CGitFetch implements Fetch {
             String.format("Cannot fetch from %s, error message: %s", uri, errorMessage));
       }
 
+      long elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startedAt);
+      repLog.info("[{}] Fetched references {} from {} in {}ms", taskIdHex, refs, uri, elapsed);
       return refsSpec.stream()
           .map(
               value -> {

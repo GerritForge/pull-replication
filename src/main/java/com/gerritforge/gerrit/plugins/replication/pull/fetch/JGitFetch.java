@@ -19,6 +19,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.eclipse.jgit.errors.TransportException;
 import org.eclipse.jgit.lib.NullProgressMonitor;
@@ -59,8 +60,13 @@ public class JGitFetch implements Fetch {
 
   private FetchResult fetchVia(Transport tn, List<RefSpec> fetchRefSpecs) throws IOException {
     repLog.info("[{}] Fetch references {} from {}", taskIdHex, fetchRefSpecs, uri);
+    long startedAt = System.nanoTime();
     try {
-      return tn.fetch(NullProgressMonitor.INSTANCE, fetchRefSpecs);
+      FetchResult result = tn.fetch(NullProgressMonitor.INSTANCE, fetchRefSpecs);
+      long elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startedAt);
+      repLog.info(
+          "[{}] Fetched references {} from {} in {}ms", taskIdHex, fetchRefSpecs, uri, elapsed);
+      return result;
     } catch (TransportException e) {
       throw PermanentTransportException.wrapIfPermanentTransportException(e);
     }
