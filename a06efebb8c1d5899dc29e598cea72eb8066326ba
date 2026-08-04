@@ -316,6 +316,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b0669b60_fd747fc0",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-04T15:59:37Z",
+      "side": 1,
+      "message": "But the issue here is that we can\u0027t order what we don\u0027t know. People could have all sort of custom ref namespaces etc, I don\u0027t think we can account for everything here?",
+      "parentUuid": "1c536ecd_54b53c11",
+      "range": {
+        "startLine": 268,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 13
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5d45cf3c_f12ca33d",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
         "patchSetId": 7
