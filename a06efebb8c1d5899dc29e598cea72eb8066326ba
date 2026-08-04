@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9fb1bbfc_317ec1d3",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-08-04T13:34:01Z",
+      "side": 1,
+      "message": "Ifind this description a bit confusing. I think the intent is to explain why this is the safest order in which to apply the refs:\n\n- Patch-set ref before meta ref: the patch-set ref must exist before the change meta ref is updated to reference it.\n- Meta ref before branch: the change meta ref must exist before the branch is updated, so the commit pointed to by the branch is already associated with a valid, reachable change.\n\nSomething like:\n\n```\n// Apply refs in dependency order:\n// 1. Patch-set refs, so the referenced patch-set objects exist.\n// 2. Change meta refs, so the change is valid and navigable.\n// 3. All other refs, such as branches and tags, which may point to those commits.\n```",
+      "range": {
+        "startLine": 257,
+        "startChar": 0,
+        "endLine": 260,
+        "endChar": 25
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "17e58993_13419aba",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
         "patchSetId": 7
@@ -14,6 +37,29 @@
       "writtenOn": "2026-08-04T13:25:45Z",
       "side": 1,
       "message": "```suggestion\n  private static int refSortOrder(String refName) {\n```\n\nThis looks like an order rather than a priority. Also, I\u0027d use the 1 (first), 2 (second) and 3 (third) to indicate the correct ordering.",
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c14a358_1c38f969",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-08-04T13:34:01Z",
+      "side": 1,
+      "message": "nit: any notedb meta ref is also a `isRefsChanges` right? You could use the first part of this logic evaluation.",
+      "range": {
+        "startLine": 265,
+        "startChar": 43,
+        "endLine": 265,
+        "endChar": 76
+      },
       "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -36,6 +82,52 @@
         "startChar": 0,
         "endLine": 268,
         "endChar": 13
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2577d99c_0b8fb01c",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-08-04T13:34:01Z",
+      "side": 1,
+      "message": "Is the sorting of any other ref stable? can you verify that?",
+      "range": {
+        "startLine": 268,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 13
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5d45cf3c_f12ca33d",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-08-04T13:34:01Z",
+      "side": 1,
+      "message": "I am not sure we should be logging the comparison steps to be honest.\nat most, we should be logging the final evaluated order. WDYT?",
+      "range": {
+        "startLine": 272,
+        "startChar": 0,
+        "endLine": 272,
+        "endChar": 66
       },
       "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
