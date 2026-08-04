@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17e58993_13419aba",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-04T13:25:45Z",
+      "side": 1,
+      "message": "```suggestion\n  private static int refSortOrder(String refName) {\n```\n\nThis looks like an order rather than a priority. Also, I\u0027d use the 1 (first), 2 (second) and 3 (third) to indicate the correct ordering.",
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d95dd9d2_a98cc2e0",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-04T13:25:45Z",
+      "side": 1,
+      "message": "What about tags? I believe they should come as the last updates.",
+      "range": {
+        "startLine": 262,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 13
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5cc847f8_8d24e12d",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueueTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-04T13:25:45Z",
+      "side": 1,
+      "message": "I don\u0027t see where you enforce the tags to be at the last position: is this working only by chance?",
+      "range": {
+        "startLine": 287,
+        "startChar": 76,
+        "endLine": 287,
+        "endChar": 92
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
