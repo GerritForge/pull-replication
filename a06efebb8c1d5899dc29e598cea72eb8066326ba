@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9937c8e_a4c03dba",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-04T15:34:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9fb1bbfc_317ec1d3",
+      "range": {
+        "startLine": 257,
+        "startChar": 0,
+        "endLine": 260,
+        "endChar": 25
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "17e58993_13419aba",
@@ -37,6 +61,42 @@
       "writtenOn": "2026-08-04T13:25:45Z",
       "side": 1,
       "message": "```suggestion\n  private static int refSortOrder(String refName) {\n```\n\nThis looks like an order rather than a priority. Also, I\u0027d use the 1 (first), 2 (second) and 3 (third) to indicate the correct ordering.",
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "37db935c_1f8c73e9",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-04T15:34:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "17e58993_13419aba",
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3f7a9cd2_55bbe105",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-04T15:34:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "17e58993_13419aba",
       "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -110,6 +170,78 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3377516_3e7b3917",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-04T15:34:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d95dd9d2_a98cc2e0",
+      "range": {
+        "startLine": 262,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 13
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "77da796e_61de1611",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-04T15:34:30Z",
+      "side": 1,
+      "message": "I\u0027ve put tags after branches, then whatever else there may be.",
+      "parentUuid": "d95dd9d2_a98cc2e0",
+      "range": {
+        "startLine": 262,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 13
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e7cba1c_1061d2c7",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-04T15:34:30Z",
+      "side": 1,
+      "message": "After patchset, meta, heads and tags, anything else won\u0027t be ordered consistently no, do we need to worry about tha?",
+      "parentUuid": "2577d99c_0b8fb01c",
+      "range": {
+        "startLine": 268,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 13
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5d45cf3c_f12ca33d",
@@ -133,6 +265,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a335d86b_f5d964b6",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-04T15:34:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5d45cf3c_f12ca33d",
+      "range": {
+        "startLine": 272,
+        "startChar": 0,
+        "endLine": 272,
+        "endChar": 66
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5cc847f8_8d24e12d",
@@ -146,6 +302,30 @@
       "writtenOn": "2026-08-04T13:25:45Z",
       "side": 1,
       "message": "I don\u0027t see where you enforce the tags to be at the last position: is this working only by chance?",
+      "range": {
+        "startLine": 287,
+        "startChar": 76,
+        "endLine": 287,
+        "endChar": 92
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1d5d361_0d4099fb",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueueTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-04T15:34:30Z",
+      "side": 1,
+      "message": "Improved the ordering function to also explicitly consider tags.",
+      "parentUuid": "5cc847f8_8d24e12d",
       "range": {
         "startLine": 287,
         "startChar": 76,
