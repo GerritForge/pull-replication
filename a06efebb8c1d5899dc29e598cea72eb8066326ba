@@ -340,6 +340,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4de01913_061c5295",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-08-04T16:35:58Z",
+      "side": 1,
+      "message": "I didn\u0027t mean an _explicit_ ordering, I meant a _stable_ ordering [1].\nBut again, I think this is the case already, so don\u0027t worry about this, not a strong requirement.\n\n\n[1] https://www.geeksforgeeks.org/dsa/stable-and-unstable-sorting-algorithms/",
+      "parentUuid": "b0669b60_fd747fc0",
+      "range": {
+        "startLine": 268,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 13
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5d45cf3c_f12ca33d",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
         "patchSetId": 7
