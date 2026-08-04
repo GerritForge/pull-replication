@@ -268,6 +268,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1c536ecd_54b53c11",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-08-04T15:41:36Z",
+      "side": 1,
+      "message": "Not a strong requirement, but I think in general we would like a _stable_ ordering, so that the same list of refs is always ordered in the same way.\nIt will leave us less exposed to undeterministic behaviour.\n\nI say this, because I _think_ the current ordering is _already_ stable, but I just wanted to verify it.",
+      "parentUuid": "3e7cba1c_1061d2c7",
+      "range": {
+        "startLine": 268,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 13
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5d45cf3c_f12ca33d",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
         "patchSetId": 7
