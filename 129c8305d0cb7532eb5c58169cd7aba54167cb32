@@ -1,6 +1,121 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "0f6852b6_e09fc5ea",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-08-04T09:27:59Z",
+      "side": 1,
+      "message": "```suggestion\nIt used to be that the meta refs were always sent last in the batch,\n```",
+      "range": {
+        "startLine": 9,
+        "startChar": 19,
+        "endLine": 9,
+        "endChar": 36
+      },
+      "revId": "129c8305d0cb7532eb5c58169cd7aba54167cb32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08d2f0de_ecb1fce3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-08-04T09:27:59Z",
+      "side": 1,
+      "message": "```suggestion\ncontain objects for which the corresponding change that brought them is\n```",
+      "range": {
+        "startLine": 12,
+        "startChar": 30,
+        "endLine": 12,
+        "endChar": 38
+      },
+      "revId": "129c8305d0cb7532eb5c58169cd7aba54167cb32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1447d6e2_56a34d95",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-08-04T09:27:59Z",
+      "side": 1,
+      "message": "```suggestion\n- everything else (heads, tags, etc...)\n```",
+      "range": {
+        "startLine": 18,
+        "startChar": 13,
+        "endLine": 18,
+        "endChar": 38
+      },
+      "revId": "129c8305d0cb7532eb5c58169cd7aba54167cb32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "745991fa_25bae00c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-08-04T09:27:59Z",
+      "side": 1,
+      "message": "```suggestion\nThis ensures that objects present on heads have an associated navigable\n```",
+      "range": {
+        "startLine": 20,
+        "startChar": 62,
+        "endLine": 20,
+        "endChar": 71
+      },
+      "revId": "129c8305d0cb7532eb5c58169cd7aba54167cb32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5aace71a_efd2f353",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-08-04T09:27:59Z",
+      "side": 1,
+      "message": "```suggestion\nThis ensures that commits referenced by branches have an associated navigable change.\n```",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 7
+      },
+      "revId": "129c8305d0cb7532eb5c58169cd7aba54167cb32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "cd1c25d6_a0ef6b97",
@@ -31,6 +146,29 @@
       "writtenOn": "2026-08-03T13:43:12Z",
       "side": 1,
       "message": "We agreed to keep this on master.",
+      "revId": "129c8305d0cb7532eb5c58169cd7aba54167cb32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "48213c54_299b48bc",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueueTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-08-04T09:27:59Z",
+      "side": 1,
+      "message": "This test input proves that the patch set is moved before meta, but it does not prove that a head or tag appearing first is moved after both change refs.\n\nShould we use this stronger input, maybe?\n\n```\ngenerateBatchRefUpdateEvent(\n    \"refs/heads/main\",\n    \"refs/changes/01/1/meta\",\n    \"refs/tags/v1.0\",\n    \"refs/changes/01/1/1\");\n```",
+      "range": {
+        "startLine": 279,
+        "startChar": 0,
+        "endLine": 283,
+        "endChar": 30
+      },
       "revId": "129c8305d0cb7532eb5c58169cd7aba54167cb32",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
