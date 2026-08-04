@@ -291,6 +291,30 @@
       },
       "revId": "129c8305d0cb7532eb5c58169cd7aba54167cb32",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf794259_1a5b5096",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueueTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-04T12:41:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "48213c54_299b48bc",
+      "range": {
+        "startLine": 279,
+        "startChar": 0,
+        "endLine": 283,
+        "endChar": 30
+      },
+      "revId": "129c8305d0cb7532eb5c58169cd7aba54167cb32",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ],
   "submitRequirementResults": []
