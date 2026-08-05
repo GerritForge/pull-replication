@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0dc07d31_39b40f61",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-05T11:21:40Z",
+      "side": 1,
+      "message": "@luca.milanesio@gmail.com Do we need to worry about order of patchsets? I don\u0027t believe it\u0027s possible for a batch to contain multiple patchsets.",
+      "range": {
+        "startLine": 287,
+        "startChar": 34,
+        "endLine": 287,
+        "endChar": 87
+      },
+      "revId": "c35d72d6653a2fdf5e2c2596328a3fe5a02ce85e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
