@@ -388,6 +388,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b46c629e_96f93992",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-05T03:58:00Z",
+      "side": 1,
+      "message": "\u003e ah I see, good point. I\u0027d be keener to leave this out for now as I believe it would probably add a fair amount of complexity.\n\nWhy? We can just do a combination of the alphabetical ordering as well, so to assure consistency.",
+      "parentUuid": "be194da9_4bfa948c",
+      "range": {
+        "startLine": 268,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 13
+      },
+      "revId": "a06efebb8c1d5899dc29e598cea72eb8066326ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5d45cf3c_f12ca33d",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
         "patchSetId": 7
