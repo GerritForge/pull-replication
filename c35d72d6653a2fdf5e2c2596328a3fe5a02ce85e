@@ -46,6 +46,53 @@
       },
       "revId": "c35d72d6653a2fdf5e2c2596328a3fe5a02ce85e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "89083381_cedd674f",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-07T06:37:28Z",
+      "side": 1,
+      "message": "Just use the `\u003d\u003d` as it is demonstrated that negations are harder to read.\n\n```suggestion\n    return priorityCompare \u003d\u003d 0 ? a.refName().compareTo(b.refName()) : priorityCompare;\n```",
+      "range": {
+        "startLine": 287,
+        "startChar": 27,
+        "endLine": 287,
+        "endChar": 31
+      },
+      "revId": "c35d72d6653a2fdf5e2c2596328a3fe5a02ce85e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d3c38983_81c88553",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-07T06:37:28Z",
+      "side": 1,
+      "message": "I agree, however, how do you pass the tests where you were asserting the orders?",
+      "parentUuid": "29d02004_a1199b56",
+      "range": {
+        "startLine": 287,
+        "startChar": 34,
+        "endLine": 287,
+        "endChar": 87
+      },
+      "revId": "c35d72d6653a2fdf5e2c2596328a3fe5a02ce85e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
