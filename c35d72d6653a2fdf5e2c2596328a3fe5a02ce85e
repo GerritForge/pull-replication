@@ -117,6 +117,30 @@
       },
       "revId": "c35d72d6653a2fdf5e2c2596328a3fe5a02ce85e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8177ad06_220b1565",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-07T07:04:09Z",
+      "side": 1,
+      "message": "The order will be deterministic but lexicographic by design, we already assert that the remaining refs.\n\nIf a situation where multiple patchsets is impossible then I don\u0027t think we need to add more cases to that same test. WDYT?",
+      "parentUuid": "d3c38983_81c88553",
+      "range": {
+        "startLine": 287,
+        "startChar": 34,
+        "endLine": 287,
+        "endChar": 87
+      },
+      "revId": "c35d72d6653a2fdf5e2c2596328a3fe5a02ce85e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
