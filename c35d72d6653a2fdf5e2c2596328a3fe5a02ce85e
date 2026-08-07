@@ -93,6 +93,30 @@
       },
       "revId": "c35d72d6653a2fdf5e2c2596328a3fe5a02ce85e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "98f36da1_7edda923",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-07T07:01:10Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "89083381_cedd674f",
+      "range": {
+        "startLine": 287,
+        "startChar": 27,
+        "endLine": 287,
+        "endChar": 31
+      },
+      "revId": "c35d72d6653a2fdf5e2c2596328a3fe5a02ce85e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
