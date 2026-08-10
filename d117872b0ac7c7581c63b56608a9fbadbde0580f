@@ -46,6 +46,30 @@
       },
       "revId": "d117872b0ac7c7581c63b56608a9fbadbde0580f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bed2576d_584d67b9",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueueTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-10T16:01:32Z",
+      "side": 0,
+      "message": "It\u0027s a regression test: we are not breaking existing functionality but rather fixing an issue.\n\nThe test didn\u0027t highlight the issue, but the additional test does.\n\nFor regression testing, I\u0027d keep this test as well.\nYou can then refactor them as a follow-up, but if we\u0027re keeping that scenario, we should also keep its tests.",
+      "parentUuid": "7ff16950_05db9db3",
+      "range": {
+        "startLine": 276,
+        "startChar": 0,
+        "endLine": 290,
+        "endChar": 3
+      },
+      "revId": "d117872b0ac7c7581c63b56608a9fbadbde0580f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
