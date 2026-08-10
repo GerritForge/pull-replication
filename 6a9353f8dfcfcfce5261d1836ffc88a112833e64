@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ca7c1445_e4766e01",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-10T05:33:19Z",
+      "side": 1,
+      "message": "You need to guard with a `if (repLog.isDebugEnabled())`",
+      "revId": "6a9353f8dfcfcfce5261d1836ffc88a112833e64",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b62db17_236b8c4d",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueue.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-10T05:33:19Z",
+      "side": 1,
+      "message": "This will be evaluated even if debug logging is not enabled, since the logger is not a Flogger.",
+      "range": {
+        "startLine": 217,
+        "startChar": 12,
+        "endLine": 217,
+        "endChar": 94
+      },
+      "revId": "6a9353f8dfcfcfce5261d1836ffc88a112833e64",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
