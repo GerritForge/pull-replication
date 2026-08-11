@@ -274,7 +274,7 @@ public class ReplicationQueueTest {
   }
 
   @Test
-  public void shouldCallSendObjectReorderingRefsHavingMetaAtTheEnd() throws Exception {
+  public void shouldCallSendObjectReorderingRefsHavingMetaAfterPatchSets() throws Exception {
     Event event = generateBatchRefUpdateEvent("refs/changes/01/1/meta", "refs/changes/01/1/1");
     objectUnderTest.start();
     objectUnderTest.onEvent(event);
@@ -282,7 +282,7 @@ public class ReplicationQueueTest {
   }
 
   @Test
-  public void shouldCallSendObjectKeepingMetaAtTheEnd() throws Exception {
+  public void shouldCallSendObjectKeepingMetaAfterPatchSets() throws Exception {
     Event event = generateBatchRefUpdateEvent("refs/changes/01/1/1", "refs/changes/01/1/meta");
     objectUnderTest.start();
     objectUnderTest.onEvent(event);
