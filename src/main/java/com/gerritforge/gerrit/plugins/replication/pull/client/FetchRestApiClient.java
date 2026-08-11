@@ -20,6 +20,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.RefInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.PullReplicationApiRequestMetrics;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.BatchApplyObjectData;
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.BatchApplyObjectsData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionsInput;
@@ -286,6 +287,33 @@ public class FetchRestApiClient implements FetchApiClient, ResponseHandler<HttpR
             .collect(Collectors.toList());
 
     String url = formatUrl(targetUri.toString(), project, "batch-apply-object");
+
+    HttpPost post = new HttpPost(url);
+    post.setEntity(new StringEntity(GSON.toJson(inputs)));
+    post.addHeader(new BasicHeader(CONTENT_TYPE, MediaType.JSON_UTF_8.toString()));
+    return executeRequest(post, bearerTokenProvider.get(), targetUri);
+  }
+
+  @Override
+  public HttpResult callBatchSendObjects(
+      NameKey project,
+      List<BatchApplyObjectsData> batchedRefs,
+      long eventCreatedOn,
+      URIish targetUri)
+      throws IOException {
+    List<RevisionsInput> inputs =
+        batchedRefs.stream()
+            .map(
+                batchApplyObjectsData ->
+                    new RevisionsInput(
+                        instanceId,
+                        batchApplyObjectsData.refName(),
+                        eventCreatedOn,
+                        batchApplyObjectsData.revisionsData().toArray(new RevisionData[0]),
+                        source.isStoreReflog()))
+            .collect(Collectors.toList());
+
+    String url = formatUrl(targetUri.toString(), project, "batch-apply-objects");
 
     HttpPost post = new HttpPost(url);
     post.setEntity(new StringEntity(GSON.toJson(inputs)));
