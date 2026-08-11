@@ -70,6 +70,30 @@
       },
       "revId": "d117872b0ac7c7581c63b56608a9fbadbde0580f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2328d1a_2cc07536",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueueTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-08-11T08:48:51Z",
+      "side": 0,
+      "message": "But the behaviour described by the tests has changed, both tests say \"MetaAtTheEnd\", which is not the case anymore. If I left these tests they\u0027d be describing an incorrect behaviour and only work by accident.\n\nI would still need the test I added, so it wouldn\u0027t be a follow-up refactor, it would be a follow-up removal, which would make little sense IMHO.",
+      "parentUuid": "bed2576d_584d67b9",
+      "range": {
+        "startLine": 276,
+        "startChar": 0,
+        "endLine": 290,
+        "endChar": 3
+      },
+      "revId": "d117872b0ac7c7581c63b56608a9fbadbde0580f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
