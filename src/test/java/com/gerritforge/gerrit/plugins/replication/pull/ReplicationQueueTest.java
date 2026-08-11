@@ -50,6 +50,7 @@ import com.googlesource.gerrit.plugins.replication.ReplicationConfigImpl;
 import com.googlesource.gerrit.plugins.replication.api.ReplicationConfig;
 import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.RefInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.BatchApplyObjectData;
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.BatchApplyObjectsData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.gerritforge.gerrit.plugins.replication.pull.client.FetchApiClient;
 import com.gerritforge.gerrit.plugins.replication.pull.client.FetchRestApiClient;
@@ -109,6 +110,7 @@ public class ReplicationQueueTest {
   List<ObjectId> revisionDataParentObjectIds;
   @Mock HttpResult httpResult;
   @Mock HttpResult batchHttpResult;
+  @Mock HttpResult batchSendObjectsHttpResult;
   @Mock ApplyObjectsRefsFilter applyObjectsRefsFilter;
   @Mock ApplyObjectBannedCreateRefsFilter applyObjectsBannedCreateRefsFilter;
 
@@ -119,8 +121,8 @@ public class ReplicationQueueTest {
 
   @Captor ArgumentCaptor<String> stringCaptor;
   @Captor ArgumentCaptor<Project.NameKey> projectNameKeyCaptor;
-  @Captor ArgumentCaptor<List<RevisionData>> revisionsDataCaptor;
   @Captor ArgumentCaptor<List<BatchApplyObjectData>> batchRefsCaptor;
+  @Captor ArgumentCaptor<List<BatchApplyObjectsData>> expandedBatchCaptor;
 
   private ExcludedRefsFilter refsFilter;
   private ReplicationQueue objectUnderTest;
@@ -176,6 +178,10 @@ public class ReplicationQueueTest {
     lenient()
         .when(fetchRestApiClient.callBatchSendObject(any(), any(), anyLong(), any()))
         .thenReturn(batchHttpResult);
+    lenient()
+        .when(fetchRestApiClient.callBatchSendObjects(any(), any(), anyLong(), any()))
+        .thenReturn(batchSendObjectsHttpResult);
+    lenient().when(batchSendObjectsHttpResult.isSuccessful()).thenReturn(true);
     when(fetchRestApiClient.callFetch(any(), anyString(), any(), anyLong(), anyBoolean()))
         .thenReturn(fetchHttpResult);
     when(fetchRestApiClient.callBatchFetch(any(), any(), any())).thenReturn(batchFetchHttpResult);
@@ -391,7 +397,7 @@ public class ReplicationQueueTest {
 
   @Test
   public void
-      shouldFallbackToApplyObjectsForEachRefWhenParentObjectIsMissingAndRefMatchesApplyObjectsRefFilter()
+      shouldCallBatchSendObjectsWhenParentObjectIsMissingAndRefMatchesApplyObjectsRefFilter()
           throws Exception {
     Event event = generateBatchRefUpdateEvent("refs/changes/01/1/1", "refs/changes/02/1/1");
     objectUnderTest.start();
@@ -402,8 +408,7 @@ public class ReplicationQueueTest {
 
     objectUnderTest.onEvent(event);
 
-    verify(fetchRestApiClient, times(2))
-        .callSendObjects(any(), anyString(), anyLong(), any(), any());
+    verify(fetchRestApiClient).callBatchSendObjects(any(), any(), anyLong(), any());
     verify(fetchRestApiClient, never()).callFetch(any(), anyString(), any());
   }
 
@@ -463,11 +468,11 @@ public class ReplicationQueueTest {
     objectUnderTest.onEvent(event);
 
     verify(fetchRestApiClient, times(1))
-        .callSendObjects(any(), anyString(), anyLong(), revisionsDataCaptor.capture(), any());
-    List<List<RevisionData>> revisionsDataValues = revisionsDataCaptor.getAllValues();
-    assertThat(revisionsDataValues).hasSize(1);
+        .callBatchSendObjects(any(), expandedBatchCaptor.capture(), anyLong(), any());
+    List<BatchApplyObjectsData> expandedBatch = expandedBatchCaptor.getValue();
+    assertThat(expandedBatch).hasSize(1);
 
-    List<RevisionData> firstRevisionsValues = revisionsDataValues.get(0);
+    List<RevisionData> firstRevisionsValues = expandedBatch.get(0).revisionsData();
     assertThat(firstRevisionsValues).hasSize(1 + revisionDataParentObjectIds.size());
     assertThat(firstRevisionsValues).contains(revisionData);
   }
@@ -486,11 +491,11 @@ public class ReplicationQueueTest {
     objectUnderTest.onEvent(event);
 
     verify(fetchRestApiClient, times(1))
-        .callSendObjects(any(), anyString(), anyLong(), revisionsDataCaptor.capture(), any());
-    List<List<RevisionData>> revisionsDataValues = revisionsDataCaptor.getAllValues();
-    assertThat(revisionsDataValues).hasSize(1);
+        .callBatchSendObjects(any(), expandedBatchCaptor.capture(), anyLong(), any());
+    List<BatchApplyObjectsData> expandedBatch = expandedBatchCaptor.getValue();
+    assertThat(expandedBatch).hasSize(1);
 
-    List<RevisionData> firstRevisionsValues = revisionsDataValues.get(0);
+    List<RevisionData> firstRevisionsValues = expandedBatch.get(0).revisionsData();
     assertThat(firstRevisionsValues).hasSize(1 + revisionDataParentObjectIds.size());
     assertThat(firstRevisionsValues).contains(revisionData);
   }
@@ -527,13 +532,12 @@ public class ReplicationQueueTest {
     when(batchHttpResult.isSuccessful()).thenReturn(false);
     when(batchHttpResult.isParentObjectMissing()).thenReturn(true);
     when(applyObjectsRefsFilter.match(any())).thenReturn(true, true);
-    when(httpResult.isSuccessful()).thenReturn(true, false);
+    when(batchSendObjectsHttpResult.isSuccessful()).thenReturn(false);
 
     objectUnderTest.start();
     objectUnderTest.onEvent(event);
 
-    verify(fetchRestApiClient, times(2))
-        .callSendObjects(any(), anyString(), anyLong(), any(), any());
+    verify(fetchRestApiClient).callBatchSendObjects(any(), any(), anyLong(), any());
     verify(fetchRestApiClient)
         .callBatchFetch(
             PROJECT,
