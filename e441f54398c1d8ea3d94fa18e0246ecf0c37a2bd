@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7ee8fa3d_46c26ecc",
+        "filename": "src/test/java/com/gerritforge/gerrit/plugins/replication/pull/ReplicationQueueTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-12T03:35:15Z",
+      "side": 1,
+      "message": "These two refs are the unmatched refs that can go anywhere.\nThey are in the lowest priority, and their relative order isn\u0027t relevant.\n\nWe should remove them from this test to make it more focused on what\u0027s interesting and relevant.",
+      "range": {
+        "startLine": 299,
+        "startChar": 0,
+        "endLine": 300,
+        "endChar": 31
+      },
+      "revId": "e441f54398c1d8ea3d94fa18e0246ecf0c37a2bd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
