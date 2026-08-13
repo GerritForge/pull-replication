@@ -16,6 +16,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.RefInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.BatchApplyObjectData;
+import com.gerritforge.gerrit.plugins.replication.pull.api.data.BatchApplyObjectsData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
 import com.google.gerrit.common.Nullable;
 import com.google.gerrit.entities.Project;
@@ -89,6 +90,13 @@ public interface FetchApiClient {
   HttpResult callBatchSendObject(
       NameKey project,
       List<BatchApplyObjectData> batchApplyObjects,
+      long eventCreatedOn,
+      URIish targetUri)
+      throws IOException;
+
+  HttpResult callBatchSendObjects(
+      NameKey project,
+      List<BatchApplyObjectsData> batchApplyObjects,
       long eventCreatedOn,
       URIish targetUri)
       throws IOException;
