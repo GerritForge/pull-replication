@@ -16,10 +16,18 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import com.google.gerrit.common.Nullable;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.entities.Project.NameKey;
+<<<<<<< HEAD:src/main/java/com/gerritforge/gerrit/plugins/replication/pull/client/FetchApiClient.java
 import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.RefInput;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.BatchApplyObjectData;
 import com.gerritforge.gerrit.plugins.replication.pull.api.data.RevisionData;
+=======
+import com.googlesource.gerrit.plugins.replication.pull.Source;
+import com.googlesource.gerrit.plugins.replication.pull.api.FetchAction.RefInput;
+import com.googlesource.gerrit.plugins.replication.pull.api.data.BatchApplyObjectData;
+import com.googlesource.gerrit.plugins.replication.pull.api.data.BatchApplyObjectsData;
+import com.googlesource.gerrit.plugins.replication.pull.api.data.RevisionData;
+>>>>>>> stable-3.12:src/main/java/com/googlesource/gerrit/plugins/replication/pull/client/FetchApiClient.java
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -89,6 +97,13 @@ public interface FetchApiClient {
   HttpResult callBatchSendObject(
       NameKey project,
       List<BatchApplyObjectData> batchApplyObjects,
+      long eventCreatedOn,
+      URIish targetUri)
+      throws IOException;
+
+  HttpResult callBatchSendObjects(
+      NameKey project,
+      List<BatchApplyObjectsData> batchApplyObjects,
       long eventCreatedOn,
       URIish targetUri)
       throws IOException;

@@ -294,6 +294,32 @@ public class FetchRestApiClient implements FetchApiClient, ResponseHandler<HttpR
   }
 
   @Override
+  public HttpResult callBatchSendObjects(
+      NameKey project,
+      List<BatchApplyObjectsData> batchedRefs,
+      long eventCreatedOn,
+      URIish targetUri)
+      throws IOException {
+    List<RevisionsInput> inputs =
+        batchedRefs.stream()
+            .map(
+                batchApplyObjectsData ->
+                    new RevisionsInput(
+                        instanceId,
+                        batchApplyObjectsData.refName(),
+                        eventCreatedOn,
+                        batchApplyObjectsData.revisionsData().toArray(new RevisionData[0])))
+            .collect(Collectors.toList());
+
+    String url = formatUrl(targetUri.toString(), project, "batch-apply-objects");
+
+    HttpPost post = new HttpPost(url);
+    post.setEntity(new StringEntity(GSON.toJson(inputs)));
+    post.addHeader(new BasicHeader(CONTENT_TYPE, MediaType.JSON_UTF_8.toString()));
+    return executeRequest(post, bearerTokenProvider.get(), targetUri);
+  }
+
+  @Override
   public HttpResult callSendObjects(
       NameKey project,
       String refName,
