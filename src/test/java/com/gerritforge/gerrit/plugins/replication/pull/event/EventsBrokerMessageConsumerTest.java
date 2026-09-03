@@ -49,7 +49,7 @@ public class EventsBrokerMessageConsumerTest {
     shutdownState = new ShutdownState();
     objectUnderTest =
         new EventsBrokerMessageConsumer(
-            eventsBrokerDynamicItem, eventListener, shutdownState, "topicName", null);
+            eventsBrokerDynamicItem, eventListener, shutdownState, "topicName", null, eventsBrokerDynamicItem);
   }
 
   @Test
