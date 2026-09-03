@@ -16,8 +16,11 @@ import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBroker
 
 import com.gerritforge.gerrit.eventbroker.AckAwareConsumer;
 import com.gerritforge.gerrit.eventbroker.BrokerApi;
+import com.gerritforge.gerrit.eventbroker.BrokerApiPluginListener;
 import com.gerritforge.gerrit.eventbroker.MessageAcknowledgement;
 import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
+import com.google.common.base.Preconditions;
+import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.common.Nullable;
 import com.google.gerrit.extensions.events.LifecycleListener;
 import com.google.gerrit.extensions.registration.DynamicItem;
@@ -30,13 +33,16 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.io.IOException;
 
-public class EventsBrokerMessageConsumer implements AckAwareConsumer<Event>, LifecycleListener {
+public class EventsBrokerMessageConsumer
+    implements AckAwareConsumer<Event>, LifecycleListener, BrokerApiPluginListener {
+  private static final FluentLogger logger = FluentLogger.forEnclosingClass();
   private final DynamicItem<BrokerApi> eventsBrokerDi;
   private final StreamEventListener eventListener;
   private final ShutdownState shutdownState;
   private final String eventsTopicName;
   private final String groupId;
   private boolean autoAck;
+  private volatile boolean brokerApiImplPluginStarted;
 
   @Inject
   public EventsBrokerMessageConsumer(
@@ -72,13 +78,38 @@ public class EventsBrokerMessageConsumer implements AckAwareConsumer<Event>, Lif
 
   @Override
   public void start() {
+    if (isBrokerApiBound()) {
+      onBrokerApiStarted();
+    } else {
+      logger.atInfo().log(
+          "No broker plugin bound, not starting consumers yet for topic: %s", eventsTopicName);
+    }
+  }
+
+  @Override
+  public DynamicItem<BrokerApi> brokerApiDynamicItem() {
+    return eventsBrokerDi;
+  }
+
+  @Override
+  public void onBrokerApiStarted() {
+    Preconditions.checkState(!brokerApiImplPluginStarted, "BrokerApi implementation plugin cannot be started more than once");
+    logger.atInfo().log("Starting consumers for topic: %s", eventsTopicName);
     BrokerApi brokerApi = eventsBrokerDi.get();
     this.autoAck = brokerApi.isAutoAck();
     if (groupId == null) {
       brokerApi.receiveAsync(eventsTopicName, this);
+      brokerApiImplPluginStarted = true;
       return;
     }
     brokerApi.receiveAsync(eventsTopicName, groupId, this);
+    brokerApiImplPluginStarted = true;
+  }
+
+  @Override
+  public void beforeBrokerApiStopped() {
+    Preconditions.checkState(brokerApiImplPluginStarted, "BrokerApi implementation plugin cannot be stopped more than once");
+    brokerApiImplPluginStarted = false;
   }
 
   @Override
