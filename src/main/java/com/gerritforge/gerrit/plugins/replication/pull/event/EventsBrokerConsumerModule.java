@@ -12,7 +12,9 @@
 package com.gerritforge.gerrit.plugins.replication.pull.event;
 
 import com.google.gerrit.lifecycle.LifecycleModule;
+import com.google.gerrit.server.plugins.StartPluginListener;
 import com.google.inject.Scopes;
+import com.google.inject.internal.UniqueAnnotations;
 import com.google.inject.name.Names;
 import com.google.inject.util.Providers;
 import org.eclipse.jgit.lib.Config;
@@ -37,5 +39,8 @@ public class EventsBrokerConsumerModule extends LifecycleModule {
         .annotatedWith(Names.named(STREAM_EVENTS_GROUP_ID))
         .toProvider(Providers.of(config.getString("replication", null, "eventBrokerGroupId")));
     listener().to(EventsBrokerMessageConsumer.class);
+    bind(StartPluginListener.class)
+        .annotatedWith(UniqueAnnotations.create())
+        .to(EventsBrokerMessageConsumer.class);
   }
 }
