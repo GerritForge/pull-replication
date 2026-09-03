@@ -16,8 +16,10 @@ import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBroker
 
 import com.gerritforge.gerrit.eventbroker.AckAwareConsumer;
 import com.gerritforge.gerrit.eventbroker.BrokerApi;
+import com.gerritforge.gerrit.eventbroker.BrokerApiPluginListener;
 import com.gerritforge.gerrit.eventbroker.MessageAcknowledgement;
 import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
+import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.common.Nullable;
 import com.google.gerrit.extensions.events.LifecycleListener;
 import com.google.gerrit.extensions.registration.DynamicItem;
@@ -30,7 +32,8 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.io.IOException;
 
-public class EventsBrokerMessageConsumer implements AckAwareConsumer<Event>, LifecycleListener {
+public class EventsBrokerMessageConsumer implements AckAwareConsumer<Event>, LifecycleListener, BrokerApiPluginListener {
+  private static final FluentLogger logger = FluentLogger.forEnclosingClass();
   private final DynamicItem<BrokerApi> eventsBrokerDi;
   private final StreamEventListener eventListener;
   private final ShutdownState shutdownState;
@@ -72,6 +75,21 @@ public class EventsBrokerMessageConsumer implements AckAwareConsumer<Event>, Lif
 
   @Override
   public void start() {
+    if (isBrokerApiStarted()) {
+      onBrokerApiStarted();
+    } else {
+      logger.atInfo().log("No broker plugin bound, not starting consumers yet");
+    }
+  }
+
+  @Override
+  public DynamicItem<BrokerApi> brokerApiDynamicItem() {
+    return eventsBrokerDi;
+  }
+
+  @Override
+  public void onBrokerApiStarted() {
+    logger.atInfo().log("starting consumers");
     BrokerApi brokerApi = eventsBrokerDi.get();
     this.autoAck = brokerApi.isAutoAck();
     if (groupId == null) {
