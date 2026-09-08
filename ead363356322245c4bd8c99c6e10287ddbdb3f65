@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad39b741_90682e89",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-09-08T17:04:52Z",
+      "side": 1,
+      "message": "We already have this injected at L47, why injecting this again?",
+      "range": {
+        "startLine": 52,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 45
+      },
+      "revId": "ead363356322245c4bd8c99c6e10287ddbdb3f65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a26c3879_5ca0fbc4",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-09-08T17:04:52Z",
+      "side": 1,
+      "message": "We call `onBrokerApiStarted()` when the broker is already available (via `start()`).\nThe same `onBrokerApiStarted()` method can be invoked via `BrokerApiPluginListener`.\n\nIs it possible (theoretically) that both paths fire for the same broker so that the consumer could subscribe to the same topic more than once?\n\nShould we not make `onBrokerApiStarted()` idempotent to avoid that?",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 27
+      },
+      "revId": "ead363356322245c4bd8c99c6e10287ddbdb3f65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1ff0b119_1a47cb73",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-09-08T17:04:52Z",
+      "side": 1,
+      "message": "It would be useful to log for which topic the consumer is NOT yet started.",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 84,
+        "endChar": 80
+      },
+      "revId": "ead363356322245c4bd8c99c6e10287ddbdb3f65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "83398972_e1f8d474",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-09-08T17:04:52Z",
+      "side": 1,
+      "message": "It would be useful to log for which topic the consumer is started for:\n\n```\nlogger.atInfo().log(\"Starting consumer for topic %s\", eventsTopicName);\n```",
+      "range": {
+        "startLine": 95,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 46
+      },
+      "revId": "ead363356322245c4bd8c99c6e10287ddbdb3f65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
