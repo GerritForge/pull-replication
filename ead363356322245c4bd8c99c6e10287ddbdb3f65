@@ -121,6 +121,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d631af2e_f68b3e04",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-09-09T06:55:37Z",
+      "side": 1,
+      "message": "\u003e Should we not make onBrokerApiStarted() idempotent to avoid that?\n\n+1. I think this should be idempotent.",
+      "parentUuid": "9bde9915_24f75bb9",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 27
+      },
+      "revId": "ead363356322245c4bd8c99c6e10287ddbdb3f65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1ff0b119_1a47cb73",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
         "patchSetId": 2
