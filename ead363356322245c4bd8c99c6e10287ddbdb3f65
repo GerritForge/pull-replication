@@ -145,6 +145,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5e74c47f_39e281fc",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-09T08:25:00Z",
+      "side": 1,
+      "message": "\u003e That\u0027s an interesting point: what happens if we start, stop and then start an \n\u003e events-broker implementation again? Do we receive the same messages twice? I \n\u003e don\u0027t believe we should because we are using the same group IDs.\n\nExactly, same group id, so we don\u0027t reconsume the messages.\n\n\u003e +1. I think this should be idempotent.\n\nAs per previous comment, I don\u0027t see how we risk connecting to the same broker twice?",
+      "parentUuid": "d631af2e_f68b3e04",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 27
+      },
+      "revId": "ead363356322245c4bd8c99c6e10287ddbdb3f65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1ff0b119_1a47cb73",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
         "patchSetId": 2
