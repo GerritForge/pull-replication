@@ -169,6 +169,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f50a0698_8d525362",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-09-09T10:26:13Z",
+      "side": 1,
+      "message": "\u003e I don\u0027t see how this could be called twice for the exact same instance of the same plugin?\n\nI agree that, in the normal startup flow, these two paths should be mutually exclusive. If the broker is already bound, `start()` calls `onBrokerApiStarted()`, otherwise, the `BrokerApiPluginListener` calls it once the broker is bound.\n\nMy concern is that all of this is relying exclusively on this lifecycle ordering, and it is not enforced in the class.\n\n`onBrokerApiStarted()` can be reached independently from both places, and each call creates another `receiveAsync()` subscription. \n\nIf it was ever called twice, we would register the same consumer twice with the same group ID. What happens after that would then depend on the concrete broker implementation, I believe.\n\nI still think it would be safer to make that operation idempotent (an `AtomicBoolean` should be enough?). That would also make the lifecycle easier to reason about if the broker is stopped, restarted, or reloaded, in my opinion.",
+      "parentUuid": "5e74c47f_39e281fc",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 27
+      },
+      "revId": "ead363356322245c4bd8c99c6e10287ddbdb3f65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1ff0b119_1a47cb73",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
         "patchSetId": 2
