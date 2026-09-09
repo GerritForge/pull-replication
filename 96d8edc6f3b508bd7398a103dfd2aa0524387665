@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44ce6e38_f8b2dcea",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-09T06:47:41Z",
+      "side": 1,
+      "message": "Use the imperative form in commit messages.\n\n\n\n```suggestion\nWith Ia3d99d8af6, events-broker exposes a listener that tells when a\n```",
+      "range": {
+        "startLine": 9,
+        "startChar": 62,
+        "endLine": 9,
+        "endChar": 64
+      },
+      "revId": "96d8edc6f3b508bd7398a103dfd2aa0524387665",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "981a4452_c6396810",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-09T06:47:41Z",
+      "side": 1,
+      "message": "I don\u0027t understand the sense of the phrase.\n\n\n\n```suggestion\nListen to events-broker\u0027s BrokerApiPluginListener to be able\nsubscribe to broker implementations\u0027 topics as soon as the\nbroker-api implementation plugin is loaded.\n```",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 61
+      },
+      "revId": "96d8edc6f3b508bd7398a103dfd2aa0524387665",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
