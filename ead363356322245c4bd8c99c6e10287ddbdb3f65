@@ -217,6 +217,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c8cd3091_1ddb71f8",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-11T06:53:07Z",
+      "side": 1,
+      "message": "I propose to put a check like this one:\nhttps://review.gerrithub.io/c/GerritForge/websession-broker/+/1249255\n\nThe check must be consistent across plugins:\n- multi-site\n- websession-broker\n- pull-replication",
+      "parentUuid": "f1431f7a_493ab5bf",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 27
+      },
+      "revId": "ead363356322245c4bd8c99c6e10287ddbdb3f65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1ff0b119_1a47cb73",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
         "patchSetId": 2
