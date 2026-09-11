@@ -35,6 +35,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7dfd7c91_7a2a2a4b",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-11T13:42:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "817d16e3_49864e4c",
+      "revId": "88fe834ad10cc996d7c4f0b1d11aefbcb1d80708",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c3552fe2_72cc4324",
@@ -52,6 +70,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "01860b2e_a748ab8f",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-11T13:42:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c3552fe2_72cc4324",
+      "revId": "88fe834ad10cc996d7c4f0b1d11aefbcb1d80708",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "192bba99_75a89943",
@@ -65,6 +101,24 @@
       "writtenOn": "2026-09-11T07:09:28Z",
       "side": 1,
       "message": "```suggestion\n    brokerApi.receiveAsync(eventsTopicName, groupId, this);\n    started \u003d true;\n```",
+      "revId": "88fe834ad10cc996d7c4f0b1d11aefbcb1d80708",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1fc1eada_a5f694db",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-11T13:42:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "192bba99_75a89943",
       "revId": "88fe834ad10cc996d7c4f0b1d11aefbcb1d80708",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
