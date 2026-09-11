@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25664c25_4cfabf76",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-11T07:09:28Z",
+      "side": 1,
+      "message": "The proposed changes should address the double-start issue.",
+      "revId": "88fe834ad10cc996d7c4f0b1d11aefbcb1d80708",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "817d16e3_49864e4c",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-11T07:09:28Z",
+      "side": 1,
+      "message": "```suggestion\n  private boolean autoAck;\n  private volatile boolean started;\n```",
+      "revId": "88fe834ad10cc996d7c4f0b1d11aefbcb1d80708",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3552fe2_72cc4324",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-11T07:09:28Z",
+      "side": 1,
+      "message": "```suggestion\n    Preconditions.checkState(!started, \"Broker api has already been started\");\n    logger.atInfo().log(\"starting consumers for topic: %s\", eventsTopicName);\n```",
+      "revId": "88fe834ad10cc996d7c4f0b1d11aefbcb1d80708",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "192bba99_75a89943",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-11T07:09:28Z",
+      "side": 1,
+      "message": "```suggestion\n    brokerApi.receiveAsync(eventsTopicName, groupId, this);\n    started \u003d true;\n```",
+      "revId": "88fe834ad10cc996d7c4f0b1d11aefbcb1d80708",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
