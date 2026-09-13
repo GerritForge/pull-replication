@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6b2aeb4_c62bed0d",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-13T20:44:13Z",
+      "side": 1,
+      "message": "```suggestion\n  private volatile boolean started;\n```",
+      "range": {
+        "startLine": 44,
+        "startChar": 27,
+        "endLine": 44,
+        "endChar": 44
+      },
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "223c6972_9d19a068",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-13T20:44:13Z",
+      "side": 1,
+      "message": "These two lines should be inverted.\n\n\n\n```suggestion\n    Preconditions.checkState(!connectedToBroker, \"Broker api has already been started\");\n    logger.atInfo().log(\"Starting consumers for topic: %s\", eventsTopicName);\n```",
+      "range": {
+        "startLine": 94,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 88
+      },
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f00804d2_286a24d9",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-13T20:44:13Z",
+      "side": 1,
+      "message": "```suggestion\n      started \u003d true;\n```",
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "96915077_441a3277",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-13T20:44:13Z",
+      "side": 1,
+      "message": "```suggestion\n    started \u003d true;\n```",
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d447c400_79616d09",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-13T20:44:13Z",
+      "side": 1,
+      "message": "Missing check against double-stop.\n\n\n\n```suggestion\n    Preconditions.checkState(started, \"Broker api was not started\");\n    connectedToBroker \u003d false;\n```",
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "431474b8_29439702",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-13T20:44:13Z",
+      "side": 1,
+      "message": "```suggestion\n    started \u003d false;\n```",
+      "range": {
+        "startLine": 110,
+        "startChar": 4,
+        "endLine": 110,
+        "endChar": 21
+      },
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
