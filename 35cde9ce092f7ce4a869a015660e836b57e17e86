@@ -269,6 +269,24 @@
       "parentUuid": "17ec8e77_fdd61e32",
       "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "52842bdc_768e076a",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-14T10:59:50Z",
+      "side": 1,
+      "message": "\u003e which could also impact the plugin shutdown itself.\n\nBy this I mean that we\u0027d be throwing an exception during plugin shutdown, so we\u0027d need to see if that impacted in any way the shutdown lifecycle.",
+      "parentUuid": "0eee7b54_0a498145",
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
