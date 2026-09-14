@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ee99821b_d4fcb7de",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-14T10:32:28Z",
+      "side": 1,
+      "message": "Why `started`? we\u0027re in pull-replication in, started makes it sounds like pull-replication plugin started, but what we\u0027re interested in is wether we\u0027re connected to a broker or not. Why pick a name that gives less context about what we\u0027re doing?",
+      "parentUuid": "a6b2aeb4_c62bed0d",
+      "range": {
+        "startLine": 44,
+        "startChar": 27,
+        "endLine": 44,
+        "endChar": 44
+      },
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "223c6972_9d19a068",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
         "patchSetId": 10
@@ -37,6 +61,30 @@
       "writtenOn": "2026-09-13T20:44:13Z",
       "side": 1,
       "message": "These two lines should be inverted.\n\n\n\n```suggestion\n    Preconditions.checkState(!connectedToBroker, \"Broker api has already been started\");\n    logger.atInfo().log(\"Starting consumers for topic: %s\", eventsTopicName);\n```",
+      "range": {
+        "startLine": 94,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 88
+      },
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb1342b2_1ce61336",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-14T10:32:28Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "223c6972_9d19a068",
       "range": {
         "startLine": 94,
         "startChar": 0,
@@ -117,6 +165,24 @@
         "endLine": 110,
         "endChar": 21
       },
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e626be3f_2b5a6049",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-14T10:32:28Z",
+      "side": 1,
+      "message": "Why do we need to check about double stop? If we\u0027re already checking against a double start, why check against a double stop?\n\nRegardless, what\u0027s the issue if a broker is stopped more than once? We don\u0027t risk messages being lost or anything so not sure this is needed. Do you agree?",
+      "parentUuid": "d447c400_79616d09",
       "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
