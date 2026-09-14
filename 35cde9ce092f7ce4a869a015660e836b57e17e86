@@ -120,6 +120,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e020d5eb_18803297",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-14T12:50:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "51beeb45_2606e046",
+      "range": {
+        "startLine": 44,
+        "startChar": 27,
+        "endLine": 44,
+        "endChar": 44
+      },
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "223c6972_9d19a068",
@@ -184,6 +208,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4206caf2_10c5c2a2",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-14T12:50:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f00804d2_286a24d9",
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "96915077_441a3277",
@@ -197,6 +239,24 @@
       "writtenOn": "2026-09-13T20:44:13Z",
       "side": 1,
       "message": "```suggestion\n    started \u003d true;\n```",
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d013f48_55908235",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-14T12:50:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "96915077_441a3277",
       "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -327,6 +387,48 @@
       "side": 1,
       "message": "The point of assertions isn\u0027t to resolve situations where you could have errors, but highlight internal inconsistencies that should never happen.\n\nIt\u0027s not about exception management, it is about asserting a predicate that must always be true.\n\nIt\u0027s not about risks (impossible means zero probability, therefore no risks).",
       "parentUuid": "52842bdc_768e076a",
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "80a08ace_aee800eb",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-14T12:50:34Z",
+      "side": 1,
+      "message": "I\u0027m still not convinced but anyway, don\u0027t have that strong of an opinion so I\u0027ll go ahead and add the check.",
+      "parentUuid": "ffbbae8b_3ad2617d",
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1e262a10_a7f43686",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-14T12:50:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "431474b8_29439702",
+      "range": {
+        "startLine": 110,
+        "startChar": 4,
+        "endLine": 110,
+        "endChar": 21
+      },
       "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
