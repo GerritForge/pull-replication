@@ -74,6 +74,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c19c61e2_805be1ea",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-14T10:53:44Z",
+      "side": 1,
+      "message": "Still not sure that it\u0027s better than `connectedToBroker`, sorry. `started also creates confusion with `isBrokerApiStarted`, if we only want to know if the broker has started or not, why then not call `isBrokerApiStarted` rather than have a separate variable for it?",
+      "parentUuid": "d1ec34b2_f15a9ad6",
+      "range": {
+        "startLine": 44,
+        "startChar": 27,
+        "endLine": 44,
+        "endChar": 44
+      },
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "223c6972_9d19a068",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
         "patchSetId": 10
@@ -225,6 +249,24 @@
       "side": 1,
       "message": "\u003e Why do we need to check about double stop? If we\u0027re already checking against a double start, why check against a double stop?\n\nThe double start can never happen and the double stop can never happen: those are two impossible situations that we are covering for preconditions.\n\nThe preconditions aren\u0027t regular code paths, but situations that should never happen.\n\n\u003e Regardless, what\u0027s the issue if a broker is stopped more than once? We don\u0027t risk messages being lost or anything so not sure this is needed. Do you agree?\n\nIt\u0027s an impossible situation that we want to detect, like the double start.",
       "parentUuid": "e626be3f_2b5a6049",
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0eee7b54_0a498145",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-09-14T10:53:44Z",
+      "side": 1,
+      "message": "but there\u0027s a difference,the start should never happen, but if it does, we risk entering an undefined behaviour situation, where we could subscribe twice to the same topics, which could lead to loss of messages, so yes, we need to prevent that.\n\nBut double stop would cause no issue? I don\u0027t see why we need to detect/prevent something that isn\u0027t an issue which could also impact the plugin shutdown itself.",
+      "parentUuid": "17ec8e77_fdd61e32",
       "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
