@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d1ec34b2_f15a9ad6",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-14T10:43:45Z",
+      "side": 1,
+      "message": "The class name is `EventsBrokerMessageConsumer` therefore `started` refers to the object: the consumer has started.",
+      "parentUuid": "ee99821b_d4fcb7de",
+      "range": {
+        "startLine": 44,
+        "startChar": 27,
+        "endLine": 44,
+        "endChar": 44
+      },
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "223c6972_9d19a068",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
         "patchSetId": 10
@@ -183,6 +207,24 @@
       "side": 1,
       "message": "Why do we need to check about double stop? If we\u0027re already checking against a double start, why check against a double stop?\n\nRegardless, what\u0027s the issue if a broker is stopped more than once? We don\u0027t risk messages being lost or anything so not sure this is needed. Do you agree?",
       "parentUuid": "d447c400_79616d09",
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17ec8e77_fdd61e32",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-14T10:43:45Z",
+      "side": 1,
+      "message": "\u003e Why do we need to check about double stop? If we\u0027re already checking against a double start, why check against a double stop?\n\nThe double start can never happen and the double stop can never happen: those are two impossible situations that we are covering for preconditions.\n\nThe preconditions aren\u0027t regular code paths, but situations that should never happen.\n\n\u003e Regardless, what\u0027s the issue if a broker is stopped more than once? We don\u0027t risk messages being lost or anything so not sure this is needed. Do you agree?\n\nIt\u0027s an impossible situation that we want to detect, like the double start.",
+      "parentUuid": "e626be3f_2b5a6049",
       "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
