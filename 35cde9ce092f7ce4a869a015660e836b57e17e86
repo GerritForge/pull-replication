@@ -98,6 +98,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "51beeb45_2606e046",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-14T11:27:00Z",
+      "side": 1,
+      "message": "There is no `connect` method, therefore the `connected` part of the name makes no sense for me. Then you could call it `subscribedToConsumers` but it\u0027s a bit long. Naming things is definitely the most difficult part of our job 😆",
+      "parentUuid": "c19c61e2_805be1ea",
+      "range": {
+        "startLine": 44,
+        "startChar": 27,
+        "endLine": 44,
+        "endChar": 44
+      },
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "223c6972_9d19a068",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
         "patchSetId": 10
@@ -285,6 +309,24 @@
       "side": 1,
       "message": "\u003e which could also impact the plugin shutdown itself.\n\nBy this I mean that we\u0027d be throwing an exception during plugin shutdown, so we\u0027d need to see if that impacted in any way the shutdown lifecycle.",
       "parentUuid": "0eee7b54_0a498145",
+      "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ffbbae8b_3ad2617d",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-14T11:27:00Z",
+      "side": 1,
+      "message": "The point of assertions isn\u0027t to resolve situations where you could have errors, but highlight internal inconsistencies that should never happen.\n\nIt\u0027s not about exception management, it is about asserting a predicate that must always be true.\n\nIt\u0027s not about risks (impossible means zero probability, therefore no risks).",
+      "parentUuid": "52842bdc_768e076a",
       "revId": "35cde9ce092f7ce4a869a015660e836b57e17e86",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
