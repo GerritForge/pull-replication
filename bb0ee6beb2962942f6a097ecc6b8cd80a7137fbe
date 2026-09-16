@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cfb7896a_3c111865",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 18
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-16T05:23:56Z",
+      "side": 1,
+      "message": "Verified with Change 631441",
+      "revId": "bb0ee6beb2962942f6a097ecc6b8cd80a7137fbe",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
