@@ -11,14 +11,19 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.event;
 
+import static com.gerritforge.gerrit.eventbroker.EventsBrokerConfiguration.ALL_EVENTS_PARTITION;
 import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule.STREAM_EVENTS_GROUP_ID;
 import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule.STREAM_EVENTS_TOPIC_NAME;
 
 import com.gerritforge.gerrit.eventbroker.AckAwareConsumer;
 import com.gerritforge.gerrit.eventbroker.BrokerApi;
 import com.gerritforge.gerrit.eventbroker.BrokerApiPluginListener;
+import com.gerritforge.gerrit.eventbroker.EventMetadata;
+import com.gerritforge.gerrit.eventbroker.EventsBrokerConfiguration;
 import com.gerritforge.gerrit.eventbroker.MessageAcknowledgement;
+import com.gerritforge.gerrit.plugins.replication.pull.ProjectLockFailureException;
 import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RemoteConfigurationMissingException;
 import com.google.common.base.Preconditions;
 import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.common.Nullable;
@@ -41,6 +46,7 @@ public class EventsBrokerMessageConsumer
   private final ShutdownState shutdownState;
   private final String eventsTopicName;
   private final String groupId;
+  private final boolean hasAllEventsPartition;
   private boolean autoAck;
   private volatile boolean brokerApiImplPluginStarted;
 
@@ -48,22 +54,61 @@ public class EventsBrokerMessageConsumer
   public EventsBrokerMessageConsumer(
       DynamicItem<BrokerApi> eventsBroker,
       StreamEventListener eventListener,
+      EventsBrokerConfiguration eventsBrokerConfiguration,
       ShutdownState shutdownState,
       @Named(STREAM_EVENTS_TOPIC_NAME) String eventsTopicName,
       @Nullable @Named(STREAM_EVENTS_GROUP_ID) String groupId) {
 
     this.eventsBrokerDi = eventsBroker;
     this.eventListener = eventListener;
+    this.hasAllEventsPartition =
+        eventsBrokerConfiguration
+            .getPartitionsForTopic(eventsTopicName)
+            .contains(ALL_EVENTS_PARTITION);
     this.shutdownState = shutdownState;
     this.eventsTopicName = eventsTopicName;
     this.groupId = groupId;
   }
 
   @Override
-  public void accept(Event event, MessageAcknowledgement<Event> msgAck)
+  public void accept(Event event, EventMetadata metadata, MessageAcknowledgement<Event> msgAck)
+      throws InterruptedException {
+    if (!autoAck) {
+      acceptSync(event, msgAck);
+    } else {
+      acceptAsync(event, msgAck);
+    }
+  }
+
+  private void acceptSync(Event event, MessageAcknowledgement<Event> msgAck)
       throws InterruptedException {
     try {
-      eventListener.fetchRefsForEvent(event);
+      eventListener.fetchRefsForEventSync(event);
+    } catch (AuthException
+        | PermissionBackendException
+        | ProjectLockFailureException
+        | IOException
+        | UnprocessableEntityException
+        | ResourceNotFoundException
+        | RemoteConfigurationMissingException e) {
+
+      logger.atSevere().withCause(e).log(
+          "Failed to process broker event %s; leaving it unacknowledged", event.type);
+      // TODO: Requeue processing failures instead of relying on broker redelivery.
+      // Follow-up: https://review.gerrithub.io/c/GerritForge/pull-replication/+/1256845
+      throw new EventRejectedException(event, e);
+    }
+
+    msgAck.ack(event);
+    if (shutdownState.isShuttingDown()) {
+      stop();
+    }
+  }
+
+  private void acceptAsync(Event event, MessageAcknowledgement<Event> msgAck)
+      throws InterruptedException {
+    try {
+      eventListener.fetchRefsForEventAsync(event);
       if (!autoAck) {
         msgAck.ack(event);
       }
@@ -72,7 +117,8 @@ public class EventsBrokerMessageConsumer
         | PermissionBackendException
         | IOException
         | UnprocessableEntityException
-        | ResourceNotFoundException e) {
+        | ResourceNotFoundException
+        | RemoteConfigurationMissingException e) {
       throw new EventRejectedException(event, e);
     }
   }
@@ -98,12 +144,21 @@ public class EventsBrokerMessageConsumer
     logger.atInfo().log("Starting consumers for topic: %s", eventsTopicName);
     BrokerApi brokerApi = eventsBrokerDi.get();
     this.autoAck = brokerApi.isAutoAck();
-    if (groupId == null) {
+    if (!autoAck) {
+      Preconditions.checkState(
+          hasAllEventsPartition,
+          "Manual acknowledgement requires the catch-all logical partition (partitionValue = *) for"
+              + " topic %s",
+          eventsTopicName);
+      Preconditions.checkState(
+          groupId != null,
+          "replication.eventBrokerGroupId is required for the all events partition consumer");
+      brokerApi.receiveAsyncWithPartition(eventsTopicName, ALL_EVENTS_PARTITION, groupId, this);
+    } else if (groupId == null) {
       brokerApi.receiveAsync(eventsTopicName, this);
-      brokerApiImplPluginStarted = true;
-      return;
+    } else {
+      brokerApi.receiveAsync(eventsTopicName, groupId, this);
     }
-    brokerApi.receiveAsync(eventsTopicName, groupId, this);
     brokerApiImplPluginStarted = true;
   }
 

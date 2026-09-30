@@ -256,13 +256,62 @@ replication.eventBrokerTopic
 
 replication.eventBrokerGroupId
 :	Optional group id for consumers. Used for keeping the offset of the
-	the last acked message on the topic with a specific group id; supported
-	only if the event-broker plugin supports the ExtendedBrokerApi
-	interface.
-	When not set, the messages received are acked using a global group id
-	shared by all subscribers in Gerrit.
+	last acknowledged message on the topic with a specific group id.
+	When unset, pull-replication uses the broker default group for a
+	non-partitioned topic. A group id is required when using the catch-all
+	partition with a broker that supports manual acknowledgement; without it,
+	the event-broker consumer fails to start.
 
 	Default: unset
+
+### Event-broker processing and acknowledgement modes
+
+Pull-replication selects the processing mode from the partition configuration
+of the topic specified by `replication.eventBrokerTopic` and from the broker
+acknowledgement mode.
+
+#### Acknowledge after processing
+
+To acknowledge an event only after it has been processed, use a broker that
+supports manual acknowledgement and configure the stream-events topic in
+[`events-broker.config`](https://github.com/GerritForge/events-broker/blob/stable-3.13/src/main/resources/Documentation/config.md)
+with the catch-all logical partition:
+
+```
+[topic "stream-events"]
+    partitionValue = *
+```
+Also set `replication.eventBrokerGroupId`. The catch-all partition preserves
+event order by routing all event types to one partition. Pull-replication then:
+
+* subscribes to the catch-all partition using the configured group id;
+* processes events synchronously on the broker consumer thread, without
+  scheduling Git fetches on the in-memory replication queue; and
+* acknowledges each message only after its event has been processed
+  successfully.
+
+An acknowledgement therefore records that the event has been applied to the
+local Gerrit instance, rather than merely accepted for later processing.
+
+If processing fails, pull-replication logs the failure and does not acknowledge
+that message. It does not currently retry or requeue the failed event. If the
+broker continues delivering messages and a later message is acknowledged, its
+committed offset may also advance past the failed message, effectively dropping
+that event.
+
+#### Acknowledge before processing
+
+When the topic has no partition configuration, pull-replication subscribes to
+the whole topic and processes ref updates through the asynchronous fetch path
+and the in-memory replication queue. The queue can delay and merge fetch
+operations, and reschedule eligible failures.
+
+Message acknowledgement does not guarantee that the ref update has already
+been applied to the local repository.
+
+Brokers that acknowledge messages before processing also use asynchronous
+processing, because pull-replication cannot defer their acknowledgement until
+processing completes.
 
 replication.maxConnectionsPerRoute
 :	Maximum number of HTTP connections per one HTTP route.
