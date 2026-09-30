@@ -329,7 +329,7 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
     }
   }
 
-  public void runSync() {
+  public void runSync() throws ProjectLockFailureException {
     try (TraceContext ctx = TraceContext.open().addTag(ID_KEY, HexFormat.fromInt(id))) {
       doRunFetchOperation(ReplicationType.SYNC);
     }
@@ -342,10 +342,13 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
   private void runFetchOperation() {
     try (TraceContext ctx = TraceContext.open().addTag(ID_KEY, HexFormat.fromInt(id))) {
       doRunFetchOperation(ReplicationType.ASYNC);
+    } catch (ProjectLockFailureException e) {
+      throw new IllegalStateException("Asynchronous fetch unexpectedly failed", e);
     }
   }
 
-  private void doRunFetchOperation(ReplicationType replicationType) {
+  private void doRunFetchOperation(ReplicationType replicationType)
+      throws ProjectLockFailureException {
     // Lock the queue, and remove ourselves, so we can't be modified once
     // we start replication (instead a new instance, with the same URI, is
     // created and scheduled for a future point in time.)
@@ -476,8 +479,10 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
         }
       }
     } catch (ProjectsLock.UnableToLockProjectException e) {
-      pool.fetchWasCanceled(this);
-      if (!canceled) {
+      if (replicationType == ReplicationType.ASYNC) {
+        pool.fetchWasCanceled(this);
+      }
+      if (!canceled && replicationType == ReplicationType.ASYNC) {
         repLog.info(
             "[{}] Project {} is locked. Rescheduling replication from {} to avoid collision with an"
                 + " in-flight fetch task [{}].",
@@ -489,12 +494,16 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
         isCollision = true;
       } else {
         repLog.info(
-            "[{}] Project {} is locked. Task is cancelled and conflicting with in-flight fetch task"
+            "[{}] Project {} is locked. Task is {} and conflicting with in-flight fetch task"
                 + " [{}]. NOT rescheduling replication from {}.",
             taskIdHex,
             projectName,
+            canceled ? "cancelled" : "synchronous",
             e.getConflictingTaskId(),
             uri);
+        if (replicationType == ReplicationType.SYNC) {
+          throw new ProjectLockFailureException(projectName, e.getConflictingTaskId(), e);
+        }
       }
     }
   }
