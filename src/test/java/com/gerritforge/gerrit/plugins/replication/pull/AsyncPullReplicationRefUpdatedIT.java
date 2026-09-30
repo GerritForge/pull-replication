@@ -23,6 +23,7 @@ import java.util.List;
     sysModule = "com.gerritforge.gerrit.plugins.replication.pull.TestPullReplicationModule",
     httpModule = "com.gerritforge.gerrit.plugins.replication.pull.api.HttpModule")
 public class AsyncPullReplicationRefUpdatedIT extends PullReplicationITBase {
+  
   private static final int ASYNC_REPLICATION_DELAY_SEC = 2;
 
   @Override
