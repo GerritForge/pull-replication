@@ -256,13 +256,53 @@ replication.eventBrokerTopic
 
 replication.eventBrokerGroupId
 :	Optional group id for consumers. Used for keeping the offset of the
-	the last acked message on the topic with a specific group id; supported
-	only if the event-broker plugin supports the ExtendedBrokerApi
-	interface.
-	When not set, the messages received are acked using a global group id
-	shared by all subscribers in Gerrit.
+	last acknowledged message on the topic with a specific group id.
+	It is required when the configured event-broker topic exposes the
+	`ref-updated` logical partition. When the topic is not partition-aware,
+	the asynchronous consumer is used.
 
 	Default: unset
+
+### Event-broker fetch and acknowledgement modes
+
+Pull-replication selects the fetch mode from the partition configuration of
+the topic specified by `replication.eventBrokerTopic`.
+
+#### Partitioned synchronous fetch
+
+To process ref-update events synchronously, configure the stream-events topic
+in `events-broker.config` as follows:
+
+```
+[topic "stream-events"]
+    partitionValue = "ref-updated"
+    partitionEventProperty = eventType
+```
+
+When the topic exposes the `ref-updated` logical partition, pull-replication:
+
+* subscribes explicitly to that partition using
+  `replication.eventBrokerGroupId`;
+* executes the Git fetch synchronously on the broker consumer thread, without
+  scheduling it on the in-memory replication queue;
+* acknowledges the message, if needed, only after the fetch has completed successfully.
+
+Consequently, acknowledging a message records that its ref update has already
+been applied to the local repository, rather than merely accepted for later
+processing. If the synchronous fetch fails, pull-replication logs the failure
+and leaves the message unacknowledged. Automatic retry or requeue handling for
+failed synchronous fetches is not currently performed by pull-replication.
+
+#### Non-partitioned asynchronous fetch
+
+When the topic does not expose the `ref-updated` logical partition,
+pull-replication operates asynchronously. It subscribes to the whole
+topic and processes ref updates through the asynchronous fetch path and the
+in-memory replication queue. The queue can delay and merge fetch operations,
+and reschedule eligible failures.
+
+Message acknowledgement does not guarantee ref update has already been
+applied to the local repository.
 
 replication.maxConnectionsPerRoute
 :	Maximum number of HTTP connections per one HTTP route.
