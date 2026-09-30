@@ -18,6 +18,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.Command;
 import com.gerritforge.gerrit.plugins.replication.pull.FetchOne;
 import com.gerritforge.gerrit.plugins.replication.pull.FetchRefSpec;
 import com.gerritforge.gerrit.plugins.replication.pull.FetchResultProcessing;
+import com.gerritforge.gerrit.plugins.replication.pull.ProjectLockFailureException;
 import com.gerritforge.gerrit.plugins.replication.pull.PullReplicationStateLogger;
 import com.gerritforge.gerrit.plugins.replication.pull.ReplicationState;
 import com.gerritforge.gerrit.plugins.replication.pull.ReplicationType;
@@ -59,11 +60,18 @@ public class FetchCommand implements Command {
       Set<FetchRefSpec> refsSpecs,
       PullReplicationApiRequestMetrics apiRequestMetrics)
       throws InterruptedException, RemoteConfigurationMissingException, TransportException {
-    fetch(name, label, refsSpecs, ASYNC, Optional.of(apiRequestMetrics));
+    try {
+      fetch(name, label, refsSpecs, ASYNC, Optional.of(apiRequestMetrics));
+    } catch (ProjectLockFailureException e) {
+      throw new IllegalStateException("Asynchronous fetch unexpectedly failed", e);
+    }
   }
 
   public void fetchSync(Project.NameKey name, String label, Set<FetchRefSpec> refsSpecs)
-      throws InterruptedException, RemoteConfigurationMissingException, TransportException {
+      throws InterruptedException,
+          ProjectLockFailureException,
+          RemoteConfigurationMissingException,
+          TransportException {
     fetch(name, label, refsSpecs, SYNC, Optional.empty());
   }
 
@@ -73,7 +81,10 @@ public class FetchCommand implements Command {
       Set<FetchRefSpec> refSpecs,
       ReplicationType fetchType,
       Optional<PullReplicationApiRequestMetrics> apiRequestMetrics)
-      throws InterruptedException, RemoteConfigurationMissingException, TransportException {
+      throws InterruptedException,
+          ProjectLockFailureException,
+          RemoteConfigurationMissingException,
+          TransportException {
     ReplicationState state =
         fetchReplicationStateFactory.create(
             new FetchResultProcessing.CommandProcessing(this, eventDispatcher.get()));
