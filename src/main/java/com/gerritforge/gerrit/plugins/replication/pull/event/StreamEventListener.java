@@ -20,12 +20,14 @@ import com.gerritforge.gerrit.plugins.replication.pull.FetchOne;
 import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction;
+import com.gerritforge.gerrit.plugins.replication.pull.api.FetchCommand;
 import com.gerritforge.gerrit.plugins.replication.pull.api.FetchJob;
 import com.gerritforge.gerrit.plugins.replication.pull.api.FetchJob.Factory;
 import com.gerritforge.gerrit.plugins.replication.pull.api.ProjectDeletionAction;
 import com.gerritforge.gerrit.plugins.replication.pull.api.ProjectInitializationAction;
 import com.gerritforge.gerrit.plugins.replication.pull.api.PullReplicationApiRequestMetrics;
 import com.gerritforge.gerrit.plugins.replication.pull.api.UpdateHeadCommand;
+import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RemoteConfigurationMissingException;
 import com.gerritforge.gerrit.plugins.replication.pull.filter.ExcludedRefsFilter;
 import com.google.common.base.Strings;
 import com.google.common.cache.Cache;
@@ -48,6 +50,7 @@ import com.google.gerrit.server.events.ProjectHeadUpdatedEvent;
 import com.google.gerrit.server.events.RefUpdatedEvent;
 import com.google.gerrit.server.git.WorkQueue;
 import com.google.gerrit.server.permissions.PermissionBackendException;
+import com.google.gerrit.server.project.ProjectCache;
 import com.google.gerrit.server.project.ProjectResource;
 import com.google.gerrit.server.restapi.project.ProjectsCollection;
 import com.google.inject.Inject;
@@ -56,6 +59,7 @@ import com.google.inject.name.Named;
 import com.googlesource.gerrit.plugins.deleteproject.ProjectDeletedEvent;
 import java.io.IOException;
 import java.util.Optional;
+import org.eclipse.jgit.errors.TransportException;
 import org.eclipse.jgit.lib.ObjectId;
 
 public class StreamEventListener implements EventListener {
@@ -63,6 +67,7 @@ public class StreamEventListener implements EventListener {
   private static final String ZERO_ID_NAME = ObjectId.zeroId().name();
 
   private final ExcludedRefsFilter refsFilter;
+  private final FetchCommand fetchCommand;
   private final Factory fetchJobFactory;
   private final UpdateHeadCommand updateHeadCommand;
   private final ProjectInitializationAction projectInitializationAction;
@@ -73,6 +78,7 @@ public class StreamEventListener implements EventListener {
   private final Cache<ApplyObjectsCacheKey, Long> refUpdatesSucceededCache;
   private final ProjectDeletionAction projectDeletionAction;
   private final ProjectsCollection projectsCollection;
+  private final ProjectCache projectCache;
 
   @Inject
   public StreamEventListener(
@@ -80,17 +86,20 @@ public class StreamEventListener implements EventListener {
       UpdateHeadCommand updateHeadCommand,
       ProjectInitializationAction projectInitializationAction,
       WorkQueue workQueue,
+      FetchCommand fetchCommand,
       FetchJob.Factory fetchJobFactory,
       Provider<PullReplicationApiRequestMetrics> metricsProvider,
       SourcesCollection sources,
       ExcludedRefsFilter excludedRefsFilter,
       @Named(APPLY_OBJECTS_CACHE) Cache<ApplyObjectsCacheKey, Long> refUpdatesSucceededCache,
       ProjectDeletionAction projectDeletionAction,
-      ProjectsCollection projectsCollection) {
+      ProjectsCollection projectsCollection,
+      ProjectCache projectCache) {
     this.instanceId = instanceId;
     this.updateHeadCommand = updateHeadCommand;
     this.projectInitializationAction = projectInitializationAction;
     this.workQueue = workQueue;
+    this.fetchCommand = fetchCommand;
     this.fetchJobFactory = fetchJobFactory;
     this.metricsProvider = metricsProvider;
     this.sources = sources;
@@ -98,6 +107,7 @@ public class StreamEventListener implements EventListener {
     this.refUpdatesSucceededCache = refUpdatesSucceededCache;
     this.projectDeletionAction = projectDeletionAction;
     this.projectsCollection = projectsCollection;
+    this.projectCache = projectCache;
 
     requireNonNull(
         Strings.emptyToNull(this.instanceId), "gerrit.instanceId cannot be null or empty");
@@ -106,7 +116,7 @@ public class StreamEventListener implements EventListener {
   @Override
   public void onEvent(Event event) {
     try {
-      fetchRefsForEvent(event);
+      fetchRefsForEventAsync(event);
     } catch (AuthException
         | PermissionBackendException
         | IOException
@@ -119,18 +129,44 @@ public class StreamEventListener implements EventListener {
     }
   }
 
-  public void fetchRefsForEvent(Event event)
+  public void fetchRefsForEventAsync(Event event)
       throws AuthException,
           PermissionBackendException,
           IOException,
           UnprocessableEntityException,
           ResourceNotFoundException {
-    if (instanceId.equals(event.instanceId) || !shouldReplicateProject(event)) {
+    try {
+      fetchRefsForEvent(event, false);
+    } catch (InterruptedException | RemoteConfigurationMissingException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  public void fetchRefsForEventSync(Event event)
+      throws AuthException,
+          PermissionBackendException,
+          IOException,
+          UnprocessableEntityException,
+          ResourceNotFoundException,
+          InterruptedException,
+          RemoteConfigurationMissingException,
+          TransportException {
+    fetchRefsForEvent(event, true);
+  }
+
+  private void fetchRefsForEvent(Event event, boolean synchronous)
+      throws AuthException,
+          PermissionBackendException,
+          IOException,
+          UnprocessableEntityException,
+          ResourceNotFoundException,
+          InterruptedException,
+          RemoteConfigurationMissingException,
+          TransportException {
+    if (instanceId.equals(event.instanceId) || !shouldReplicateProject(event, synchronous)) {
       return;
     }
 
-    PullReplicationApiRequestMetrics metrics = metricsProvider.get();
-    metrics.start(event);
     if (event instanceof RefUpdatedEvent) {
       RefUpdatedEvent refUpdatedEvent = (RefUpdatedEvent) event;
       if (!isRefToBeReplicated(refUpdatedEvent.getRefName())) {
@@ -152,12 +188,13 @@ public class StreamEventListener implements EventListener {
         return;
       }
 
-      fetchRefsAsync(
+      fetchRefs(
           refUpdatedEvent.getRefName(),
           refUpdatedEvent.instanceId,
           refUpdatedEvent.getProjectNameKey(),
           isRefDelete(refUpdatedEvent),
-          metrics);
+          synchronous,
+          event);
     } else if (event instanceof ProjectCreatedEvent) {
       ProjectCreatedEvent projectCreatedEvent = (ProjectCreatedEvent) event;
       try {
@@ -166,12 +203,13 @@ public class StreamEventListener implements EventListener {
             getProjectRepositoryName(projectCreatedEvent),
             projectCreatedEvent.headName,
             isStoreRefLog);
-        fetchRefsAsync(
+        fetchRefs(
             FetchOne.ALL_REFS,
             projectCreatedEvent.instanceId,
             projectCreatedEvent.getProjectNameKey(),
             false,
-            metrics);
+            synchronous,
+            event);
       } catch (AuthException | PermissionBackendException | IOException e) {
         logger.atSevere().withCause(e).log(
             "Cannot initialise project:%s", projectCreatedEvent.projectName);
@@ -212,7 +250,8 @@ public class StreamEventListener implements EventListener {
     return !refsFilter.match(refName);
   }
 
-  private boolean shouldReplicateProject(Event event) {
+  private boolean shouldReplicateProject(Event event, boolean synchronous)
+      throws AuthException, PermissionBackendException, IOException {
     if (!isInterestingEventType(event)) {
       return false;
     }
@@ -261,6 +300,17 @@ public class StreamEventListener implements EventListener {
     return RefNames.isConfigRef(event.getRefName()) && isRefDelete(event);
   }
 
+  protected void fetchRefsSync(
+      String refName, String sourceInstanceId, NameKey projectNameKey, boolean isDelete)
+      throws InterruptedException, RemoteConfigurationMissingException, TransportException {
+    FetchAction.Input input = new FetchAction.Input();
+    input.refName = refName;
+    input.label = sourceInstanceId;
+    input.isDelete = isDelete;
+
+    fetchCommand.fetchSync(projectNameKey, sourceInstanceId, fromInput(input).getRefSpecs());
+  }
+
   protected void fetchRefsAsync(
       String refName,
       String sourceInstanceId,
@@ -273,6 +323,23 @@ public class StreamEventListener implements EventListener {
     input.isDelete = isDelete;
 
     fetchJobFactory.create(projectNameKey, fromInput(input), metrics).run();
+  }
+
+  private void fetchRefs(
+      String refName,
+      String sourceInstanceId,
+      NameKey projectNameKey,
+      boolean isDelete,
+      boolean synchronous,
+      Event event)
+      throws InterruptedException, RemoteConfigurationMissingException, TransportException {
+    if (synchronous) {
+      fetchRefsSync(refName, sourceInstanceId, projectNameKey, isDelete);
+    } else {
+      PullReplicationApiRequestMetrics metrics = metricsProvider.get();
+      metrics.start(event);
+      fetchRefsAsync(refName, sourceInstanceId, projectNameKey, isDelete, metrics);
+    }
   }
 
   private String getProjectRepositoryName(ProjectCreatedEvent projectCreatedEvent) {
