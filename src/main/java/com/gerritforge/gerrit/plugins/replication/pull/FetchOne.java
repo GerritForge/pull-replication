@@ -476,8 +476,10 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
         }
       }
     } catch (ProjectsLock.UnableToLockProjectException e) {
-      pool.fetchWasCanceled(this);
-      if (!canceled) {
+      if (replicationType == ReplicationType.ASYNC) {
+        pool.fetchWasCanceled(this);
+      }
+      if (!canceled && replicationType == ReplicationType.ASYNC) {
         repLog.info(
             "[{}] Project {} is locked. Rescheduling replication from {} to avoid collision with an"
                 + " in-flight fetch task [{}].",
@@ -489,10 +491,11 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
         isCollision = true;
       } else {
         repLog.info(
-            "[{}] Project {} is locked. Task is cancelled and conflicting with in-flight fetch task"
+            "[{}] Project {} is locked. Task is {} and conflicting with in-flight fetch task"
                 + " [{}]. NOT rescheduling replication from {}.",
             taskIdHex,
             projectName,
+            canceled ? "cancelled" : "synchronous",
             e.getConflictingTaskId(),
             uri);
       }

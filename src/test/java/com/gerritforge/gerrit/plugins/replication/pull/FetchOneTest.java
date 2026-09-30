@@ -266,6 +266,16 @@ public class FetchOneTest {
   }
 
   @Test
+  public void shouldNotQueueSynchronousFetchIfTheProjectLockCantBeObtained() throws Exception {
+    setupMocks(false);
+
+    objectUnderTest.runSync();
+
+    verify(source, never()).fetchWasCanceled(objectUnderTest);
+    verify(source, never()).reschedule(any(), any());
+  }
+
+  @Test
   public void shouldNotRescheduleAnAlreadyCancelledReplicationTaskIfTheQueueLockCantBeObtained()
       throws Exception {
     setupMocks(false);
