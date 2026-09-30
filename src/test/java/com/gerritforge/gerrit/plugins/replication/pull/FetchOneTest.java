@@ -14,6 +14,7 @@ package com.gerritforge.gerrit.plugins.replication.pull;
 import static com.gerritforge.gerrit.plugins.replication.pull.FetchOne.FILTER_ONLY;
 import static com.gerritforge.gerrit.plugins.replication.pull.FetchOne.refsToDelete;
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.gerrit.testing.GerritJUnit.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.argThat;
@@ -90,6 +91,7 @@ public class FetchOneTest {
   @Mock private DeleteRefCommand deleteRefCommand;
 
   private URIish urIish;
+  private ProjectsLock projectsLock;
   private FetchOne objectUnderTest;
 
   @Before
@@ -114,6 +116,7 @@ public class FetchOneTest {
     when(idGenerator.next()).thenReturn(1);
     int maxLockRetries = 1;
     when(source.getLockErrorMaxRetries()).thenReturn(maxLockRetries);
+    projectsLock = new ProjectsLock();
 
     objectUnderTest =
         new FetchOne(
@@ -127,7 +130,7 @@ public class FetchOneTest {
             fetchFactory,
             fetchRefsDatabase,
             deleteRefCommand,
-            new ProjectsLock(),
+            projectsLock,
             PROJECT_NAME,
             urIish,
             Optional.of(pullReplicationApiRequestMetrics));
@@ -266,13 +269,28 @@ public class FetchOneTest {
   }
 
   @Test
+  public void shouldNotQueueSynchronousFetchIfTheProjectLockCantBeObtained() throws Exception {
+    setupMocks(true);
+
+    try (ProjectsLock.LockToken ignored = projectsLock.tryLock(PROJECT_NAME, "conflicting-task")) {
+      assertThrows(ProjectLockFailureException.class, () -> objectUnderTest.runSync());
+    }
+
+    verify(source, never()).fetchWasCanceled(objectUnderTest);
+    verify(source, never()).reschedule(any(), any());
+  }
+
+  @Test
   public void shouldNotRescheduleAnAlreadyCancelledReplicationTaskIfTheQueueLockCantBeObtained()
       throws Exception {
-    setupMocks(false);
+    setupMocks(true);
     objectUnderTest.canceledByReplication();
 
-    objectUnderTest.run();
+    try (ProjectsLock.LockToken ignored = projectsLock.tryLock(PROJECT_NAME, "conflicting-task")) {
+      objectUnderTest.run();
+    }
 
+    verify(source).fetchWasCanceled(objectUnderTest);
     verify(source, never()).notifyFinished(objectUnderTest);
     verify(source, never()).reschedule(objectUnderTest, Source.RetryReason.COLLISION);
   }
