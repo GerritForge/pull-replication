@@ -11,8 +11,8 @@
 
 package com.gerritforge.gerrit.plugins.replication.pull.api;
 
-
 import com.gerritforge.gerrit.plugins.replication.pull.FetchRefSpec;
+import com.gerritforge.gerrit.plugins.replication.pull.ProjectLockFailureException;
 import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction.Input;
 import com.gerritforge.gerrit.plugins.replication.pull.api.FetchJob.Factory;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RemoteConfigurationMissingException;
@@ -145,6 +145,7 @@ public class FetchAction implements RestModifyView<ProjectResource, Input> {
     } catch (InterruptedException
         | ExecutionException
         | IllegalStateException
+        | ProjectLockFailureException
         | TimeoutException
         | TransportException e) {
       throw RestApiException.wrap(e.getMessage(), e);
@@ -156,6 +157,7 @@ public class FetchAction implements RestModifyView<ProjectResource, Input> {
   private Response<?> applySync(Project.NameKey project, BatchInput input)
       throws InterruptedException,
           ExecutionException,
+          ProjectLockFailureException,
           RemoteConfigurationMissingException,
           TimeoutException,
           TransportException {

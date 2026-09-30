@@ -21,9 +21,11 @@ import static org.mockito.Mockito.when;
 
 import com.gerritforge.gerrit.plugins.replication.pull.ApplyObjectsCacheKey;
 import com.gerritforge.gerrit.plugins.replication.pull.FetchOne;
+import com.gerritforge.gerrit.plugins.replication.pull.FetchRefSpec;
 import com.gerritforge.gerrit.plugins.replication.pull.Source;
 import com.gerritforge.gerrit.plugins.replication.pull.SourcesCollection;
 import com.gerritforge.gerrit.plugins.replication.pull.api.FetchAction;
+import com.gerritforge.gerrit.plugins.replication.pull.api.FetchCommand;
 import com.gerritforge.gerrit.plugins.replication.pull.api.FetchJob;
 import com.gerritforge.gerrit.plugins.replication.pull.api.ProjectDeletionAction;
 import com.gerritforge.gerrit.plugins.replication.pull.api.ProjectInitializationAction;
@@ -42,6 +44,7 @@ import com.google.gerrit.server.events.ProjectHeadUpdatedEvent;
 import com.google.gerrit.server.events.RefUpdatedEvent;
 import com.google.gerrit.server.git.WorkQueue;
 import com.google.gerrit.server.restapi.project.ProjectsCollection;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Before;
@@ -65,6 +68,7 @@ public class StreamEventListenerTest {
   @Mock private ProjectInitializationAction projectInitializationAction;
   @Mock private WorkQueue workQueue;
   @Mock private ScheduledExecutorService executor;
+  @Mock private FetchCommand fetchCommand;
   @Mock private FetchJob fetchJob;
   @Mock private FetchJob.Factory fetchJobFactory;
   @Mock private UpdateHeadCommand updateHeadCommand;
@@ -98,6 +102,7 @@ public class StreamEventListenerTest {
             updateHeadCommand,
             projectInitializationAction,
             workQueue,
+            fetchCommand,
             fetchJobFactory,
             () -> metrics,
             sources,
@@ -184,6 +189,26 @@ public class StreamEventListenerTest {
 
     verify(executor, never()).submit(any(FetchJob.class));
     verify(fetchJob).run();
+  }
+
+  @Test
+  public void shouldFetchRefUpdateSynchronously() throws Exception {
+    RefUpdatedEvent event = new RefUpdatedEvent();
+    RefUpdateAttribute refUpdate = new RefUpdateAttribute();
+    refUpdate.refName = TEST_REF_NAME;
+    refUpdate.project = TEST_PROJECT;
+    refUpdate.oldRev = ObjectId.zeroId().getName();
+    refUpdate.newRev = NEW_REV;
+    event.instanceId = REMOTE_INSTANCE_ID;
+    event.refUpdate = () -> refUpdate;
+
+    objectUnderTest.fetchRefsForEventSync(event);
+
+    verify(fetchCommand)
+        .fetchSync(
+            Project.nameKey(TEST_PROJECT),
+            REMOTE_INSTANCE_ID,
+            Set.of(FetchRefSpec.fromRef(TEST_REF_NAME)));
   }
 
   @Test

@@ -329,7 +329,7 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
     }
   }
 
-  public void runSync() {
+  public void runSync() throws ProjectLockFailureException {
     try (TraceContext ctx = TraceContext.open().addTag(ID_KEY, HexFormat.fromInt(id))) {
       doRunFetchOperation(ReplicationType.SYNC);
     }
@@ -345,7 +345,8 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
     }
   }
 
-  private void doRunFetchOperation(ReplicationType replicationType) {
+  private void doRunFetchOperation(ReplicationType replicationType)
+      throws ProjectLockFailureException {
     // Lock the queue, and remove ourselves, so we can't be modified once
     // we start replication (instead a new instance, with the same URI, is
     // created and scheduled for a future point in time.)
@@ -476,8 +477,10 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
         }
       }
     } catch (ProjectsLock.UnableToLockProjectException e) {
-      pool.fetchWasCanceled(this);
-      if (!canceled) {
+      if (replicationType == ReplicationType.ASYNC) {
+        pool.fetchWasCanceled(this);
+      }
+      if (!canceled && replicationType == ReplicationType.ASYNC) {
         repLog.info(
             "[{}] Project {} is locked. Rescheduling replication from {} to avoid collision with an"
                 + " in-flight fetch task [{}].",
@@ -489,12 +492,16 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
         isCollision = true;
       } else {
         repLog.info(
-            "[{}] Project {} is locked. Task is cancelled and conflicting with in-flight fetch task"
+            "[{}] Project {} is locked. Task is {} and conflicting with in-flight fetch task"
                 + " [{}]. NOT rescheduling replication from {}.",
             taskIdHex,
             projectName,
+            canceled ? "cancelled" : "synchronous",
             e.getConflictingTaskId(),
             uri);
+        if (replicationType == ReplicationType.SYNC) {
+          throw new ProjectLockFailureException(projectName, e.getConflictingTaskId(), e);
+        }
       }
     }
   }
@@ -514,14 +521,17 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
         List<FetchRefSpec> toFetch =
             fetchRefSpecs.stream().filter(rs -> rs.getSource() != null).toList();
         Set<String> toDelete = refsToDelete(fetchRefSpecs);
-        updateStates(fetch.fetch(toFetch));
+        boolean allUpdatesSucceeded = updateStates(fetch.fetch(toFetch));
 
         // JGit doesn't support a fetch of <empty> to a ref (e.g. :refs/to/delete) therefore we have
         // manage them separately and remove them one by one.
         if (!toDelete.isEmpty()) {
-          updateStates(
-              deleteRefCommand.deleteRefsSync(taskIdHex, projectName, toDelete, getRemoteName()));
+          allUpdatesSucceeded &=
+              updateStates(
+                  deleteRefCommand.deleteRefsSync(
+                      taskIdHex, projectName, toDelete, getRemoteName()));
         }
+        succeeded = allUpdatesSucceeded;
         return fetchRefSpecs;
       } catch (InexistentRefTransportException e) {
         String inexistentRef = e.getInexistentRef();
@@ -701,15 +711,10 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
     return Optional.empty();
   }
 
-  private void updateStates(List<RefUpdateState> refUpdates) throws IOException {
+  private boolean updateStates(List<RefUpdateState> refUpdates) throws IOException {
     Set<RefSpec> doneRefSpecs = new HashSet<>();
     boolean anyRefFailed = false;
     RefUpdate.Result lastRefUpdateResult = RefUpdate.Result.NO_CHANGE;
-
-    // NOOP fetches are considered as successes
-    if (refUpdates.isEmpty()) {
-      succeeded = true;
-    }
 
     for (RefUpdateState u : refUpdates) {
       ReplicationState.RefFetchResult fetchStatus = ReplicationState.RefFetchResult.SUCCEEDED;
@@ -727,7 +732,6 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
         case FORCED:
         case RENAMED:
         case FAST_FORWARD:
-          succeeded = true;
           break;
         case NOT_ATTEMPTED:
         case REJECTED:
@@ -792,6 +796,8 @@ public class FetchOne implements ProjectRunnable, CanceledWhileRunning, Completa
     for (RefSpec doneRef : doneRefSpecs) {
       stateMap.removeAll(doneRef);
     }
+    // NOOP fetches are considered successful because no ref update failed.
+    return !anyRefFailed;
   }
 
   private void notifyRefReplicatedIOException() {

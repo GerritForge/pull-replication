@@ -550,7 +550,8 @@ public class Source {
       Project.NameKey project,
       Set<FetchRefSpec> refs,
       URIish uri,
-      Optional<PullReplicationApiRequestMetrics> apiRequestMetrics) {
+      Optional<PullReplicationApiRequestMetrics> apiRequestMetrics)
+      throws ProjectLockFailureException {
     Set<FetchRefSpec> refsToReplicate =
         refs.stream()
             .filter(ref -> shouldReplicate(project, ref))
