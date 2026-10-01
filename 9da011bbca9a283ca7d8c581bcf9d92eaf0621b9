@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "241a62fa_a9d69e01",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-01T12:47:44Z",
+      "side": 1,
+      "message": "Seems like there is a regression in project creation when enabling replication with the broker only. I am looking into that.",
+      "revId": "9da011bbca9a283ca7d8c581bcf9d92eaf0621b9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
