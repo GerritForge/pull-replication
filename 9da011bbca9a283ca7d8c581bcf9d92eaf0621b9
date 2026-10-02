@@ -33,6 +33,42 @@
       "message": "This change is blocked by this missing feature in the events-broker: https://issues.gerritcodereview.com/issues/568010383",
       "revId": "9da011bbca9a283ca7d8c581bcf9d92eaf0621b9",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "123340d7_80b82621",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-02T12:46:32Z",
+      "side": 1,
+      "message": "No need for that change. We will work on the assumption that the broker can publish on a single partition.",
+      "parentUuid": "88463e33_a0ac1e27",
+      "revId": "9da011bbca9a283ca7d8c581bcf9d92eaf0621b9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ce054f27_eadca4e7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-02T12:46:32Z",
+      "side": 1,
+      "message": "Assuming the broker can publish on a single partition this will be resolved.",
+      "parentUuid": "241a62fa_a9d69e01",
+      "revId": "9da011bbca9a283ca7d8c581bcf9d92eaf0621b9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
