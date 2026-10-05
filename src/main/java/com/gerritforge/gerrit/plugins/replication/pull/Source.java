@@ -312,7 +312,7 @@ public class Source {
       logger.atWarning().atMostEvery(DRAINED_LOGGING_FREQUENCY_SECS, SECONDS).log(
           "Queue not drained: %d pending|%d in-flight", numberOfPending, numberOfInFlight);
     } else {
-      logger.atWarning().log("Queue drained");
+      logger.atInfo().log("Queue drained");
     }
 
     return drained;
