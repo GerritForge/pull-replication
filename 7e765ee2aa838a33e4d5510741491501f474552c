@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "480644ce_eaab1271",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 12
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-12T16:39:31Z",
+      "side": 1,
+      "message": "```suggestion\n#### Acknowledge after processing\n```\n\nThe fact that it\u0027s synchronous in the case of acknowledging after an event has been processed it\u0027s kind of a detail is it not?",
+      "range": {
+        "startLine": 273,
+        "startChar": 5,
+        "endLine": 273,
+        "endChar": 45
+      },
+      "revId": "7e765ee2aa838a33e4d5510741491501f474552c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "89cd74ab_46e39e37",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 12
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-12T16:39:31Z",
+      "side": 1,
+      "message": "```suggestion\n#### Acknowledge before processing\n```",
+      "range": {
+        "startLine": 301,
+        "startChar": 5,
+        "endLine": 301,
+        "endChar": 28
+      },
+      "revId": "7e765ee2aa838a33e4d5510741491501f474552c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
