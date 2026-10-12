@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9eb39b41_82a3d69e",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-12T15:12:27Z",
+      "side": 1,
+      "message": "Check the latest version. We are now subscribing to a \"catch-all\" partition introduced by https://gerrit-review.googlesource.com/c/modules/events-broker/+/640963",
+      "parentUuid": "190d69a1_05153317",
+      "range": {
+        "startLine": 152,
+        "startChar": 59,
+        "endLine": 152,
+        "endChar": 79
+      },
+      "revId": "b6362ef6b7cb08afc063735f33462df65f43d0f1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0aea8c34_d4e0c2cd",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-10-06T11:20:36Z",
       "side": 1,
       "message": "Unused?",
+      "range": {
+        "startLine": 249,
+        "startChar": 52,
+        "endLine": 249,
+        "endChar": 73
+      },
+      "revId": "b6362ef6b7cb08afc063735f33462df65f43d0f1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2ae574b_dd6e229b",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-12T15:12:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0aea8c34_d4e0c2cd",
       "range": {
         "startLine": 249,
         "startChar": 52,
@@ -70,6 +118,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e8f4d2c9_d19ea189",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-12T15:12:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "11299933_d6a9ad9d",
+      "range": {
+        "startLine": 250,
+        "startChar": 6,
+        "endLine": 250,
+        "endChar": 67
+      },
+      "revId": "b6362ef6b7cb08afc063735f33462df65f43d0f1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d1b2d271_9de00bdd",
@@ -83,6 +155,30 @@
       "writtenOn": "2026-10-06T11:20:36Z",
       "side": 1,
       "message": "What happens if not set?",
+      "range": {
+        "startLine": 257,
+        "startChar": 0,
+        "endLine": 262,
+        "endChar": 35
+      },
+      "revId": "b6362ef6b7cb08afc063735f33462df65f43d0f1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "471a301f_598cb281",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 8
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-12T15:12:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d1b2d271_9de00bdd",
       "range": {
         "startLine": 257,
         "startChar": 0,
@@ -118,6 +214,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "643ae044_f0597c2e",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 8
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-12T15:12:27Z",
+      "side": 1,
+      "message": "See if it makes more sense now",
+      "parentUuid": "ffc5fb31_8c90c480",
+      "range": {
+        "startLine": 273,
+        "startChar": 0,
+        "endLine": 273,
+        "endChar": 43
+      },
+      "revId": "b6362ef6b7cb08afc063735f33462df65f43d0f1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b668b211_8b03e367",
         "filename": "src/main/resources/Documentation/config.md",
         "patchSetId": 8
@@ -129,6 +249,30 @@
       "writtenOn": "2026-10-06T11:20:36Z",
       "side": 1,
       "message": "But if we don\u0027t ack a message, we can\u0027t ack following ones either, so the whole processing stops?\n\nFrom the code, it looks to me like we keep processing new messages and acknowledging them, so effectively we\u0027re just dropping events, I would be clearer in our docs.",
+      "range": {
+        "startLine": 291,
+        "startChar": 12,
+        "endLine": 292,
+        "endChar": 38
+      },
+      "revId": "b6362ef6b7cb08afc063735f33462df65f43d0f1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4370466b_eb77fca3",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 8
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-12T15:12:27Z",
+      "side": 1,
+      "message": "I have tried to be clearer, see if it works",
+      "parentUuid": "b668b211_8b03e367",
       "range": {
         "startLine": 291,
         "startChar": 12,
@@ -162,6 +306,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9cd5417_b1657d39",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 8
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-12T15:12:27Z",
+      "side": 1,
+      "message": "This does not apply anymore. I have modified the documentation slightly.",
+      "parentUuid": "6dcb2f1e_83463b71",
+      "range": {
+        "startLine": 297,
+        "startChar": 0,
+        "endLine": 300,
+        "endChar": 33
+      },
+      "revId": "b6362ef6b7cb08afc063735f33462df65f43d0f1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6fe66ae0_aa2d2956",
@@ -175,6 +343,30 @@
       "writtenOn": "2026-10-06T11:20:36Z",
       "side": 1,
       "message": "```suggestion\nMessage acknowledgement does not guarantee that the ref update has already been\napplied to the local repository.\n```",
+      "range": {
+        "startLine": 302,
+        "startChar": 0,
+        "endLine": 303,
+        "endChar": 32
+      },
+      "revId": "b6362ef6b7cb08afc063735f33462df65f43d0f1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bea4232d_d3a70ebd",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 8
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-12T15:12:27Z",
+      "side": 1,
+      "message": "I have modified the documentation, this suggestion does not aply anymore.",
+      "parentUuid": "6fe66ae0_aa2d2956",
       "range": {
         "startLine": 302,
         "startChar": 0,
