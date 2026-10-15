@@ -237,6 +237,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "745b54c6_65003ed9",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-15T15:43:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fd7591ee_92c5314b",
+      "range": {
+        "startLine": 335,
+        "startChar": 6,
+        "endLine": 336,
+        "endChar": 27
+      },
+      "revId": "aac3d845ce4b8c7c3ea6f7d2de2bad2b8acc4a6e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "89e5466c_75cebfcc",
