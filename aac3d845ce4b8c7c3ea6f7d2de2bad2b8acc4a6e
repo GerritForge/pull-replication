@@ -97,6 +97,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c688b6df_c478d173",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/FetchOne.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 501,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-10-15T15:01:27Z",
+      "side": 1,
+      "message": "It looks like this also changes the behavior of cancelled asynchronous fetches.\n\nPreviously, when a cancelled async task couldn\u0027t acquire the project lock, we just logged it and returned.\n\nNow we throw `ProjectLockFailureException`, which gets wrapped in `IllegalStateException`.\n\nShouldn\u0027t we only throw for synchronous replication and leave the existing async behavior untouched?",
+      "parentUuid": "6b0329c0_df7d66df",
+      "range": {
+        "startLine": 492,
+        "startChar": 0,
+        "endLine": 501,
+        "endChar": 7
+      },
+      "revId": "aac3d845ce4b8c7c3ea6f7d2de2bad2b8acc4a6e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "969436b4_1aec620f",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
         "patchSetId": 14
