@@ -273,6 +273,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8ef458ff_0e057070",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-16T19:13:22Z",
+      "side": 1,
+      "message": "Acknowledged; however, why do we need to block the thread interruption here?\nIf the thread is interrupted, we will not do the ack, which is fine.\n\nWhat are the consequences if we receive a thread interruption and we don\u0027t wrap the exception?",
+      "parentUuid": "baf24906_ef9c8da2",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 49
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a925d799_efd932c4",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
         "patchSetId": 19
