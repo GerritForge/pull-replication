@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2ca73bac_6729bbe4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 19
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-16T15:37:13Z",
+      "side": 1,
+      "message": "Agreed. I’ll create a follow-up implementing requeuing and place both changes in the same topic",
+      "parentUuid": "b127771d_99408a3a",
+      "range": {
+        "startLine": 17,
+        "startChar": 65,
+        "endLine": 18,
+        "endChar": 72
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "84fcc108_d8e255d6",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-10-16T14:41:57Z",
       "side": 1,
       "message": "AFAIK, the pull-replication plugin uses only one topic: what other non-partitioned topics are you referring to?",
+      "range": {
+        "startLine": 20,
+        "startChar": 50,
+        "endLine": 21,
+        "endChar": 6
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f2d8471_98fb0866",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 19
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-16T15:37:13Z",
+      "side": 1,
+      "message": "You’re right; there is only one configured topic. I meant the configured topic when it has no partition configuration. I’ll correct the wording",
+      "parentUuid": "84fcc108_d8e255d6",
       "range": {
         "startLine": 20,
         "startChar": 50,
@@ -95,6 +143,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d2af0968_bba218ac",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/FetchCommand.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-16T15:37:13Z",
+      "side": 1,
+      "message": "The wrapping was necessary only because ProjectLockFailureException was checked. I made it unchecked and removed the wrappers.",
+      "parentUuid": "d6944e6c_ee7bb584",
+      "range": {
+        "startLine": 65,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 5
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d2c999cd_36b35c3a",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
         "patchSetId": 19
@@ -106,6 +178,24 @@
       "writtenOn": "2026-10-16T14:41:57Z",
       "side": 1,
       "message": "Missing braces.\n\n\n\n```suggestion\n      if (shutdownState.isShuttingDown()) {\n        stop();\n      }\n```",
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "32454639_667551a6",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-16T15:37:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2c999cd_36b35c3a",
       "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -123,6 +213,30 @@
       "writtenOn": "2026-10-16T14:41:57Z",
       "side": 1,
       "message": "I do not see any difference between this catch block and the one at L102-107, apart from the message. The cause of the exception is already reported in `withCause(e)`; why do we also have to customize the message here?",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 49
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "baf24906_ef9c8da2",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-16T15:37:13Z",
+      "side": 1,
+      "message": "The difference is the thread interruption. Regarding the message, you are right I can use the same.",
+      "parentUuid": "11855d7c_1d685a0a",
       "range": {
         "startLine": 87,
         "startChar": 0,
