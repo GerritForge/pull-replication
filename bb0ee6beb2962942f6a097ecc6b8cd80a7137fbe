@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e8714c10_5bbded92",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/FetchAction.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-16T14:41:57Z",
+      "side": 0,
+      "message": "nit: unrelated formatting change.",
+      "revId": "bb0ee6beb2962942f6a097ecc6b8cd80a7137fbe",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}

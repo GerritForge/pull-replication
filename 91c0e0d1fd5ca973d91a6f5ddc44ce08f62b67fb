@@ -1,0 +1,228 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b127771d_99408a3a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 19
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-16T14:41:57Z",
+      "side": 1,
+      "message": "Well, this is a real issue.\nI believe it can be addressed in a follow-up change by introducing the requeuing mechanism.\n\nHowever, this can\u0027t be merged as-is until the requeuing is in place. You can create the follow-up and put it in the same topic.\n\nWhat do you think?",
+      "range": {
+        "startLine": 17,
+        "startChar": 65,
+        "endLine": 18,
+        "endChar": 72
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84fcc108_d8e255d6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 19
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-16T14:41:57Z",
+      "side": 1,
+      "message": "AFAIK, the pull-replication plugin uses only one topic: what other non-partitioned topics are you referring to?",
+      "range": {
+        "startLine": 20,
+        "startChar": 50,
+        "endLine": 21,
+        "endChar": 6
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "964ba4b9_015c6ba5",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/FetchOne.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-16T14:41:57Z",
+      "side": 1,
+      "message": "Why wrap these exceptions and not just propagate them upstream?",
+      "range": {
+        "startLine": 345,
+        "startChar": 0,
+        "endLine": 347,
+        "endChar": 5
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d6944e6c_ee7bb584",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/FetchCommand.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-16T14:41:57Z",
+      "side": 1,
+      "message": "Why are you wrapping the `ProjectLockFailureException` in this async scenario, but propagating the exception in the sync scenario at L72?",
+      "range": {
+        "startLine": 65,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 5
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2c999cd_36b35c3a",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-16T14:41:57Z",
+      "side": 1,
+      "message": "Missing braces.\n\n\n\n```suggestion\n      if (shutdownState.isShuttingDown()) {\n        stop();\n      }\n```",
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "11855d7c_1d685a0a",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-16T14:41:57Z",
+      "side": 1,
+      "message": "I do not see any difference between this catch block and the one at L102-107, apart from the message. The cause of the exception is already reported in `withCause(e)`; why do we also have to customize the message here?",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 49
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a925d799_efd932c4",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-16T14:41:57Z",
+      "side": 1,
+      "message": "Why do we care about this _all events_ partition configuration? If the _ catch-all _ partition is not set but `autoAck \u003d true`, do we really want to leave all messages unacked?\n\nTo me, `hasAllEventsPartition` is more of a prerequisite for starting the plugin; otherwise, the configuration is invalid, and the plugin cannot work properly.",
+      "range": {
+        "startLine": 162,
+        "startChar": 11,
+        "endLine": 162,
+        "endChar": 32
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "856c730f_9b6616ec",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-16T14:41:57Z",
+      "side": 1,
+      "message": "Why wrap these exceptions and not just propagate them upstream?",
+      "range": {
+        "startLine": 139,
+        "startChar": 0,
+        "endLine": 143,
+        "endChar": 5
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b23c4fa_f1225f32",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-16T14:41:57Z",
+      "side": 1,
+      "message": "We already have `ReplicationType` with `ASYNC` and `SYNC` values, which is clearer than using a boolean here.",
+      "range": {
+        "startLine": 159,
+        "startChar": 46,
+        "endLine": 159,
+        "endChar": 65
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ac46aca_764b6c5f",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-16T14:41:57Z",
+      "side": 1,
+      "message": "We already have `ReplicationType` with `ASYNC` and `SYNC` values, which is clearer than using a boolean here.",
+      "range": {
+        "startLine": 337,
+        "startChar": 6,
+        "endLine": 337,
+        "endChar": 25
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
