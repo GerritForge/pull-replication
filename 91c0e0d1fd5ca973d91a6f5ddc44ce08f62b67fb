@@ -294,6 +294,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8a3a8c09_cf2bfd45",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-16T16:02:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a925d799_efd932c4",
+      "range": {
+        "startLine": 162,
+        "startChar": 11,
+        "endLine": 162,
+        "endChar": 32
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "856c730f_9b6616ec",
@@ -307,6 +331,30 @@
       "writtenOn": "2026-10-16T14:41:57Z",
       "side": 1,
       "message": "Why wrap these exceptions and not just propagate them upstream?",
+      "range": {
+        "startLine": 139,
+        "startChar": 0,
+        "endLine": 143,
+        "endChar": 5
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "80d080ee_545eff2f",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-16T16:02:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "856c730f_9b6616ec",
       "range": {
         "startLine": 139,
         "startChar": 0,
