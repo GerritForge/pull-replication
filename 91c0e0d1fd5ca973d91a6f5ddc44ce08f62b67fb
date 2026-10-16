@@ -316,6 +316,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4da14e9d_77e16009",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-16T15:37:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b23c4fa_f1225f32",
+      "range": {
+        "startLine": 159,
+        "startChar": 46,
+        "endLine": 159,
+        "endChar": 65
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3ac46aca_764b6c5f",
@@ -329,6 +353,30 @@
       "writtenOn": "2026-10-16T14:41:57Z",
       "side": 1,
       "message": "We already have `ReplicationType` with `ASYNC` and `SYNC` values, which is clearer than using a boolean here.",
+      "range": {
+        "startLine": 337,
+        "startChar": 6,
+        "endLine": 337,
+        "endChar": 25
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "76f0096c_fc3c188d",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-16T15:37:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3ac46aca_764b6c5f",
       "range": {
         "startLine": 337,
         "startChar": 6,
