@@ -14,6 +14,7 @@ package com.gerritforge.gerrit.plugins.replication.pull.event;
 import static com.gerritforge.gerrit.eventbroker.EventsBrokerConfiguration.ALL_EVENTS_PARTITION;
 import static com.google.gerrit.testing.GerritJUnit.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -27,11 +28,13 @@ import com.gerritforge.gerrit.eventbroker.EventsBrokerConfiguration;
 import com.gerritforge.gerrit.eventbroker.MessageAcknowledgement;
 import com.gerritforge.gerrit.plugins.replication.pull.ProjectLockFailureException;
 import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
+import com.google.common.util.concurrent.Futures;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.extensions.registration.DynamicItem;
 import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.events.RefUpdatedEvent;
 import com.google.gerrit.server.permissions.PermissionBackendException;
+import java.io.IOException;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -126,7 +129,41 @@ public class EventsBrokerMessageConsumerTest {
   }
 
   @Test
-  public void shouldNotAcknowledgeWhenSynchronousFetchThrows() throws Exception {
+  public void shouldRequeueAndAcknowledgeWhenSynchronousFetchThrows() throws Exception {
+    objectUnderTest = createAllEventsPartitionConsumer();
+    when(eventsBrokerDynamicItem.get()).thenReturn(eventsBroker);
+    doThrow(IOException.class).when(eventListener).fetchRefsForEventSync(any());
+    Event event = new RefUpdatedEvent();
+    when(eventsBroker.requeue(TOPIC_NAME, event)).thenReturn(Futures.immediateFuture(true));
+
+    objectUnderTest.accept(event, acknowledgement);
+
+    InOrder inOrder = inOrder(eventsBroker, acknowledgement);
+    inOrder.verify(eventsBroker).requeue(TOPIC_NAME, event);
+    inOrder.verify(acknowledgement).ack(event);
+  }
+
+  @Test
+  public void shouldNotAcknowledgeWhenRequeueFails() throws Exception {
+    objectUnderTest = createAllEventsPartitionConsumer();
+    when(eventsBrokerDynamicItem.get()).thenReturn(eventsBroker);
+    doThrow(
+            new ProjectLockFailureException(
+                Project.nameKey("project"), "conflicting-task", new Exception("lock failure")))
+        .when(eventListener)
+        .fetchRefsForEventSync(any());
+    Event event = new RefUpdatedEvent();
+    when(eventsBroker.requeue(TOPIC_NAME, event)).thenReturn(Futures.immediateFuture(false));
+
+    assertThrows(
+        EventRejectedException.class, () -> objectUnderTest.accept(event, acknowledgement));
+
+    verify(eventsBroker).requeue(eq(TOPIC_NAME), eq(event));
+    verify(acknowledgement, never()).ack(event);
+  }
+
+  @Test
+  public void shouldNotRequeueOrAcknowledgeNonTransientFailure() throws Exception {
     objectUnderTest = createAllEventsPartitionConsumer();
     doThrow(PermissionBackendException.class).when(eventListener).fetchRefsForEventSync(any());
     Event event = new RefUpdatedEvent();
@@ -134,22 +171,7 @@ public class EventsBrokerMessageConsumerTest {
     assertThrows(
         EventRejectedException.class, () -> objectUnderTest.accept(event, acknowledgement));
 
-    verify(acknowledgement, never()).ack(event);
-  }
-
-  @Test
-  public void shouldNotAcknowledgeWhenSynchronousFetchCannotAcquireProjectLock() throws Exception {
-    objectUnderTest = createAllEventsPartitionConsumer();
-    doThrow(
-            new ProjectLockFailureException(
-                Project.nameKey("project"), "conflicting-task", new Exception("lock failure")))
-        .when(eventListener)
-        .fetchRefsForEventSync(any());
-    Event event = new RefUpdatedEvent();
-
-    assertThrows(
-        EventRejectedException.class, () -> objectUnderTest.accept(event, acknowledgement));
-
+    verify(eventsBroker, never()).requeue(any(), any());
     verify(acknowledgement, never()).ack(event);
   }
 
