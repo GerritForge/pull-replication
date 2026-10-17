@@ -293,11 +293,12 @@ event order by routing all event types to one partition. Pull-replication then:
 An acknowledgement therefore records that the event has been applied to the
 local Gerrit instance, rather than merely accepted for later processing.
 
-If processing fails, pull-replication logs the failure and does not acknowledge
-that message. It does not currently retry or requeue the failed event. If the
-broker continues delivering messages and a later message is acknowledged, its
-committed offset may also advance past the failed message, effectively dropping
-that event.
+If processing fails because of a transient project-lock, transport, or I/O
+failure, pull-replication requeues the failed event and acknowledges the original
+message only after the requeue succeeds. If the requeue fails, or processing
+fails because of a non-transient authorization, validation, missing-resource, or
+configuration error, the original message remains unacknowledged so that it can
+be redelivered by the broker.
 
 #### Acknowledge before processing
 

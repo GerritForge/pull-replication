@@ -36,6 +36,7 @@ import com.google.gerrit.server.permissions.PermissionBackendException;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 public class EventsBrokerMessageConsumer
     implements AckAwareConsumer<Event>, LifecycleListener, BrokerApiPluginListener {
@@ -93,20 +94,45 @@ public class EventsBrokerMessageConsumer
       // subsequent one.
       // A better approach should retry/requeue the fetch.
       throw new EventRejectedException(event, e);
+    } catch (ProjectLockFailureException | IOException e) {
+      requeueAndAcknowledge(event, msgAck, e);
     } catch (AuthException
         | PermissionBackendException
-        | ProjectLockFailureException
-        | IOException
         | UnprocessableEntityException
         | ResourceNotFoundException
         | RemoteConfigurationMissingException e) {
-
       logger.atSevere().withCause(e).log(
-          "Failed to process broker event %s; leaving it unacknowledged", event.type);
-      // TODO: Message might be reprocessed, in case of restart without acking of the message or any
-      // subsequent one.
-      // A better approach should retry/requeue the fetch.
+          "Failed to process broker event %s due to a non-transient error; leaving it"
+              + " unacknowledged",
+          event.type);
       throw new EventRejectedException(event, e);
+    }
+  }
+
+  private void requeueAndAcknowledge(
+      Event event, MessageAcknowledgement<Event> msgAck, Exception processingFailure) {
+    logger.atWarning().withCause(processingFailure).log(
+        "Failed to process broker event %s; attempting to requeue it", event.type);
+
+    if (requeue(event)) {
+      msgAck.ack(event);
+      return;
+    }
+
+    throw new EventRejectedException(event, processingFailure);
+  }
+
+  private boolean requeue(Event event) {
+    try {
+      return eventsBrokerDi.get().requeue(eventsTopicName, event).get();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      logger.atSevere().withCause(e).log(
+          "Interrupted while requeuing broker event %s", event.type);
+      return false;
+    } catch (ExecutionException e) {
+      logger.atSevere().withCause(e).log("Failed to requeue broker event %s", event.type);
+      return false;
     }
   }
 
