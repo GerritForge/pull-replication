@@ -297,6 +297,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9cf23302_d849fa23",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-17T11:10:54Z",
+      "side": 1,
+      "message": "\u003e What are the consequences if we receive a thread interruption and we don\u0027t wrap the exception?\n\nWe can\u0027t propagate it since `accept()` doesn\u0027t handle checked exceptions. From the Java documenation [1]: _Code that catches InterruptedException should rethrow the exception, or restore the current thread\u0027s interrupted status, with Thread.currentThread().interrupt(), before continuing normally or handling it by throwing another type of exception._\n\n[1]: https://cr.openjdk.org/~alanb/api/java.base/java/lang/InterruptedException.html",
+      "parentUuid": "8ef458ff_0e057070",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 49
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a925d799_efd932c4",
         "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
         "patchSetId": 19
