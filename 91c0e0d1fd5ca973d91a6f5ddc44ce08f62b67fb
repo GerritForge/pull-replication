@@ -189,6 +189,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f39f9c6c_4dcada63",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/api/FetchCommand.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-19T07:02:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2af0968_bba218ac",
+      "range": {
+        "startLine": 65,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 5
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d2c999cd_36b35c3a",
@@ -309,6 +333,30 @@
       "side": 1,
       "message": "\u003e What are the consequences if we receive a thread interruption and we don\u0027t wrap the exception?\n\nWe can\u0027t propagate it since `accept()` doesn\u0027t handle checked exceptions. From the Java documenation [1]: _Code that catches InterruptedException should rethrow the exception, or restore the current thread\u0027s interrupted status, with Thread.currentThread().interrupt(), before continuing normally or handling it by throwing another type of exception._\n\n[1]: https://cr.openjdk.org/~alanb/api/java.base/java/lang/InterruptedException.html",
       "parentUuid": "8ef458ff_0e057070",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 49
+      },
+      "revId": "91c0e0d1fd5ca973d91a6f5ddc44ce08f62b67fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3b368e4_5752f62d",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-10-19T07:02:56Z",
+      "side": 1,
+      "message": "Why don\u0027t we just propagate it upstream as-is?\n\nThis exception is thrown when the thread must be terminated; why are we trying to manage it? What cleanup action are we doing here?",
+      "parentUuid": "9cf23302_d849fa23",
       "range": {
         "startLine": 87,
         "startChar": 0,
