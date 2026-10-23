@@ -60,7 +60,7 @@ public class EventsBrokerMessageConsumer
   }
 
   @Override
-  public void accept(Event event, MessageAcknowledgement<Event> msgAck) {
+  public void accept(Event event, MessageAcknowledgement<Event> msgAck) throws InterruptedException {
     try {
       eventListener.fetchRefsForEvent(event);
       if (!autoAck) {
