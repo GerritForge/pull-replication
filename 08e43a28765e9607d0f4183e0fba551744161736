@@ -16,6 +16,24 @@
       "message": "Wanna add a `Depends-On` on the events-broker change?",
       "revId": "08e43a28765e9607d0f4183e0fba551744161736",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "75a2b5ab_a6a719d3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-23T14:41:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c5303df9_26d7837e",
+      "revId": "08e43a28765e9607d0f4183e0fba551744161736",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
