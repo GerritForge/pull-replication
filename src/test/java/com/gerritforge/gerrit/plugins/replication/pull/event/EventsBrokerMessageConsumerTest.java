@@ -15,6 +15,8 @@ import static com.gerritforge.gerrit.eventbroker.EventsBrokerConfiguration.ALL_E
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.gerrit.testing.GerritJUnit.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -30,15 +32,19 @@ import com.gerritforge.gerrit.eventbroker.MessageAcknowledgement;
 import com.gerritforge.gerrit.eventbroker.MessageAcknowledgementException;
 import com.gerritforge.gerrit.plugins.replication.pull.ProjectLockFailureException;
 import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
+import com.google.common.util.concurrent.Futures;
 import com.google.gerrit.entities.Project;
 import com.google.gerrit.extensions.registration.DynamicItem;
 import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.events.RefUpdatedEvent;
 import com.google.gerrit.server.permissions.PermissionBackendException;
+import com.google.gerrit.server.util.time.TimeUtil;
+import java.io.IOException;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -47,6 +53,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class EventsBrokerMessageConsumerTest {
 
   public static final String TOPIC_NAME = "stream-events";
+  private static final String INSTANCE_ID = "instance-id";
+  private static final int RETRY_INTERVAL = 30_000;
+  private static final int RETRY_POLL_INTERVAL = 0;
   @Mock private StreamEventListener eventListener;
   @Mock DynamicItem<BrokerApi> eventsBrokerDynamicItem;
   @Mock BrokerApi eventsBroker;
@@ -69,7 +78,10 @@ public class EventsBrokerMessageConsumerTest {
             eventsBrokerConfiguration,
             shutdownState,
             TOPIC_NAME,
-            null);
+            null,
+            INSTANCE_ID,
+            RETRY_INTERVAL,
+            RETRY_POLL_INTERVAL);
   }
 
   @Test
@@ -138,23 +150,111 @@ public class EventsBrokerMessageConsumerTest {
         EventRejectedException.class,
         () -> objectUnderTest.accept(event, EventMetadata.EMPTY, acknowledgement));
 
+    verify(eventsBroker, never()).requeue(any(), any(), any());
     verify(acknowledgement, never()).ack(event);
   }
 
   @Test
-  public void shouldNotAcknowledgeWhenSynchronousFetchCannotAcquireProjectLock() throws Exception {
+  public void shouldRequeueTransientFailureWithNextRetryMetadataAndAcknowledge() throws Exception {
     objectUnderTest = createAllEventsPartitionConsumer();
+    when(eventsBrokerDynamicItem.get()).thenReturn(eventsBroker);
+    doThrow(IOException.class).when(eventListener).fetchRefsForEventSync(any());
+    Event event = new RefUpdatedEvent();
+    EventMetadata metadata =
+        new EventMetadata(new EventMetadata.Retry(2, 1234L, INSTANCE_ID));
+    when(eventsBroker.requeue(any(), any(), any())).thenReturn(Futures.immediateFuture(true));
+
+    objectUnderTest.accept(event, metadata, acknowledgement);
+
+    ArgumentCaptor<EventMetadata> metadataCaptor = ArgumentCaptor.forClass(EventMetadata.class);
+    InOrder inOrder = inOrder(eventsBroker, acknowledgement);
+    inOrder.verify(eventsBroker).requeue(eq(TOPIC_NAME), eq(event), metadataCaptor.capture());
+    inOrder.verify(acknowledgement).ack(event);
+    EventMetadata requeuedMetadata = metadataCaptor.getValue();
+    assertThat(requeuedMetadata.retry().retryCount()).isEqualTo(3);
+    assertThat(requeuedMetadata.retry().retryingInstanceId()).isEqualTo(INSTANCE_ID);
+    assertThat(requeuedMetadata.retry().lastAttemptOn()).isGreaterThan(1234L);
+  }
+
+  @Test
+  public void shouldRequeueThrottledRetryWithoutProcessingOrAdvancingMetadata() throws Exception {
+    objectUnderTest = createAllEventsPartitionConsumer();
+    when(eventsBrokerDynamicItem.get()).thenReturn(eventsBroker);
+    Event event = new RefUpdatedEvent();
+    EventMetadata metadata =
+        new EventMetadata(new EventMetadata.Retry(2, TimeUtil.nowMs(), INSTANCE_ID));
+    when(eventsBroker.requeue(TOPIC_NAME, event, metadata))
+        .thenReturn(Futures.immediateFuture(true));
+
+    objectUnderTest.accept(event, metadata, acknowledgement);
+
+    verify(eventListener, never()).fetchRefsForEventSync(any());
+    InOrder inOrder = inOrder(eventsBroker, acknowledgement);
+    inOrder.verify(eventsBroker).requeue(eq(TOPIC_NAME), same(event), same(metadata));
+    inOrder.verify(acknowledgement).ack(event);
+  }
+
+  @Test
+  public void shouldAcknowledgeWithoutProcessingRetryAssignedToAnotherInstance() throws Exception {
+    objectUnderTest = createAllEventsPartitionConsumer();
+    Event event = new RefUpdatedEvent();
+    EventMetadata metadata =
+        new EventMetadata(new EventMetadata.Retry(2, TimeUtil.nowMs(), "other-instance"));
+
+    objectUnderTest.accept(event, metadata, acknowledgement);
+
+    verify(acknowledgement).ack(event);
+    verify(eventListener, never()).fetchRefsForEventSync(any());
+    verify(eventsBroker, never()).requeue(any(), any(), any());
+  }
+
+  @Test
+  public void shouldProcessRetryAfterRetryIntervalElapses() throws Exception {
+    objectUnderTest = createAllEventsPartitionConsumer();
+    Event event = new RefUpdatedEvent();
+    EventMetadata metadata =
+        new EventMetadata(
+            new EventMetadata.Retry(2, TimeUtil.nowMs() - RETRY_INTERVAL, INSTANCE_ID));
+
+    objectUnderTest.accept(event, metadata, acknowledgement);
+
+    InOrder inOrder = inOrder(eventListener, acknowledgement);
+    inOrder.verify(eventListener).fetchRefsForEventSync(event);
+    inOrder.verify(acknowledgement).ack(event);
+    verify(eventsBroker, never()).requeue(any(), any(), any());
+  }
+
+  @Test
+  public void shouldNotAcknowledgeWhenRequeueFails() throws Exception {
+    objectUnderTest = createAllEventsPartitionConsumer();
+    when(eventsBrokerDynamicItem.get()).thenReturn(eventsBroker);
     doThrow(
             new ProjectLockFailureException(
                 Project.nameKey("project"), "conflicting-task", new Exception("lock failure")))
         .when(eventListener)
         .fetchRefsForEventSync(any());
     Event event = new RefUpdatedEvent();
+    when(eventsBroker.requeue(any(), any(), any())).thenReturn(Futures.immediateFuture(false));
 
     assertThrows(
         EventRejectedException.class,
         () -> objectUnderTest.accept(event, EventMetadata.EMPTY, acknowledgement));
 
+    verify(eventsBroker).requeue(any(), any(), any());
+    verify(acknowledgement, never()).ack(event);
+  }
+
+  @Test
+  public void shouldPropagateInterruptionWithoutRequeueingOrAcknowledging() throws Exception {
+    objectUnderTest = createAllEventsPartitionConsumer();
+    doThrow(InterruptedException.class).when(eventListener).fetchRefsForEventSync(any());
+    Event event = new RefUpdatedEvent();
+
+    assertThrows(
+        InterruptedException.class,
+        () -> objectUnderTest.accept(event, EventMetadata.EMPTY, acknowledgement));
+
+    verify(eventsBroker, never()).requeue(any(), any(), any());
     verify(acknowledgement, never()).ack(event);
   }
 
@@ -207,7 +307,10 @@ public class EventsBrokerMessageConsumerTest {
         eventsBrokerConfiguration,
         shutdownState,
         TOPIC_NAME,
-        "groupId");
+        "groupId",
+        INSTANCE_ID,
+        RETRY_INTERVAL,
+        RETRY_POLL_INTERVAL);
   }
 
   private void startAutoAckConsumer() {
