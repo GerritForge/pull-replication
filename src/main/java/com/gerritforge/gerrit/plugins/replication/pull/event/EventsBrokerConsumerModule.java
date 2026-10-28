@@ -23,6 +23,11 @@ import org.eclipse.jgit.lib.Config;
 public class EventsBrokerConsumerModule extends LifecycleModule {
   public static final String STREAM_EVENTS_TOPIC_NAME = "stream_events_topic_name";
   public static final String STREAM_EVENTS_GROUP_ID = "stream_events_group_id";
+  public static final String STREAM_EVENTS_RETRY_INTERVAL = "stream_events_retry_interval";
+  public static final String STREAM_EVENTS_RETRY_POLL_INTERVAL =
+      "stream_events_retry_poll_interval";
+  static final int DEFAULT_RETRY_INTERVAL = 30_000;
+  static final int DEFAULT_RETRY_POLL_INTERVAL = 1_000;
 
   private final String topicName;
   private final Config config;
@@ -39,6 +44,19 @@ public class EventsBrokerConsumerModule extends LifecycleModule {
     bind(String.class)
         .annotatedWith(Names.named(STREAM_EVENTS_GROUP_ID))
         .toProvider(Providers.of(config.getString("replication", null, "eventBrokerGroupId")));
+    bind(Integer.class)
+        .annotatedWith(Names.named(STREAM_EVENTS_RETRY_INTERVAL))
+        .toInstance(
+            Math.max(
+                0,
+                config.getInt("replication", "eventBrokerRetryInterval", DEFAULT_RETRY_INTERVAL)));
+    bind(Integer.class)
+        .annotatedWith(Names.named(STREAM_EVENTS_RETRY_POLL_INTERVAL))
+        .toInstance(
+            Math.max(
+                0,
+                config.getInt(
+                    "replication", "eventBrokerRetryPollInterval", DEFAULT_RETRY_POLL_INTERVAL)));
     listener().to(EventsBrokerMessageConsumer.class);
     bind(StartPluginListener.class)
         .annotatedWith(UniqueAnnotations.create())
