@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "271bdd81_0fa3f7ca",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-10-28T12:47:09Z",
+      "side": 1,
+      "message": "Can you think of any case where the instanceId might not be set? Maybe in case of 2 nodes, once of which with pull-replication standalone (as a replica) `instanceId` might not be required.\n\nWDYT?",
+      "range": {
+        "startLine": 77,
+        "startChar": 4,
+        "endLine": 79,
+        "endChar": 90
+      },
+      "revId": "6558ee30012a7f608631b9b960ba877eb71040be",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
