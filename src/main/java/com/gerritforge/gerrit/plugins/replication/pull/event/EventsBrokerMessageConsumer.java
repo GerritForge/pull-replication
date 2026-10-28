@@ -13,7 +13,10 @@ package com.gerritforge.gerrit.plugins.replication.pull.event;
 
 import static com.gerritforge.gerrit.eventbroker.EventsBrokerConfiguration.ALL_EVENTS_PARTITION;
 import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule.STREAM_EVENTS_GROUP_ID;
+import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule.STREAM_EVENTS_RETRY_INTERVAL;
+import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule.STREAM_EVENTS_RETRY_POLL_INTERVAL;
 import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule.STREAM_EVENTS_TOPIC_NAME;
+import static java.util.Objects.requireNonNull;
 
 import com.gerritforge.gerrit.eventbroker.AckAwareConsumer;
 import com.gerritforge.gerrit.eventbroker.BrokerApi;
@@ -25,6 +28,7 @@ import com.gerritforge.gerrit.plugins.replication.pull.ProjectLockFailureExcepti
 import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RemoteConfigurationMissingException;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.common.Nullable;
 import com.google.gerrit.extensions.events.LifecycleListener;
@@ -32,11 +36,14 @@ import com.google.gerrit.extensions.registration.DynamicItem;
 import com.google.gerrit.extensions.restapi.AuthException;
 import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
 import com.google.gerrit.extensions.restapi.UnprocessableEntityException;
+import com.google.gerrit.server.config.GerritInstanceId;
 import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.permissions.PermissionBackendException;
+import com.google.gerrit.server.util.time.TimeUtil;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 public class EventsBrokerMessageConsumer
     implements AckAwareConsumer<Event>, LifecycleListener, BrokerApiPluginListener {
@@ -46,6 +53,9 @@ public class EventsBrokerMessageConsumer
   private final ShutdownState shutdownState;
   private final String eventsTopicName;
   private final String groupId;
+  private final String instanceId;
+  private final int retryInterval;
+  private final int retryPollInterval;
   private final boolean hasAllEventsPartition;
   private boolean autoAck;
   private volatile boolean brokerApiImplPluginStarted;
@@ -57,7 +67,10 @@ public class EventsBrokerMessageConsumer
       EventsBrokerConfiguration eventsBrokerConfiguration,
       ShutdownState shutdownState,
       @Named(STREAM_EVENTS_TOPIC_NAME) String eventsTopicName,
-      @Nullable @Named(STREAM_EVENTS_GROUP_ID) String groupId) {
+      @Nullable @Named(STREAM_EVENTS_GROUP_ID) String groupId,
+      @Nullable @GerritInstanceId String instanceId,
+      @Named(STREAM_EVENTS_RETRY_INTERVAL) int retryInterval,
+      @Named(STREAM_EVENTS_RETRY_POLL_INTERVAL) int retryPollInterval) {
 
     this.eventsBrokerDi = eventsBroker;
     this.eventListener = eventListener;
@@ -68,40 +81,127 @@ public class EventsBrokerMessageConsumer
     this.shutdownState = shutdownState;
     this.eventsTopicName = eventsTopicName;
     this.groupId = groupId;
+    this.instanceId =
+        requireNonNull(
+            Strings.emptyToNull(instanceId), "gerrit.instanceId cannot be null or empty");
+    this.retryInterval = retryInterval;
+    this.retryPollInterval = retryPollInterval;
   }
 
   @Override
   public void accept(Event event, EventMetadata metadata, MessageAcknowledgement<Event> msgAck)
       throws InterruptedException {
     if (!autoAck) {
-      acceptSync(event, msgAck);
+      acceptSync(event, metadata, msgAck);
     } else {
       acceptAsync(event, msgAck);
     }
   }
 
-  private void acceptSync(Event event, MessageAcknowledgement<Event> msgAck)
+  private void acceptSync(
+      Event event, EventMetadata metadata, MessageAcknowledgement<Event> msgAck)
       throws InterruptedException {
+    if (isRetryForOtherInstance(metadata)) {
+      logger.atFine().log(
+          "Skipping retry %d of broker event %s assigned to instance %s",
+          metadata.retry().retryCount(), event.type, metadata.retry().retryingInstanceId());
+      acknowledge(event, msgAck);
+      return;
+    }
+
+    if (shouldThrottle(metadata)) {
+      logger.atFine().log(
+          "Deferring retry %d of broker event %s until its retry interval elapses",
+          metadata.retry().retryCount(), event.type);
+      requeueUnchangedAndAcknowledge(event, metadata, msgAck);
+      return;
+    }
+
     try {
       eventListener.fetchRefsForEventSync(event);
+    } catch (ProjectLockFailureException | IOException e) {
+      requeueAndAcknowledge(event, metadata, msgAck, e);
+      return;
     } catch (AuthException
         | PermissionBackendException
-        | ProjectLockFailureException
-        | IOException
         | UnprocessableEntityException
         | ResourceNotFoundException
         | RemoteConfigurationMissingException e) {
-
       logger.atSevere().withCause(e).log(
-          "Failed to process broker event %s; leaving it unacknowledged", event.type);
-      // TODO: Requeue processing failures instead of relying on broker redelivery.
-      // Follow-up: https://review.gerrithub.io/c/GerritForge/pull-replication/+/1256845
+          "Failed to process broker event %s due to a non-transient error; leaving it"
+              + " unacknowledged",
+          event.type);
       throw new EventRejectedException(event, e);
     }
 
     msgAck.ack(event);
     if (shutdownState.isShuttingDown()) {
       stop();
+    }
+  }
+
+  private boolean isRetryForOtherInstance(EventMetadata metadata) {
+    return metadata.isRetry() && !instanceId.equals(metadata.retry().retryingInstanceId());
+  }
+
+  private boolean shouldThrottle(EventMetadata metadata) throws InterruptedException {
+    if (!metadata.isRetry()) {
+      return false;
+    }
+
+    long millisUntilRetry = retryInterval - (TimeUtil.nowMs() - metadata.retry().lastAttemptOn());
+    if (millisUntilRetry <= 0) {
+      return false;
+    }
+
+    Thread.sleep(Math.min(retryPollInterval, millisUntilRetry));
+    return true;
+  }
+
+  private void requeueUnchangedAndAcknowledge(
+      Event event, EventMetadata metadata, MessageAcknowledgement<Event> msgAck)
+      throws InterruptedException {
+    if (requeue(event, metadata)) {
+      acknowledge(event, msgAck);
+      return;
+    }
+
+    throw new EventRejectedException(
+        event, new IllegalStateException("Failed to requeue throttled broker event"));
+  }
+
+  private void requeueAndAcknowledge(
+      Event event,
+      EventMetadata metadata,
+      MessageAcknowledgement<Event> msgAck,
+      Exception processingFailure)
+      throws InterruptedException {
+    EventMetadata retryMetadata = metadata.nextRetry(instanceId);
+    logger.atWarning().withCause(processingFailure).log(
+        "Failed to process broker event %s; attempting retry %d",
+        event.type, retryMetadata.retry().retryCount());
+
+    if (requeue(event, retryMetadata)) {
+      acknowledge(event, msgAck);
+      return;
+    }
+
+    throw new EventRejectedException(event, processingFailure);
+  }
+
+  private void acknowledge(Event event, MessageAcknowledgement<Event> msgAck) {
+    msgAck.ack(event);
+    if (shutdownState.isShuttingDown()) {
+      stop();
+    }
+  }
+
+  private boolean requeue(Event event, EventMetadata metadata) throws InterruptedException {
+    try {
+      return eventsBrokerDi.get().requeue(eventsTopicName, event, metadata).get();
+    } catch (ExecutionException e) {
+      logger.atSevere().withCause(e).log("Failed to requeue broker event %s", event.type);
+      return false;
     }
   }
 
