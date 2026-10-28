@@ -14,16 +14,19 @@ package com.gerritforge.gerrit.plugins.replication.pull.event;
 import static com.gerritforge.gerrit.eventbroker.EventsBrokerConfiguration.ALL_EVENTS_PARTITION;
 import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule.STREAM_EVENTS_GROUP_ID;
 import static com.gerritforge.gerrit.plugins.replication.pull.event.EventsBrokerConsumerModule.STREAM_EVENTS_TOPIC_NAME;
+import static java.util.Objects.requireNonNull;
 
 import com.gerritforge.gerrit.eventbroker.AckAwareConsumer;
 import com.gerritforge.gerrit.eventbroker.BrokerApi;
 import com.gerritforge.gerrit.eventbroker.BrokerApiPluginListener;
 import com.gerritforge.gerrit.eventbroker.EventsBrokerConfiguration;
 import com.gerritforge.gerrit.eventbroker.MessageAcknowledgement;
+import com.gerritforge.gerrit.eventbroker.MessageMetadata;
 import com.gerritforge.gerrit.plugins.replication.pull.ProjectLockFailureException;
 import com.gerritforge.gerrit.plugins.replication.pull.ShutdownState;
 import com.gerritforge.gerrit.plugins.replication.pull.api.exception.RemoteConfigurationMissingException;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.common.Nullable;
 import com.google.gerrit.extensions.events.LifecycleListener;
@@ -31,11 +34,13 @@ import com.google.gerrit.extensions.registration.DynamicItem;
 import com.google.gerrit.extensions.restapi.AuthException;
 import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
 import com.google.gerrit.extensions.restapi.UnprocessableEntityException;
+import com.google.gerrit.server.config.GerritInstanceId;
 import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.permissions.PermissionBackendException;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 public class EventsBrokerMessageConsumer
     implements AckAwareConsumer<Event>, LifecycleListener, BrokerApiPluginListener {
@@ -45,6 +50,7 @@ public class EventsBrokerMessageConsumer
   private final ShutdownState shutdownState;
   private final String eventsTopicName;
   private final String groupId;
+  private final String instanceId;
   private final boolean hasAllEventsPartition;
   private boolean autoAck;
   private volatile boolean brokerApiImplPluginStarted;
@@ -56,7 +62,8 @@ public class EventsBrokerMessageConsumer
       EventsBrokerConfiguration eventsBrokerConfiguration,
       ShutdownState shutdownState,
       @Named(STREAM_EVENTS_TOPIC_NAME) String eventsTopicName,
-      @Nullable @Named(STREAM_EVENTS_GROUP_ID) String groupId) {
+      @Nullable @Named(STREAM_EVENTS_GROUP_ID) String groupId,
+      @Nullable @GerritInstanceId String instanceId) {
 
     this.eventsBrokerDi = eventsBroker;
     this.eventListener = eventListener;
@@ -67,19 +74,23 @@ public class EventsBrokerMessageConsumer
     this.shutdownState = shutdownState;
     this.eventsTopicName = eventsTopicName;
     this.groupId = groupId;
+    this.instanceId =
+        requireNonNull(
+            Strings.emptyToNull(instanceId), "gerrit.instanceId cannot be null or empty");
   }
 
   @Override
-  public void accept(Event event, MessageAcknowledgement<Event> msgAck)
+  public void accept(Event event, MessageMetadata metadata, MessageAcknowledgement<Event> msgAck)
       throws InterruptedException {
     if (!autoAck) {
-      acceptSync(event, msgAck);
+      acceptSync(event, metadata, msgAck);
     } else {
       acceptAsync(event, msgAck);
     }
   }
 
-  private void acceptSync(Event event, MessageAcknowledgement<Event> msgAck)
+  private void acceptSync(
+      Event event, MessageMetadata metadata, MessageAcknowledgement<Event> msgAck)
       throws InterruptedException {
     try {
       eventListener.fetchRefsForEventSync(event);
@@ -87,20 +98,49 @@ public class EventsBrokerMessageConsumer
       if (shutdownState.isShuttingDown()) {
         stop();
       }
+    } catch (ProjectLockFailureException | IOException e) {
+      requeueAndAcknowledge(event, metadata, msgAck, e);
     } catch (AuthException
         | PermissionBackendException
-        | ProjectLockFailureException
-        | IOException
         | UnprocessableEntityException
         | ResourceNotFoundException
         | RemoteConfigurationMissingException e) {
-
       logger.atSevere().withCause(e).log(
-          "Failed to process broker event %s; leaving it unacknowledged", event.type);
-      // TODO: Message might be reprocessed, in case of restart without acking of the message or any
-      // subsequent one.
-      // A better approach should retry/requeue the fetch.
+          "Failed to process broker event %s due to a non-transient error; leaving it"
+              + " unacknowledged",
+          event.type);
       throw new EventRejectedException(event, e);
+    }
+  }
+
+  private void requeueAndAcknowledge(
+      Event event,
+      MessageMetadata metadata,
+      MessageAcknowledgement<Event> msgAck,
+      Exception processingFailure)
+      throws InterruptedException {
+    MessageMetadata retryMetadata = metadata.nextRetry(instanceId);
+    logger.atWarning().withCause(processingFailure).log(
+        "Failed to process broker event %s; attempting retry %d",
+        event.type, retryMetadata.retry().retryCount());
+
+    if (requeue(event, retryMetadata)) {
+      msgAck.ack(event);
+      if (shutdownState.isShuttingDown()) {
+        stop();
+      }
+      return;
+    }
+
+    throw new EventRejectedException(event, processingFailure);
+  }
+
+  private boolean requeue(Event event, MessageMetadata metadata) throws InterruptedException {
+    try {
+      return eventsBrokerDi.get().requeue(eventsTopicName, event, metadata).get();
+    } catch (ExecutionException e) {
+      logger.atSevere().withCause(e).log("Failed to requeue broker event %s", event.type);
+      return false;
     }
   }
 

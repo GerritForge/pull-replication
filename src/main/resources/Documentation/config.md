@@ -293,11 +293,17 @@ event order by routing all event types to one partition. Pull-replication then:
 An acknowledgement therefore records that the event has been applied to the
 local Gerrit instance, rather than merely accepted for later processing.
 
-If processing fails, pull-replication logs the failure and does not acknowledge
-that message. It does not currently retry or requeue the failed event. If the
-broker continues delivering messages and a later message is acknowledged, its
-committed offset may also advance past the failed message, effectively dropping
-that event.
+If processing fails because of a transient project-lock, transport, or I/O
+failure, pull-replication requeues the failed event with an incremented retry
+count and acknowledges the original message only after the requeue succeeds.
+The retry metadata is stored in the broker message, so its count, last-attempt
+time, and retrying instance survive plugin reloads and Gerrit restarts.
+
+If the requeue fails, or processing fails because of a non-transient
+authorization, validation, missing-resource, or configuration error, the
+original message remains unacknowledged so that it can be redelivered by the
+broker. There is currently no retry limit or backoff; a persistent transient
+failure can therefore be requeued indefinitely.
 
 #### Acknowledge before processing
 
