@@ -48,6 +48,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b609bdf4_5a5bf262",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ProjectLockFailureException.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T18:02:24Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "54c98ed1_f4f4209a",
+      "range": {
+        "startLine": 20,
+        "startChar": 13,
+        "endLine": 20,
+        "endChar": 40
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "79b4551b_01c2ce28",
@@ -236,6 +260,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "96176f9d_ccd842d9",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T18:02:24Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "08f93038_fbbe7a62",
+      "range": {
+        "startLine": 120,
+        "startChar": 6,
+        "endLine": 125,
+        "endChar": 37
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2e6c65b5_3b843466",
@@ -273,6 +321,30 @@
       "side": 1,
       "message": "See the discussion here: https://review.gerrithub.io/c/GerritForge/pull-replication/+/1252729/comment/22ca431c_4e4b56ae/",
       "parentUuid": "2e6c65b5_3b843466",
+      "range": {
+        "startLine": 352,
+        "startChar": 6,
+        "endLine": 352,
+        "endChar": 27
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "507d2283_b8d62252",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T18:02:24Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "e3e4cbd9_c58ded5c",
       "range": {
         "startLine": 352,
         "startChar": 6,
@@ -390,6 +462,30 @@
       "side": 1,
       "message": "Mmm, what would be the added value? Happy to add it if you think it can be useful",
       "parentUuid": "88bde67e_0206dbce",
+      "range": {
+        "startLine": 302,
+        "startChar": 0,
+        "endLine": 302,
+        "endChar": 34
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2289e2f0_aa76395a",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 26
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T18:02:24Z",
+      "side": 1,
+      "message": "I was thinking if someone upgrading from a previous version might want to know what\u0027s the current behaviour and decide what to do, but agree that it\u0027s minor and the new approach requires active changes so someone would need to be looking into this anyway, let\u0027s leave it out.",
+      "parentUuid": "2b046df5_e29e540e",
       "range": {
         "startLine": 302,
         "startChar": 0,
