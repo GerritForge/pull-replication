@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d86a6119_bfac8a71",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/ProjectLockFailureException.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T16:35:15Z",
+      "side": 1,
+      "message": "This feels like something that happened before too, why are we introducing a new Exception now?",
+      "range": {
+        "startLine": 20,
+        "startChar": 13,
+        "endLine": 20,
+        "endChar": 40
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "79b4551b_01c2ce28",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T16:35:15Z",
+      "side": 1,
+      "message": "Are we sure we didn\u0027t throw after the ack was done? Sure `isShuttingDown` and `stop` don\u0027t throw anything, so shall we move them outside the `try/catch` block?",
+      "range": {
+        "startLine": 99,
+        "startChar": 5,
+        "endLine": 100,
+        "endChar": 86
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aeb6c63f_96808722",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T16:35:15Z",
+      "side": 1,
+      "message": "Worth mentioning that this is already being worked on in the follow-up?",
+      "range": {
+        "startLine": 101,
+        "startChar": 0,
+        "endLine": 103,
+        "endChar": 58
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "23b498d4_eeb89198",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T16:35:15Z",
+      "side": 1,
+      "message": "Would an admin be able to understand what we mean for `all events partition`? \nDo we have any docs we can link? Or explain it differently?",
+      "range": {
+        "startLine": 148,
+        "startChar": 6,
+        "endLine": 152,
+        "endChar": 94
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b44f184_a5e587fc",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T16:35:15Z",
+      "side": 1,
+      "message": "Unrelated change?",
+      "range": {
+        "startLine": 120,
+        "startChar": 6,
+        "endLine": 125,
+        "endChar": 37
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e6c65b5_3b843466",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/StreamEventListener.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T16:35:15Z",
+      "side": 1,
+      "message": "Slightly unrelated change, aren\u0027t we changing how the metrics are calculated? Seem right to me, but unrelated perhaps?",
+      "range": {
+        "startLine": 352,
+        "startChar": 6,
+        "endLine": 352,
+        "endChar": 27
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45b43b5a_3ccb43c5",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 26
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T16:35:15Z",
+      "side": 1,
+      "message": "I feel like we refer to `catch-all partition` without really explaining what it is.\nCan we link to `Acknowledge after processing` the section below?",
+      "range": {
+        "startLine": 261,
+        "startChar": 62,
+        "endLine": 262,
+        "endChar": 10
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd710123_01162e91",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 26
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T16:35:15Z",
+      "side": 1,
+      "message": "Shall we specify to what it should be set? i.e. An arbitrary string, it\u0027s not a value that needs to match something else etc...",
+      "range": {
+        "startLine": 284,
+        "startChar": 8,
+        "endLine": 284,
+        "endChar": 41
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "88bde67e_0206dbce",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 26
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T16:35:15Z",
+      "side": 1,
+      "message": "Should we specify that this is the only available mode pre 3.15?",
+      "range": {
+        "startLine": 302,
+        "startChar": 0,
+        "endLine": 302,
+        "endChar": 34
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7dadacec_7178ea9c",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 26
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 1020677
+      },
+      "writtenOn": "2026-10-29T16:35:15Z",
+      "side": 1,
+      "message": "```suggestion\nBrokers that acknowledge messages before processing also use asynchronous\n```",
+      "range": {
+        "startLine": 312,
+        "startChar": 34,
+        "endLine": 312,
+        "endChar": 47
+      },
+      "revId": "f8b2395fcff4580c5c30d26e4457abe37020063b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
