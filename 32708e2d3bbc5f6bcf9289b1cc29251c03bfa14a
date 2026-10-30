@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd4ff509_17e13638",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerConsumerModule.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-10-30T14:11:24Z",
+      "side": 1,
+      "message": "Should we require `eventBrokerRetryPollInterval` to be greater than zero?\n\nCurrently, we allow zero, which means `Thread.sleep(0)` returns immediately. If the broker redelivers quickly, this can generate unnecessary broker traffic and CPU work.\n\nWDYT?",
+      "range": {
+        "startLine": 56,
+        "startChar": 11,
+        "endLine": 59,
+        "endChar": 98
+      },
+      "revId": "32708e2d3bbc5f6bcf9289b1cc29251c03bfa14a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
