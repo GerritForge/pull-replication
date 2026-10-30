@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bfa20162_74bcbdb3",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/FetchOne.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 738,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-10-30T14:04:47Z",
+      "side": 1,
+      "message": "We set `succeeded` to `true` as soon as we have a successful fetch.\nHowever, when we have failures `L742` to `L765`, we don\u0027t reset this flag.\n\nSo, if a fetch updates multiple refs and at least one succeeds but another fails, `succeeded` remains `true`.\n\nThe problem is that, in `FetchCommand` we raise an exception only when succeeded is false.\n\n```\n} else if (maybeFetch.map(fetch -\u003e !fetch.hasSucceeded()).orElse(false)) {\n  throw newTransportException(maybeFetch.get());\n}\n```\n\nIn other words, a partially successful replication is considered successful.\nThis means that `FetchCommand.fetchSync()` returns normally, and then we will `msgAck.ack(event)`, despite these partial failures.\n\nShouldn\u0027t `hasSucceeded()` return `false` if any ref failed, so that the event can be handled as a failure rather than acknowledged?\n\nI think this behaviour was already there before your patch, but since we\u0027re now relying on it to decide whether to acknowledge an event, the implications are deeper now.\n\nWDYT?",
+      "range": {
+        "startLine": 731,
+        "startChar": 0,
+        "endLine": 738,
+        "endChar": 16
+      },
+      "revId": "a4a8df7a6d2c77515dee50e266cdf2942972ff65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "093d2757_f611e307",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2026-10-30T14:04:47Z",
+      "side": 1,
+      "message": "We are calling `acceptAsync` only when `autoAck` is `true` at `L79`, I don\u0027t think this condition can ever be `true`, right?",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 114,
+        "endChar": 7
+      },
+      "revId": "a4a8df7a6d2c77515dee50e266cdf2942972ff65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
