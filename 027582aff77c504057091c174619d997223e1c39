@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "51c7f622_0e81302e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-11-02T13:03:14Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "8fd46d76_bf7a7f75",
+      "range": {
+        "startLine": 10,
+        "startChar": 4,
+        "endLine": 12,
+        "endChar": 29
+      },
+      "revId": "027582aff77c504057091c174619d997223e1c39",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "598280b8_5e0f2415",
@@ -70,6 +94,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d6ac128_02665bed",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-11-02T13:03:14Z",
+      "side": 1,
+      "message": "Adding a numeric retry limit is easy; defining what happens after we finish the retries is not. Same issue applies to the multi-site. Until we have a way of handling non-retriable this is the best we can do.",
+      "parentUuid": "0a6ec32c_7be02b9f",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 25
+      },
+      "revId": "027582aff77c504057091c174619d997223e1c39",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fa90a66d_5874dc70",
@@ -93,6 +141,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "20441a8e_0dade395",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerConsumerModule.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-11-02T13:03:14Z",
+      "side": 1,
+      "message": "Nope. Amended. Even if I think we should :P",
+      "parentUuid": "fa90a66d_5874dc70",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 55
+      },
+      "revId": "027582aff77c504057091c174619d997223e1c39",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "61d757f3_4c32cc89",
@@ -106,6 +178,30 @@
       "writtenOn": "2026-11-02T12:24:23Z",
       "side": 1,
       "message": "Why do we need to sleep?",
+      "range": {
+        "startLine": 158,
+        "startChar": 0,
+        "endLine": 158,
+        "endChar": 64
+      },
+      "revId": "027582aff77c504057091c174619d997223e1c39",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "829cc5e6_1579d648",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-11-02T13:03:14Z",
+      "side": 1,
+      "message": "Same as for the multi-site we want a backpressure system to avoid overflooding the broker with retry messages. We want to make sure subsequent retyable faliures will succeed.",
+      "parentUuid": "61d757f3_4c32cc89",
       "range": {
         "startLine": 158,
         "startChar": 0,
