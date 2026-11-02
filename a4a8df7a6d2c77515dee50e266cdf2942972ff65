@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f05103bb_a904ae33",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/FetchOne.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 738,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-11-02T10:09:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bfa20162_74bcbdb3",
+      "range": {
+        "startLine": 731,
+        "startChar": 0,
+        "endLine": 738,
+        "endChar": 16
+      },
+      "revId": "a4a8df7a6d2c77515dee50e266cdf2942972ff65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "093d2757_f611e307",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-10-30T14:04:47Z",
       "side": 1,
       "message": "We are calling `acceptAsync` only when `autoAck` is `true` at `L79`, I don\u0027t think this condition can ever be `true`, right?",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 114,
+        "endChar": 7
+      },
+      "revId": "a4a8df7a6d2c77515dee50e266cdf2942972ff65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "391bcdee_1d54d6a1",
+        "filename": "src/main/java/com/gerritforge/gerrit/plugins/replication/pull/event/EventsBrokerMessageConsumer.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-11-02T10:09:31Z",
+      "side": 1,
+      "message": "Correct! Good catch",
+      "parentUuid": "093d2757_f611e307",
       "range": {
         "startLine": 112,
         "startChar": 0,
