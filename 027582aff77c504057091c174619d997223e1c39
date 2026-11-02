@@ -73,6 +73,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "3ce96ebd_aa6a7a9d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1012541
+      },
+      "writtenOn": "2026-11-02T13:07:11Z",
+      "side": 1,
+      "message": "If requeueing fails and the broker continues delivering records, ack a subsequent record may advance the offset past the failed event. Successful requeues are safe because publication is confirmed before acknowledging the original, but failed requeues still depend on the broker stopping delivery after the callback failure.\n\nThis is a limitation we currently have in multi-site as well.",
+      "parentUuid": "598280b8_5e0f2415",
+      "range": {
+        "startLine": 16,
+        "startChar": 61,
+        "endLine": 17,
+        "endChar": 35
+      },
+      "revId": "027582aff77c504057091c174619d997223e1c39",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0a6ec32c_7be02b9f",
         "filename": "/COMMIT_MSG",
         "patchSetId": 10
